@@ -1,0 +1,129 @@
+<?php View::flash(); ?>
+
+<?= DwForm::setStyleForm(); ?>
+
+<?php if (!empty($empresa)) { ?>
+    <div class="row">
+        <div class="col-md-3">
+            <?= DwForm::dbSelect('sucursal.ciudad_id', 'ciudad', array('ciudad', 'getListadoCiudad'), 'Seleccione una Ciudad', array('class' => 'form-control select2 input-required mask-pint show-errors'), $empresa->ciudad_id, 'Ciudad'); ?>
+        </div>
+        <div class="col-md-3">
+            <?= DwForm::dbSelect('empresa.tipo_documento', 'titulo', array('tablas_tipos', 'getListaTablasActivas', 'tid'), 'Seleccione una Opción', array('class' => 'input-xlarge input-required mask-pint show-errors'), $empresa->tipo_documento, 'Tipo de identificación'); ?>
+        </div>
+        <div class="col-md-3" id="div_tipo_documento">
+            <?php echo DwForm::text('empresa.ruc', array('class' => 'input-required mask-pint show-error', 'maxlength' => '13'), $empresa->ruc, 'Ruc/Cédula'); ?>
+        </div>
+        <div class="col-md-3">
+            <?= DwForm::select('empresa.especial', array('' => 'Seleccione', 'SI' => 'SI', 'NO' => 'NO'), array('class' => 'input-break input-medium input-required mask-pint show-errors'), $empresa->especial, 'Contribuyente Especial'); ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <?php echo DwForm::text('empresa.nombres', array('class' => 'input-required mask-text show-error', 'maxlength' => '45'), $empresa->nombres, 'Nombres'); ?>
+        </div>
+        <div class="col-md-5">
+            <?php echo DwForm::text('empresa.razon_social', array('class' => 'input-required mask-text show-error', 'maxlength' => '150'), $empresa->razon_social, 'Raz&oacute;n Social / Apellidos'); ?>
+        </div>
+        <div class="col-md-2">
+            <?= DwForm::select('empresa.credito', array('' => 'Seleccione', '1' => 'SI', '0' => 'NO'), array('class' => 'input-break input-medium input-required mask-pint show-errors'), $empresa->credito, 'Tiene Crèdito?'); ?>
+        </div>
+        <div class="col-md-2" id="tiempo">
+            <?php if (!empty($empresa->credito)) { ?>
+                <?= DwForm::select('empresa.tiempo', array('' => 'Seleccione', '30' => '30', '60' => '60', '90' => '90', '120' => '120'), array('class' => 'input-break input-medium input-required mask-pint show-errors'), $empresa->tiempo, 'Tiempo Dìas'); ?>
+            <?php } else { ?>
+                <?= DwForm::select('empresa.tiempo', array('0' => '0'), array('class' => 'input-break input-medium input-required mask-pint show-errors'), $empresa->tiempo, 'Tiempo Dìas'); ?>
+            <?php } ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <?php echo DwForm::text('sucursal.direccion', array('class' => 'input-xxlarge input-required mask-text show-error', 'maxlength' => '150'), $empresa->direccion, 'Dirección'); ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <?php echo DwForm::email('sucursal.email', array('class' => 'input-required mask-email show-error', 'maxlength' => '100'), $empresa->email, 'Email'); ?>
+        </div>
+        <div class="col-md-6">
+            <?php echo DwForm::email('sucursal.email2', array('class' => 'mask-email show-error', 'maxlength' => '100'), $empresa->email2, 'Email 2'); ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <?php echo DwForm::text('sucursal.telefono', array('class' => 'input-numeric mask-pint show-error', 'maxlength' => '10'), $empresa->telefono, 'Teléfono 1'); ?>
+        </div>            
+        <div class="col-md-3">
+            <?php echo DwForm::text('sucursal.telefono2', array('class' => 'input-numeric mask-pint show-error', 'maxlength' => '10'), $empresa->telefono2, 'Teléfono 2'); ?>
+        </div>            
+        <div class="col-md-3">
+            <?php echo DwForm::text('sucursal.ext', array('class' => 'input-numeric mask-pint show-error', 'maxlength' => '20'), $empresa->ext, 'Extensión'); ?>
+        </div>            
+        <div class="col-md-3">
+            <?php echo DwForm::text('sucursal.celular', array('class' => 'input-numeric mask-pint show-error', 'maxlength' => '10'), $empresa->celular, 'Celular'); ?>
+        </div>
+    </div>
+
+    <?php echo DwForm::hidden('sucursal.empresas_id', null, $empresa->id) ?>
+    <?php echo DwForm::hidden('sucursal.id', null, $empresa->id_sucursal) ?>
+
+    <script type="text/javascript">
+        $(function () {
+            $('#empresa_tipo_documento').change(function () {
+                actual = $(this).val();
+                $.ajax({
+                    type: "POST",
+                    url: "<?php echo PUBLIC_PATH . 'cuenta/items/input/'; ?>",
+                    data: "tipo_id=" + actual,
+                    success: function (data) {
+                        $("#div_tipo_documento").html(data);
+                    }
+                });
+            });
+            $('#empresa_tipo_empresa').change(function () {
+                actual = $(this).val();
+                $.ajax({
+                    type: "POST",
+                    url: "<?php echo PUBLIC_PATH . 'cuenta/items/input/'; ?>",
+                    data: "tipo_id=" + actual,
+                    success: function (data) {
+                        $("#div_tipo_empresa").html(data);
+                    }
+                });
+            });
+            $('#empresa_credito').change(function () {
+                actual = $(this).val();
+                $.ajax({
+                    type: "POST",
+                    url: "<?php echo PUBLIC_PATH . 'cuenta/items/credito/'; ?>",
+                    data: "tipo_id=" + actual,
+                    success: function (data) {
+                        $("#tiempo").html(data);
+                    }
+                });
+            });
+            $("#empresa_celular").on('change', function () {
+                $("#flash-message").empty();
+                var actual = $(this).val().length;
+                if (actual != 10) {
+                    flashError('El numero de celular debe tener 10 digitos')
+                    $('#empresa_celular').val('');
+                    return false;
+                }
+            });
+
+            $("#empresa_telefono").on('change', function () {
+                $("#flash-message").empty();
+                var actual = $(this).val().length;
+                if (actual != 9) {
+                    flashError('El numero de telefono debe tener 9 digitos')
+                    $('#empresa_telefono').val('');
+                    return false;
+                }
+            });
+        });
+    </script>
+<?php } ?>

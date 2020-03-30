@@ -1,0 +1,403 @@
+<?php View::flash(); ?>
+
+<?php echo Tag::js('jquery/ruc_jquery_validator.min') . PHP_EOL; ?>
+
+<div class="row">
+
+    <?= DwForm::open('orden/factura/', 'post', array('id' => 'data-form', 'class' => 'no-ajax dw-validate clearfix')); ?>
+
+    <div class="col-md-6">
+        <div class="billing-details">
+            <p>¿Ya eres cliente?  
+                <?php if (empty(Session::get('login'))) { ?>
+                    <?= DwHtml::link('cuenta/login/entrar', 'Iniciar sesión', array('class' => 'no-load', 'title' => 'Ingresar')); ?>
+                <?php } ?>
+            </p>
+            <div class="section-title">
+                <h3 class="title">Datos de Facturaci&oacute;n</h3>
+            </div>
+            <div class="form-group">
+                <?= DwForm::dbSelect('cuenta.tipo_documento', 'titulo', array('tablas_tipos', 'getListadoTablasTipos', TablasTipos::TIPO_IDENTIFICACION), 'Seleccione una Opción', array('class' => 'input-xlarge input-required mask-pint show-errors'), NULL, 'Tipo de identificaci&oacute;n'); ?>
+            </div>
+            <div class="form-group" id="div_tipo_documento">
+                <?= DwForm::text('cuenta.ruc', array('class' => 'input-required mask-pint show-error', 'maxlength' => '13', 'placeholder' => 'Seleccione el Tipo Documento'), NULL, 'Ruc / C&eacute;dula'); ?>
+            </div>
+            <div class="form-group">
+                <?= DwForm::text('cuenta.nombres', array('class' => 'input-required mask-text show-error', 'maxlength' => '45', 'placeholder' => 'Nombres / Nombre Comercial', 'autocomplete' => 'off'), NULL, 'Nombres / Nombre Comercial'); ?>
+            </div>
+            <div class="form-group">
+                <?= DwForm::text('cuenta.razon_social', array('class' => 'input-required mask-text show-error', 'maxlength' => '150', 'placeholder' => 'Apellidos / Raz&oacute;n Social', 'autocomplete' => 'off'), NULL, 'Apellidos / Raz&oacute;n Social'); ?>
+            </div>
+            <div class="form-group" id="id-ciudad">
+                <?= DwForm::dbSelect('cuenta.ciudad_id', 'ciudad', array('ciudad', 'getListadoCiudad'), 'Seleccione una Ciudad', array('class' => 'form-control select2 mask-pint show-errors'), NULL, 'Ciudad'); ?>
+            </div>
+            <div class="form-group">
+                <div class="input-checkbox">
+                    <input id="add-ciudad" name="cuenta[new_ciudad]" type="checkbox" value="0">
+                    <label class="font-weak"><b>No encuentro mi Ciudad!</b></label>
+                    <div class="caption">
+                        <p>Ingrese el nombre de su Ciudad.
+                        <p>
+                            <?= DwForm::select('cuenta.region', array('' => 'Seleccione', 'c' => 'COSTA', 's' => 'SIERRA', 'O' => 'ORIENTE', 'g' => 'GALAPAGOS'), array('class' => 'input-break input-medium mask-pint show-errors'), NULL, 'REGION'); ?>
+                            <?php echo DwForm::text('cuenta.ciudad', array('class' => 'input-xxlarge mask-text show-error', 'maxlength' => '150', 'placeholder' => 'Nombre Ciudad', 'autocomplete' => 'off'), NULL, 'Nombre Ciudad'); ?>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo DwForm::textarea('cuenta.direccion', array('class' => 'input-xxlarge input-required mask-text show-error', 'maxlength' => '150', 'placeholder' => 'Direccion completa', 'autocomplete' => 'off'), NULL, 'Dirección'); ?>
+            </div>
+            <div class="form-group">
+                <?php echo DwForm::email('cuenta.email', array('class' => 'input-required mask-email show-error', 'maxlength' => '100', 'placeholder' => 'info@dominio.com', 'autocomplete' => 'off'), NULL, 'Email'); ?>
+            </div>
+            <div class="form-group">
+                <?php echo DwForm::text('cuenta.telefono', array('class' => 'input-required input-numeric mask-pint show-error', 'maxlength' => '10', 'placeholder' => 'Teléfono', 'autocomplete' => 'off'), NULL, 'Teléfono / Celular'); ?>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="shiping-methods">
+            <div class="section-title">
+                <h3 class="title">Datos Para Entrega / Env&iacute;o</h3>
+            </div>
+            <div class="form-group">
+                <?= DwForm::textarea('cuenta.observacion', array('class' => 'input-required mask-text show-error', 'maxlength' => '500', 'placeholder' => 'informacion direccion / persona recibe / referencia'), NULL, 'Referencia / Recibe'); ?>
+            </div>
+
+            <?php echo DwForm::hidden('mode', null, 'auth'); ?>
+
+            <div class="form-group">
+                <div class="input-checkbox">
+                    <input id="crear-cuenta" name="cuenta[new_usuario]" type="checkbox" value="0">
+                    <label class="font-weak">¿Crear una cuenta?</label>
+                    <div class="caption">
+                        <p>Ingrese el nombre de usuario y contraseña.
+                        <p>
+                            <?php echo DwForm::email('cuenta.email3', array('class' => 'input-email mask-email'), NULL, 'Email'); ?>
+                            <?php echo DwForm::text('cuenta.login', array('class' => 'input-lower', 'maxlength' => '15', 'placeholder' => 'pcarlos', 'autocomplete' => 'off'), NULL, 'Usuario'); ?>
+                            <?php echo DwForm::pass('cuenta.password', array('class' => 'input-pass', 'maxlength' => '15', 'autocomplete' => 'off'), '', 'Contraseña / Minimo 8 digitos'); ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-title">
+                <h4 class="title">M&Eacute;TODOS DE ENV&Iacute;O</h4>
+            </div>
+            <div id="regiones-local">
+                <div class="input-checkbox">
+                    <input type="radio" name="cuenta[envios]" data-orden="Quito, Norte" class="entregas" value="6.50">
+                    <label for="cuenta_envios0">Quito, Norte  - $6.50</label>
+                    <div class="caption">
+                        <p>Todos los productos, entrega en un periodo de tiempo de 2 a 5 horas, sector entre Rico Coca y Condado.
+                        <p>
+                    </div>
+                </div>
+                <div class="input-checkbox">
+                    <input type="radio" name="cuenta[envios]" data-orden="Quito, Centro Norte/Sur" class="entregas" value="3.50">
+                    <label for="cuenta_envios1">Quito, Centro Norte/Sur  - $3.50</label>
+                    <div class="caption">
+                        <p>Todos los productos, entrega en un periodo de tiempo de 2 a 5 horas, sector entre Villaflora y Rio Coca.
+                        <p>
+                    </div>
+                </div>
+                <div class="input-checkbox">
+                    <input type="radio" name="cuenta[envios]" data-orden="Quito, Sur" class="entregas" value="6.50">
+                    <label for="cuenta_envios2">Quito, Sur  - $6.50</label>
+                    <div class="caption">
+                        <p>Todos los productos, entrega en un periodo de tiempo de 2 a 5 horas, sector entre Villaflora y Quitumbe.
+                        <p>
+                    </div>
+                </div>
+                <div class="input-checkbox">
+                    <input type="radio" name="cuenta[envios]" data-orden="Quito, Urgente" class="entregas" value="5.00">
+                    <label for="cuenta_envios3">Quito, Urgente  - $5.00</label>
+                    <div class="caption">
+                        <p>Todos los productos, entrega en un periodo de tiempo de 1 a 2 horas, sector entre Centro Historico, La Kennedy y Cumbaya.
+                        <p>
+                    </div>
+                </div>
+                <div class="input-checkbox">
+                    <input type="radio" name="cuenta[envios]" data-orden="Provincia Pichincha" class="entregas" value="3.50">
+                    <label for="cuenta_envios4">Provincia Pichincha - $3.50</label>
+                    <div class="caption">
+                        <p>Todos los productos que no superen el peso de 2 kilos, env&iacute;o por courier tiempo de entrega de 24 a 48 horas.
+                        <p>
+                    </div>
+                </div>
+                <div class="input-checkbox">
+                    <input type="radio" name="cuenta[envios]" data-orden="Quito, Env&iacute;o gratis" class="entregas" value="0.00">
+                    <label for="cuenta_envios5">Quito, Env&iacute;o gratis -  $0.00</label>
+                    <div class="caption">
+                        <p>Compras en montos superiores a $100 dolares, tiempo de entrega de 24 a 48 horas.
+                        <p>
+                    </div>
+                </div>
+                <div class="input-checkbox">
+                    <input type="radio" name="cuenta[envios]" data-orden="Quito, Recoger en Matriz" class="entregas" value="0.00">
+                    <label for="cuenta_envios7">Quito, Recoger en Matriz -  $0.00</label>
+                    <div class="caption">
+                        <p>Recoger el Producto en nuestra oficina Matriz Sector la Floresta.
+                        <p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="regiones-otras" style="display: block;">
+                <div class="input-checkbox">
+                    <input type="radio" name="cuenta[envios]" data-orden="Otras Ciudades" class="entregas" value="6.00">
+                    <label for="cuenta_envios6">Otras Ciudades - $6.00</label>
+                    <div class="caption">
+                        <p>Todos los productos que no superen el peso de 2 kilos, env&iacute;o por courier tiempo de entrega de 24 a 48 horas.
+                        <p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="payments-methods">
+            <div class="section-title">
+                <h4 class="title">M&Eacute;TODOS DE PAGO</h4>
+            </div>
+            <div class="input-checkbox">
+                <input type="radio" name="cuenta[pagos]" class="pagos" value="efectivo">
+                <label for="pagos0">Transferencias | Dep&oacute;sitos | Efectivo</label>
+                <div class="caption">
+                    <p><b>Transferencia Directa | Dep&oacute;sitos Banco Pichincha</b>/Guayaquil/Internacional.
+                    <p>
+                </div>
+            </div>
+            <div class="input-checkbox">
+                <input type="radio" name="cuenta[pagos]" class="pagos" value="cheque">
+                <label for="pagos1">Cheque Al D&iacute;a Solo Empresas</label>
+                <div class="caption">
+                    <p>Aceptamos cheques, siempre que sea una cuenta que haya cancelado previamente con este m&eacute;todo.
+                    <p>
+                </div>
+            </div>
+            <div class="input-checkbox">
+                <input type="radio" name="cuenta[pagos]" class="pagos" value="payphone">
+                <label for="pagos2">PayPhone</label>
+                <div class="caption ">
+                    <div class="input-checkbox">
+                        <?= DwHtml::img("payphone.png", NULL, array('class' => 'logo', 'style' => 'text-align: left')) ?>
+                        <div class="payphone">
+                            <!--                                                        <form class="" action="venta.php">
+                                                                                        <div class="half left cf">
+                                                                                            <input type="submit" style="text-align: center;" value="Enviar Cobro" class ="boton" id="createsale"><br>
+                                                                                        </div>
+                                                                                    </form-->
+
+                        </div>
+                    </div>
+                    <p><h4>Preferimos PAYPHONE, 3 y 6 meses sin intereses con tarjetas de:</h4><p>
+                    <ul>
+                        <li>Produbanco (Visa - Mastercard)</li>
+                        <li>Amazonas (Visa)</li>
+                        <li>Bolivariano (Mastercard)</li>
+                        <li>Mutualista Pichincha (Mastercard)</li>
+                        <li>Internacional (Visa - Mastercard)</li>
+                        <li>Mutualista Azuay (Visa)</li>
+                        <li>Machala (Visa - Mastercard)</li>
+                        <li>Solidario (visa)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="input-checkbox">
+                <input type="radio" name="cuenta[pagos]" class="pagos" value="entrega">
+                <label for="pagos1">Pago al Recibir el producto, Quito</label>
+                <div class="caption">
+                    <p>Aceptamos pagos en efectivo, cheque al D&iacute;a.
+                    <p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="order-summary clearfix">
+            <div class="section-title">
+                <h3 class="title">RESUMEN PEDIDO</h3>
+            </div>
+            <table class="shopping-cart-table table">
+                <thead>
+                    <tr>
+                        <th>Imagen</th>
+                        <th>Producto</th>
+                        <th class="text-center">Precio</th>
+                        <th class="text-center">Cantidad</th>
+                        <th class="text-center">Total</th>
+                    </tr>
+                </thead>
+                <tbody id="table-carrito">
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th class="empty" colspan="3"></th>
+                        <th>PEDIDO</th>
+                        <td colspan="2" class="total">$<span id="total-compra"></span></td>
+                    </tr>
+                    <tr>
+                        <th class="empty" colspan="3"></th>
+                        <th>ENVÍO</th>
+                        <td colspan="2" class="total">$<span id="total-envio">0.00</span></td>
+                    </tr>
+                    <tr>
+                        <th class="empty" colspan="3"></th>
+                        <th>TOTAL</th>
+                        <th colspan="2" class="total">$<span id="total-cancelar">0.00</span></th>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <?= DwForm::hidden('cuenta.total') ?>
+            <?= DwForm::hidden('cuenta.entregas') ?>
+            <?= DwForm::hidden('cuenta.tipo_orden', NULL, 'o') ?>
+            <input name="publicados" id="publicados" value="" type="hidden">
+
+            <div class="pull-right">
+                <p>
+                    <label>
+                        <?php if (empty($terms)) { ?>
+                            <input type="checkbox" id="terms" name="cuenta[terms]" value="" /> Acepto los t&eacute;rminos
+                        <?php } else { ?>
+                            <input type="checkbox" id="terms" name="cuenta[terms]" value="<?= $terms ?>" checked /> Acepto los t&eacute;rminos
+                        <?php } ?>
+                    </label>
+                </p>
+                <?php echo DwButton::submit('Finalizar Pedido', 'fa-save', array('class' => 'primary-btn btn-danger btn-guarda-orden'), 'Finalizar Pedido'); ?>
+            </div>
+        </div>
+
+    </div>
+
+    <?= DwForm::close(); ?>
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //Initialize Select2 Elements
+        $('.select2').select2();
+        cart = paypal.minicart.cart;
+        items = (cart.items());
+        total = 0;
+        // Count the number of each item in the cart
+        for (var i = 0, max = items.length; i < max; i++) {
+            data = items[i]._data;
+            totalu = 0;
+            var num = items[i]._total;
+            var totalu = num.toFixed(2);
+            total += items[i]._total;
+
+            if (data.quantity > data.instock) {
+                alert('La cantidad no puede ser mayor al Stock');
+            }
+            row = '<tr><td class="thumb"><img src="' + $.KumbiaPHP.publicPath + 'img/upload/productos/' + data.imagen + '" style="width:90px;"></td><td class="details"><a href="' + $.KumbiaPHP.publicPath + 'index/detalle/' + data.href + '">' + data.articulo + '</a><ul><li><span>Num Parte: ' + data.mpn + '</span></li><li><span>Stock: ' + data.instock + '</span></li></ul></td><td class="price text-center"><b>$' + data.amount + '</b><br><del class="font-weak"></del></td><td class="qty text-center"><input class="addToCartQuantityBox input-readonly" readonly="readonly" value="' + data.quantity + '"></td><td class="total text-center"><spam class="primary-color">$' + totalu + '</spam></td></tr>';
+            $(row).appendTo("#table-carrito");
+        }
+        carro_items = ObtenerDatos(items);
+        $("#publicados").val(carro_items);
+        $("#total-compra").html(total.toFixed(2));
+        $("#total-cancelar").html(total.toFixed(2));
+    });
+
+    $(function () {
+        $('.delete-items').on('click', function (e) {
+            idx = $(this).attr('data-minicart-idx');
+            paypal.minicart.cart.remove(idx);
+        });
+        $('#cuenta_tipo_documento').change(function () {
+            actual = $(this).val();
+            $.ajax({
+                type: "POST",
+                url: "<?php echo PUBLIC_PATH . 'items/input/'; ?>",
+                data: "tipo_id=" + actual,
+                success: function (data) {
+                    $("#div_tipo_documento").html(data);
+                }
+            });
+        });
+        $('#cuenta_ciudad_id').change(function () {
+            ciudad_id = $(this).val();
+            $.ajax({
+                type: "POST",
+                url: "<?php echo PUBLIC_PATH . 'items/region/'; ?>",
+                data: "ciudad_id=" + ciudad_id,
+                success: function (data) {
+                    data = JSON.parse(data);
+                    if (data.region == 'l') {
+                        $('#regiones-local').attr({'style': 'display: block'});
+                        $('#regiones-otras').attr({'style': 'display: none'});
+                    } else {
+                        $('#regiones-local').attr({'style': 'display: none'});
+                        $('#regiones-otras').attr({'style': 'display: block'});
+                    }
+                }
+            });
+        });
+        $('#add-ciudad').change(function () {
+            $("#flash-message").empty();
+            actual = $(this).val();
+            if (actual != 0) {
+                flashInfo('Seleccione una Ciudad');
+                $("#add-ciudad").val('0');
+            } else {
+                flashValid('Agregue una Region y Ciudad');
+                $("#add-ciudad").val('1');
+                $('#regiones-local').attr({'style': 'display: block'});
+                $('#regiones-otras').attr({'style': 'display: block'});
+            }
+        });
+        $('#crear-cuenta').change(function () {
+            $("#flash-message").empty();
+            actual = $(this).val();
+            if (actual != 0) {
+                flashInfo('Sin Cuenta');
+                $("#crear-cuenta").val('0');
+            } else {
+                flashValid('Cuenta Nueva');
+                $("#crear-cuenta").val('1');
+            }
+        });
+        $('#terms').change(function () {
+            $("#flash-message").empty();
+            actual = $(this).val();
+            if (actual != 0) {
+                $("#terms").val('0');
+            } else {
+                $("#terms").val('1');
+            }
+        });
+        $('#data-form').on('submit', function (e) { //use on if jQuery 1.7+
+            $("#flash-message").empty();
+            flashInfo('Almacenando Espere por favor...');
+        });
+        /***** identificacion *****/
+        $("#cuenta_ruc").validarCedulaEC({
+            onValid: function () {
+                $("#flash-message").empty();
+                $(".btn-guarda-orden").removeClass('btn-danger').addClass('btn-success').removeAttr('disabled');
+            },
+            onInvalid: function () {
+                $("#flash-message").empty();
+                $("#empresa_ruc").val('');
+                $(".btn-guarda-orden").removeClass('btn-success').addClass('btn-danger').attr('disabled', 'disabled');
+                flashError('Cédula o RUC Inválido.<br>Ingrese Nuevamente...');
+            }
+        });
+        $(".entregas").change(function () {
+            value = $(this).attr("data-orden");
+            compra = $("#total-compra").text();
+            envios = $(this).val();
+            suma = (parseFloat(compra) + parseFloat(envios));
+            total = suma.toFixed(2);
+            if ($(this).is(':checked')) {
+                $("#cuenta_entregas").val(value);
+                $("#total-envio").html(envios);
+                $("#total-cancelar").html(total);
+                $("#cuenta_total").val(total);
+            }
+        });
+    });
+</script>

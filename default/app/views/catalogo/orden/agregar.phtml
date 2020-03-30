@@ -1,0 +1,306 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<?php echo Tag::js('jquery/ruc_jquery_validator.min') . PHP_EOL; ?>
+
+<section class="content">
+
+    <?= DwForm::open('', 'post', array('id' => 'form', 'class' => 'dw-validate no-ajax')); ?>
+
+    <div class="box box-danger">
+
+        <div class="box-body">
+
+            <div class="row">
+                <div class="col-md-2">
+                    <?= DwForm::text('orden.numero', array('class' => 'input-readonly mask-num show-error', 'maxlength' => '9'), NULL, 'Número orden'); ?>
+                </div>
+                <div class="col-md-2">
+                    <?php if (Session::get('perfil_id') <= Perfil::ADMIN) { ?>
+                        <?= DwForm::date('orden.fecha_emision', array('class' => 'mask-date show-error', 'maxlength' => '10'), date('Y-m-d'), 'Fecha Emisión'); ?>
+                    <?php } else { ?>
+                        <?= DwForm::text('orden.fecha_emision', array('class' => 'input-readonly mask-date input-readonly show-error', 'maxlength' => '10'), date('Y-m-d'), 'Fecha Emisión'); ?>
+                    <?php } ?>
+                </div>
+                <div class="col-md-6" id="list-clientes">
+                    <?php echo DwForm::dbSelect('orden.empresas_id', array('ruc', 'nombres', 'razon_social'), array('empresas', 'getListaEmpresas', Empresas::CLIENTE), NULL, array('class' => 'select2 input-required'), NULL, 'Cliente'); ?>
+                </div>
+                <div class="col-md-1">
+                    <?= DwForm::label('<b>Editar Cliente.</b>', 'modifica'); ?>
+                    <?= DwForm::check('modifica', NULL, array('class' => 'modifica'), FALSE); ?>
+                </div>
+                <div class="col-md-1">
+                    <?= DwHtml::button("catalogo/cliente/agregar/", '', array('class' => 'btn-success btn-add', 'data-toggle' => 'modal', 'rel' => 'tooltip', 'data-original-title' => 'Añadir cliente'), 'fa-plus'); ?>
+                </div>
+            </div>
+
+            <div class="row" id="list-datos">
+                <div class="col-md-6">
+                    <?= DwForm::text('orden.nombres', array('class' => 'input-break input-readonly mask-text show-error', 'maxlength' => '200'), NULL, 'Nombres'); ?>
+                </div>
+                <div class="col-md-6">
+                    <?= DwForm::text('orden.razon_social', array('class' => 'input-break input-readonly input-required mask-text show-error', 'maxlength' => '200'), NULL, 'Raz&oacute;n Social / Apellidos'); ?>
+                </div>
+                <div class="col-md-2">
+                    <?= DwForm::dbSelect('orden.tipo_documento', 'titulo', array('params/tablas_tipos', 'getListadoTablasTipos', TablasTipos::TIPO_IDENTIFICACION), 'Seleccione una Opción', array('class' => 'input-break input-readonly show-errors'), NULL, 'Tipo Documento'); ?>
+                </div>
+                <div class="col-md-2">
+                    <?= DwForm::text('orden.ruc', array('class' => 'input-break input-readonly input-required show-error', 'maxlength' => '13'), NULL, 'Cédula o RUC'); ?>
+                </div>
+                <div class="col-md-2">
+                    <?= DwForm::text('orden.telefono', array('class' => 'input-break input-readonly input-required show-error', 'maxlength' => '9'), NULL, 'Télefono'); ?>
+                </div>
+                <div class="col-md-3"> 
+                    <?= DwForm::text('orden.email', array('class' => 'input-break input-readonly input-required mask-email show-error', 'maxlength' => '60'), NULL, 'Email'); ?>
+                </div>
+                <div class="col-md-3"> 
+                    <?= DwForm::textarea('orden.direccion', array('class' => 'input-break input-readonly input-required mask-text show-error', 'maxlength' => '60'), NULL, 'Direccion'); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2">
+                    <?= DwForm::select('orden.garantia', array('' => 'Seleccione', '1 AÑO' => '1 AÑO', '6 MESES' => '6 MESES', '3 MESES' => '3 MESES', '18 MESES' => '18 MESES', 'SIN GARANTIA' => 'SIN GARANTIA'), array('class' => 'input-required show-errors'), NULL, 'Garantia'); ?>
+                </div>
+                <div class="col-md-2">
+                    <?= DwForm::select('orden.vigencia', array('' => 'Seleccione', '5 DIAS' => '5 DIAS', '10 DIAS' => '10 DIAS', '15 DIAS' => '15 DIAS', '30 DIAS' => '30 DIAS', 'BAJO PEDIDO' => 'BAJO PEDIDO'), array('class' => 'input-required show-errors'), NULL, 'Vigencia Dìas'); ?>
+                </div>
+                <div class="col-md-2">
+                    <?= DwForm::select('orden.pagos', array('' => 'Seleccione', 'efectivo' => 'EFECTIVO', 'credito' => 'CREDITO EMPRESAS', 'cheque' => 'CHEQUE', 'payphone' => 'PAYPHONE', 'entrega' => 'CONTRA ENTREGA'), array('class' => 'input-required show-errors'), NULL, 'Forma de Pago'); ?>
+                </div>
+                <div class="col-md-2">
+                    <?= DwForm::text('orden.tiempo_entrega', array('class' => 'input-required mask-text show-error', 'maxlength' => '4'), NULL, 'Tiempo Entrega (Hrs)'); ?>
+                </div>
+                <div class="col-md-2">
+                    <?= DwForm::text('orden.envios', array('class' => 'mask-text show-error', 'maxlength' => '10'), NULL, 'Costo Entrega'); ?>
+                </div>
+                <div class="col-md-2">
+                    <?= DwForm::text('orden.entregas', array('class' => 'mask-text show-error', 'maxlength' => '20'), NULL, 'Sector Entrega'); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <?= DwForm::textarea('orden.observacion', array('class' => 'mask-text show-error', 'maxlength' => '500'), NULL, 'Observacion'); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-actions">
+                    <?= DwButton::save('Guardar información'); ?>
+                    <?php echo DwForm::cancel(); ?>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <?= DwForm::close(); ?>
+
+</section>
+
+<div class="modal fade" id="form-detalle-cliente">
+
+    <div class="modal-dialog">
+
+        <?= DwForm::open('', 'post', array('id' => 'form-modal-cliente', 'class' => 'dw-validate no-ajax')); ?>
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">NUEVO CLIENTE</h4>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <?= DwForm::dbSelect('sucursal.ciudad_id', 'ciudad', array('ciudad', 'getListadoCiudad'), 'Seleccione una Ciudad', array('class' => 'form-control select2 input-required mask-pint show-errors'), NULL, 'Ciudad'); ?>
+                    </div>
+                    <div class="col-md-3">
+                        <?= DwForm::dbSelect('empresa.tipo_documento', 'titulo', array('tablas_tipos', 'getListaTablasActivas', 'tid'), 'Seleccione una Opción', array('class' => 'input-xlarge input-required mask-pint show-errors'), NULL, 'Tipo de identificación'); ?>
+                    </div>
+                    <div class="col-md-3" id="div_tipo_documento">
+                        <?php echo DwForm::text('empresa.ruc', array('class' => 'input-required mask-pint show-error', 'maxlength' => '13'), NULL, 'Ruc/Cédula'); ?>
+                    </div>
+                    <div class="col-md-3">
+                        <?= DwForm::select('empresa.contabilidad', array('' => 'Seleccione', 'SI' => 'SI', 'NO' => 'NO'), array('class' => 'input-break input-required mask-pint show-errors'), NULL, 'Obligado llevar Contabilidad'); ?>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <?php echo DwForm::text('empresa.nombres', array('class' => 'input-required mask-text show-error', 'maxlength' => '45'), NULL, 'Nombres'); ?>
+                    </div>
+                    <div class="col-md-6">
+                        <?php echo DwForm::text('empresa.razon_social', array('class' => 'input-required mask-text show-error', 'maxlength' => '150'), NULL, 'Raz&oacute;n Social / Apellidos'); ?>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <?php echo DwForm::email('sucursal.email', array('class' => 'input-required mask-email show-error', 'maxlength' => '100'), NULL, 'Email'); ?>
+                    </div>
+                    <div class="col-md-6">
+                        <?php echo DwForm::email('sucursal.email2', array('class' => 'mask-email show-error', 'maxlength' => '100'), NULL, 'Email 2'); ?>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <?php echo DwForm::text('sucursal.direccion', array('class' => 'input-xxlarge input-required mask-text show-error', 'maxlength' => '150'), NULL, 'Dirección'); ?>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <?php echo DwForm::text('sucursal.telefono', array('class' => 'input-numeric mask-pint show-error', 'maxlength' => '10'), NULL, 'Teléfono 1'); ?>
+                    </div>            
+                    <div class="col-md-3">
+                        <?php echo DwForm::text('sucursal.telefono2', array('class' => 'input-numeric mask-pint show-error', 'maxlength' => '10'), NULL, 'Teléfono 2'); ?>
+                    </div>            
+                    <div class="col-md-3">
+                        <?php echo DwForm::text('sucursal.ext', array('class' => 'input-numeric mask-pint show-error', 'maxlength' => '20'), NULL, 'Extensión'); ?>
+                    </div>            
+                    <div class="col-md-3">
+                        <?php echo DwForm::text('sucursal.celular', array('class' => 'input-numeric mask-pint show-error', 'maxlength' => '10'), NULL, 'Celular'); ?>
+                    </div>
+                    <div class="col-md-2">
+                        <?= DwForm::select('empresa.credito', array('' => 'Seleccione', '1' => 'SI', '0' => 'NO'), array('class' => 'input-required mask-pint show-errors'), NULL, 'Tiene Crèdito'); ?>
+                    </div>
+                    <div class="col-md-2" id="tiempo">
+                        <?= DwForm::select('empresa.tiempo', array('0' => '0'), array('class' => 'input-required mask-pint show-errors'), NULL, 'Tiempo Dìas'); ?>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <div class="box box-info">
+                    <div class="box-footer">
+                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cerrar</button>
+                        <?php echo DwForm::send('Guardar', 'fa-save', array('class' => 'btn btn-primary btn-submit-cliente'), 'Guardar'); ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php echo DwForm::close(); ?>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //Initialize Select2 Elements
+        $('.select2').select2();
+        $('.btn-add').on('click', function (e) {
+            e.stopImmediatePropagation();
+            addCliente($(this));
+            return false;
+        });
+        /***** identificacion *****/
+        $("#empresa_ruc").validarCedulaEC({
+            onValid: function () {
+                $("#flash-message").empty();
+                $(".btn-submit-cliente").removeClass('btn-danger').addClass('btn-success').removeAttr('disabled');
+            },
+            onInvalid: function () {
+                $("#flash-message").empty();
+                $(".btn-submit-cliente").removeClass('btn-success').addClass('btn-danger').attr('disabled', 'disabled');
+                flashError('Cédula o RUC Inválido.<br>Ingrese Nuevamente...');
+            }
+        });
+        $('#empresa_tipo_documento').change(function () {
+            actual = $(this).val();
+            $.ajax({
+                type: "POST",
+                url: "<?php echo PUBLIC_PATH . 'cuenta/items/input/'; ?>",
+                data: "tipo_id=" + actual,
+                success: function (data) {
+                    $("#div_tipo_documento").html(data);
+                }
+            });
+        });
+        $('#empresa_credito').change(function () {
+            actual = $(this).val();
+            $.ajax({
+                type: "POST",
+                url: "<?php echo PUBLIC_PATH . 'cuenta/items/credito/'; ?>",
+                data: "tipo_id=" + actual,
+                success: function (data) {
+                    $("#tiempo").html(data);
+                }
+            });
+        });
+        $('.modifica').on('click', function () {
+            $("#flash-message").empty();
+            if ($(this).is(':checked')) {
+                $(".modifica").val('1');
+                $(".input-break").removeAttr("readonly").attr('required', 'required');
+                flashValid("Ingrese los datos del cliente");
+            } else {
+                $(".modifica").val('0');
+                $(".input-break").attr("readonly", "true");
+            }
+        });
+        $('#orden_empresas_id').change(function () {
+            actual = $(this).val();
+            $.ajax({
+                type: "POST",
+                url: "<?php echo PUBLIC_PATH . 'catalogo/orden/getDatosCliente/'; ?>",
+                data: "cliente=" + actual,
+                success: function (data) {
+                    $("#list-datos").html(data);
+                }
+            });
+        });
+        //Guardado
+        $("#form-modal-cliente").on('submit', function (e) {
+            $("#flash-message").empty();
+            jsSpinner('hide');
+
+            if ($("#btn-submit-item").hasClass('btn-danger')) {
+                return false;
+            }
+            este = $(this);
+            source = {
+                url: $(this).attr('action'),
+                change_url: false,
+                spinner: true,
+                method: 'post',
+                response: 'json',
+                data: $(this).serialize()
+            }
+
+            request = $.kload(source);
+            if (request && request.success == true) {
+                input = '<label for="orden_empresas_id">Cliente<span class="req">*</span></label><select id="orden_empresas_id" name="orden[empresas_id]" class="form-control select2 input-required" required="required" data-select2-id="orden_empresas_id" tabindex="-1" aria-hidden="true"><option value="' + request.empresas_id + '" selected="selected">' + request.ruc + ' | ' + request.nombres + ' | ' + request.razon_social + '</option></select>';
+                $('#list-clientes').html(input);
+                $("#orden_nombres").val(request.nombres);
+                $("#orden_razon_social").val(request.razon_social);
+                $("#orden_tipo_documento").val(request.tipo_documento);
+                $("#orden_ruc").val(request.ruc);
+                $("#orden_telefono").val(request.telefono);
+                $("#orden_email").val(request.email);
+                $("#orden_direccion").val(request.direccion);
+            } else {
+                texto = (request.message != undefined) ? request.message : 'Oops! no hemos podido establecer la conexión con el servidor. <br />Intenta nuevamente.';
+                flashError(texto);
+            }
+            $('#form-detalle-cliente').modal('hide');
+            $('.modal-backdrop').removeClass('in').hide();
+            return false;
+        });
+    });
+    /***** Funciones para abrir los dialogos *****/
+    function addCliente(refer) {
+        $("#flash-message").empty();
+        $('.input-break').val('');
+        $("#form-modal-cliente").attr('action', refer.attr('href')).attr('data-update', 'false');
+        $('#form-detalle-cliente').modal('show');
+    }
+</script>

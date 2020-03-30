@@ -1,0 +1,176 @@
+<htmlpageheader name="letterheader">
+    <table width="100%" style=" font-family: sans-serif;">
+        <thead style="backgnumber_format-color: #269abc;">
+            <tr>
+                <td colspan="4" width="40%" style="color:#0000BB;">
+                    <span style="font-weight: bold; font-size: 11pt;"><?= $empresa->razon_social ?></span>
+                </td>
+                <td width="15%"></td>
+                <td rowspan="3" colspan="3" width="40%" style="text-align: right; vertical-align: top;">
+                    <?php echo DwHtml::img("logo.png", APP_NAME, array('style' => 'width: 250px;height:55px;')); ?>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="3" colspan="2" style="color:#7c7979;">
+                    <span style="font-size: 8pt;">
+                        <?= $empresa->direccion ?> - <?= $empresa->ciudad ?><br>
+                        <span style="font-size: 13pt;">☎</span> CEL: <?= $empresa->celular ?> <i class="fa fa-whatsapp"></i> 
+                    </span>
+                </td>
+                <td colspan="3" align="center">e-mail: <a href="mailto:<?= $empresa->email ?>" target="_blank"><?= $empresa->email ?></a></td>
+            </tr>
+            <tr>
+                <td rowspan="2" colspan="3" align="center">
+                    <span style="font-weight: bold; font-size: 10pt;"><a href="<?= $empresa->web ?>" target="_blank"><?= $empresa->web ?></a> </span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3" style="text-align: right; vertical-align: top;">
+                    <span style="font-weight: bold; font-size: 9pt;">RUC: <?= $empresa->ruc ?></span>
+                </td>
+            </tr>
+        </thead>
+    </table>
+    <hr />
+    <br>
+    <h2 align="right"><?= $orden->numero ?></h2>
+    <br>
+    <table width="100%" style=" font-family: sans-serif;">
+        <tbody>
+            <tr>
+                <td width="15%"><b>Ref Atención:</b></td>
+                <td width="40%" colspan="6"> </td>
+                <td width="15%" align="right"><b>Fecha:</b></td>
+                <td width="40%" colspan="2" align="center"><?= DwOnline::FechaFormato(date("Y-m-d", strtotime($orden->fecha_emision))) ?></td>
+            </tr>
+            <tr>
+                <td><b>Cliente: </b></td>
+                <td colspan="6"><?= $orden->nombres . ' ' . $orden->razon_social ?></td>
+                <td align="right"><b>RUC:</b></td>
+                <td colspan="2" align="center"><?= $orden->ruc ?></td>
+            </tr>
+            <tr>
+                <td><b>Dirección: </b></td>
+                <td colspan="9"><?= $orden->ciudad ?>, <?= $orden->direccion ?></td>
+            </tr>
+            <tr>
+                <td><b>Teléfono: </b></td>
+                <td colspan="4"><?= empty($orden->telefono) ? $orden->celular : $orden->telefono ?></td>
+                <td align="right"><b>e-mail: </b></td>
+                <td colspan="4"><?= empty($orden->email) ? 'SIN EMAIL' : strtolower($orden->email) ?></td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+    <br>
+    <div style="height: 450px;font-size:8pt; font-family: lucidaconsole, mono;">
+        <table width="100%" style=" font-family: sans-serif;">
+            <thead>
+                <tr bgcolor="blue">
+                    <td colspan="10"></td>
+                </tr>
+                <tr>
+                    <td width="7%"><b>Cant.</b></td>
+                    <td width="12%"><b>Códido</b></td>
+                    <td width="90%" colspan="6"><b>Detalle</b></td>
+                    <td width="8%" align="right"><b>Precio</b></td>
+                    <td width="8%" align="right"><b>Desc.%</b></td>
+                    <td width="10%" align="right"><b>Total</b></td>
+                </tr>
+            </thead>
+            <tbody>
+                <?php $counter = 0; ?>
+                <?php $sub_total = 0; ?>
+                <?php $costo_total = 0; ?>
+                <?php $dsc_total = 0; ?>
+                <?php if ($detalle) { ?>
+                    <?php foreach ($detalle as $articulo): ?>
+                        <tr>
+                            <td class="borde-tbl" align="center"><?= $articulo->cantidad; ?></td>
+                            <td class="borde-tbl"><?= $articulo->mpn; ?></td>
+                            <td colspan="6" class="borde-tbl"><?= $articulo->descripcion; ?></td>
+                            <td class="borde-tbl" align="right"><?= $articulo->valor_unitario; ?></td>
+                            <td class="borde-tbl" align="right"><?= $articulo->descuento; ?></td>
+                            <td class="borde-tbl" align="right">$ <?= $articulo->valor_total; ?></td>
+                        </tr>
+                        <?php if ($articulo->detalle) { ?>
+                            <tr>
+                                <td class="borde-tbl"></td>
+                                <td class="borde-tbl"></td>
+                                <td colspan="6" class="borde-tbl"><?= $articulo->detalle; ?></td>
+                                <td class="borde-tbl"></td>
+                                <td class="borde-tbl"></td>
+                                <td class="borde-tbl"></td>
+                            </tr>
+                        <?php } ?>
+                        <?php $counter++; ?>
+                        <?php $sub_total += $articulo->valor_total; ?>
+                        <?php $costo_total += DwOnline::setPrecios($articulo->valor_total, $articulo->valor); ?>
+                    <?php endforeach; ?>
+                <?php } ?>
+            </tbody>
+        </table>
+
+    </div>
+
+    <table width="100%" style=" font-family: sans-serif;">
+        <tbody>
+            <tr bgcolor="blue">
+                <td colspan="10"></td>
+            </tr>
+            <tr>
+                <td width="20%"><b>CRÉDITO:</b></td>
+                <td width="80%" colspan="7"><?= empty($orden->credito) ? 'NO TIENE' : $orden->tiempo . ' DIAS' ?></td>
+                <td width="15%" align="right"><b>SUBTOTAL:</b></td>
+                <td width="15%" align="right">$ <?= number_format($sub_total, 2) ?></td>
+            </tr>
+            <tr>
+                <td><b>FORMA DE PAGO:</b></td>
+                <td colspan="7"><?= $orden->pagos ?></td>
+                <td align="right"><b>DESCUENTO:</b></td>
+                <td align="right">$ 0.00</td>
+            </tr>
+            <tr>
+                <td><b>TIPO DE ENTREGA:</b></td>
+                <td colspan="7"><?= empty($orden->tiempo_entrega) ? '' : $orden->tiempo_entrega . ' Hrs' ?></td>
+                <td align="right"><b>IVA 12 %:</b></td>
+                <td align="right">$ <?= number_format($costo_total - $sub_total, 2) ?></td>
+            </tr>
+            <tr>
+                <td><b>GARANTÍA:</b></td>
+                <td colspan="7"><?= empty($orden->garantia) ? '' : $orden->garantia ?></td>
+                <td align="right"><b>IVA 0 %:</b></td>
+                <td align="right">$ $ 0.00</td>
+            </tr>
+            <tr>
+                <td><b>VÁLIDEZ:</b></td>
+                <td colspan="7"><?= empty($orden->vigencia) ? '' : $orden->vigencia . ' Días' ?></td>
+                <td align="right"><b>TOTAL:</b></td>
+                <td align="right">$ <?= number_format($costo_total, 2) ?></td>
+            </tr>
+        </tbody>
+    </table><br>
+
+    <span style="height: 80px;padding: 0.6em; font-size:8pt; font-family: lucidaconsole, mono;">
+        <table width="100%" style=" font-family: sans-serif;">
+            <tbody>
+                <tr>
+                    <td width="20%" colspan="4"><b>Elaborado por:</b><br><br><br><br><br><br></td>
+                    <td width="20%"></td>
+                    <td width="20%" colspan="4"><b>Acepto Conforme</b><br><br><br><br><br><br></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="border-bottom: 5px ridge brown;"><?php $empresa->representante ?><br>GERENTE GENERAL</td>
+                    <td></td>
+                    <td colspan="4" style="border-bottom: 5px ridge brown;">NOMBRES</td>
+                    <td></td>  
+                </tr>
+            </tbody>
+        </table>
+        <br>
+        <br>
+        <span align="center">&copy; Copyright <?php echo date("Y"); ?> | <?= APP_NOMBRE ?>. Todos los derechos reservados.  | Sistema Autom&aacute;tico v<?= APP_VERSION; ?></span>
+    </span>
+</htmlpageheader>
+

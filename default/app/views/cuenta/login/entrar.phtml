@@ -1,0 +1,48 @@
+<?php View::flash(); ?>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-4 col-md-6 ml-auto mr-auto">
+            <div class="card card-login">
+
+                <?php echo DwForm::open('cuenta/login/entrar/', '', array('class' => 'form no-ajax form-validate', 'id' => 'formulario', 'before-send' => 'onSend();')); ?>
+
+                <div class="card-header card-header-primary text-center">
+                    <h4 class="card-title">Iniciar Sesión:</h4>
+                    <div class="social-line"></div>
+                </div>
+                <p class="description text-center">Acceso Restringido!</p>
+                <div class="card-body">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="material-icons">face</i>
+                            </span>
+                        </div>
+                        <input type="text" id="login" name="login" value="" placeholder="Usuario" autocomplete="off" required="required" maxlength="30" class="form-control login username-field" />
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="material-icons">lock_outline</i>
+                            </span>
+                        </div>
+                        <input type="password" id="password" name="password" value="" placeholder="Contraseña" autocomplete="off" required="required" maxlength="15" class="form-control login password-field span10"/>
+                    </div>
+                </div>
+                <div class="footer text-center">
+                    <?php echo DwForm::btnSubmit('Entrar', array('class' => 'btn btn-primary btn-link btn-wd btn-lg'), 'fa-sign-in'); ?>
+                <?php echo DwHtml::button("index/registro", 'Crear Cuenta', array('class' => 'btn-primary btn-link btn-wd'), 'fa-edit', APP_AJAX); ?>
+                <?php echo DwHtml::button("index/recuperar", 'Recuperar contraseña?', array('class' => 'btn-primary btn-link btn-wd'), 'fa-exchange', APP_AJAX); ?>
+                </div>
+                <div>
+                    <?php echo DwForm::hidden('mode', null, 'auth'); ?>
+                </div>
+                <div>
+                    <?php echo DwForm::token(); ?>
+                </div>
+                <?php echo DwForm::close(); ?>
+            </div>
+        </div>
+    </div>
+</div>

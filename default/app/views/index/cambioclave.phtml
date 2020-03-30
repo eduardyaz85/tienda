@@ -1,0 +1,48 @@
+<?php View::flash(); ?>
+
+<div class="row">
+
+    <?= DwForm::open('', 'post', array('id' => 'data-form', 'class' => 'no-ajax dw-validate clearfix')); ?>
+
+    <div class="col-md-6">
+        <div class="billing-details">
+            <p>¿Ya eres cliente?  
+                <?php if (empty(Session::get('login'))) { ?>
+                    <?= DwHtml::link('cuenta/login/entrar', 'Iniciar sesión', array('class' => 'no-load', 'title' => 'Ingresar')); ?>
+                <?php } ?>
+            </p>
+            <div class="section-title">
+                <h3 class="title">Cambiar Contraseña</h3>
+            </div>
+
+            <div class="form-group">
+                <?php echo DwForm::pass('password', array('class' => 'input-pass', 'autocomplete' => 'off'), NULL, 'Contraseña Nueva / Minimo 8 digitos'); ?>
+                <?php echo DwForm::pass('repassword', array('class' => 'input-repass', 'data-equalto' => 'usuario_password', 'autocomplete' => 'off'), '', 'Confirmar Contraseña'); ?>
+            </div>
+
+            <?php echo DwForm::hidden('mode', null, 'auth'); ?>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="order-summary clearfix">
+            <?php echo DwButton::submit('Guardar Contraseña', 'fa-save', array('class' => 'primary-btn btn-danger btn-guarda-orden'), 'Guardar Contraseña'); ?>
+        </div>
+
+    </div>
+
+    <?= DwForm::close(); ?>
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#password").val('');
+    });
+    $(function () {
+        $('#data-form').on('submit', function (e) { //use on if jQuery 1.7+
+            $("#flash-message").empty();
+            flashInfo('Enviando Espere por favor...');
+        });
+    });
+</script>

@@ -1,0 +1,297 @@
+<?php View::flash(); ?>
+
+<div class="section">
+    <!-- container -->
+    <div class="container">
+        <!-- row -->
+        <div class="row">
+            <!-- section-title -->
+            <div class="col-md-12">
+                <div class="section-title">
+                    <h2 class="title">PRODUCTOS NUEVOS</h2>
+                    <div class="pull-right">
+                        <div class="product-slick-dots-1 custom-dots"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- /section-title -->
+
+            <!-- banner -->
+            <div class="col-md-3 col-sm-6 col-xs-6">
+                <div class="banner banner-2">
+                    <?= DwHtml::img("frontend/banner14.jpg", NULL, array('id' => 'img-banner')); ?>
+                    <div class="banner-caption">
+                        <h2 class="white-color">NUEVO<br>PRODUCTO</h2>
+                        <?php echo DwHtml::link('dashboard/index/', 'Comprar Ahora', array('class' => 'no-load btn btn-danger'), 'fa-won', FALSE); ?>
+                        <button class="primary-btn">Comprar Ahora</button>
+                    </div>
+                </div>
+            </div>
+            <!-- /banner -->
+
+            <!-- Product Slick -->
+            <div class="col-md-9 col-sm-6 col-xs-6">
+                <div class="row">
+                    <div id="product-slick-1" class="product-slick">
+                        <!-- Product Single -->
+                        <?php $cuenta = 0; ?>
+                        <?php foreach ($catalogo['nuevo'] as $key => $row) { ?>
+                            <?php
+                            if ($cuenta == 20) {
+                                break;
+                            }
+                            $foto_web = empty($row->imagen) ? 'default.jpg' : $row->imagen;
+
+                            if (!empty(Session::get('login')) && Session::get('perfil_id') == Perfil::DISTRIBUIDOR) {
+                                $precio_vent = DwOnline::setPrecios($row->precio_distribuidor, $row->valor);
+                            } else {
+                                $precio_vent = DwOnline::setPrecios($row->precio_venta, $row->valor);
+                            }
+
+//                            DwOnline::pr($foto_url);
+//                            die();
+                            ?>
+                            <div class="product product-single">
+                                <div class="product-thumb">
+                                    <div class="product-label">
+                                        <span><?= !empty($row->nuevo) ? 'Nuevo' : ''; ?></span>
+                                    </div>
+                                    <button class="main-btn quick-view"><i class="fa fa-search-plus"></i> Ver m&aacute;s...</button>
+                                    <?= DwHtml::img("upload/productos/$foto_web", "", array('id' => 'img-productos', 'width' => '210', 'height' => '185')) ?>
+                                </div>
+                                <div class="product-body">
+                                    <h3 class="product-price"><?= $precio_vent ?> <del class="product-old-price"><?= $row->precio_distribuidor ?></del></h3>
+                                    <div class="product-rating">
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star-o empty"></i>
+                                    </div>
+                                    <h2 class="product-name"><a href="#"><?= $row->descripcion ?></a></h2>
+                                    <div class="product-btns">
+                                        <button class="main-btn icon-btn"><i class="fa fa-heart"></i></button>
+                                        <button class="main-btn icon-btn"><i class="fa fa-exchange"></i></button>
+                                        <?php echo DwForm::open('#', '', array('class' => 'no-ajax form-validate formulario', 'id' => 'formulario')); ?>
+                                        <fieldset>
+                                            <input type="hidden" name="href" value="<?= $row->id; ?>" />
+                                            <input type="hidden" name="imagen" value="<?= $foto_web; ?>" />
+                                            <input type="hidden" name="instock" value="<?= $row->instock ?>" />
+                                            <input type="hidden" name="codigo" value="<?= $row->id ?>" />
+                                            <input type="hidden" name="mpn" value="<?= $row->mpn ?>" />
+                                            <input type="hidden" name="cmd" value="_cart" />
+                                            <input type="hidden" name="articulo" value="<?= $row->descripcion ?>" />
+                                            <input type="hidden" name="amount" value="<?= $precio_vent ?>" />
+                                            <input type="hidden" name="discount_amount" value="0" />
+                                            <div class="item-add-qty">
+                                                <input id="1" maxlength="3" class="addToCartQuantityBox mask-num" type="text" name="quantity" value="1" autocomplete="off" />
+                                                <button type="submit" name="submit" class="primary-btn add-to-cart btn-add-item"><i class="fa fa-shopping-cart"></i> Añadir</button>
+                                            </div>
+                                        </fieldset>
+                                        <?php echo DwForm::close(); ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php $cuenta++; ?>
+                        <?php } ?>
+                        <!-- /Product Single -->
+                    </div>
+                </div>
+            </div>
+            <!-- /Product Slick -->
+        </div>
+        <!-- /row -->
+
+        <!-- row -->
+        <div class="row">
+            <!-- section title -->
+            <div class="col-md-12">
+                <div class="section-title">
+                    <h2 class="title">OFERTAS DEL D&Iacute;A</h2>
+                    <div class="pull-right">
+                        <div class="product-slick-dots-2 custom-dots">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- section title -->
+
+            <!-- Product Single -->
+            <div class="col-md-3 col-sm-6 col-xs-6">
+                <div class="product product-single product-hot">
+
+                    <div class="product-thumb">
+                        <div class="product-label">
+                            <span class="sale">Productos en Oferta</span>
+                        </div>
+                        <button class="main-btn quick-view"><i class="fa fa-search-plus"></i> Ver Lista</button>
+                        <?= DwHtml::img("frontend/product01.jpg", NULL, array('id' => 'img-banner')); ?>
+                    </div>
+                    <div class="product-body">
+                        <h2 class="product-name"><a href="#">Revisa toda la lista de Ofertas</a></h2>
+                        <div class="product-btns">
+                            <button class="primary-btn add-to-cart"><i class="fa fa-list"></i> Comprar Ahora</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /Product Single -->
+
+            <!-- Product Slick -->
+            <div class="col-md-9 col-sm-6 col-xs-6">
+                <div class="row">
+                    <div id="product-slick-2" class="product-slick">
+                        <!-- Product Single -->
+                        <?php $cuenta2 = 0; ?>
+                        <?php foreach ($catalogo['sales'] as $key => $row) { ?>
+                            <?php
+                            if ($cuenta2 == 20) {
+                                break;
+                            }
+                            $foto_web = empty($row->imagen) ? 'default.jpg' : $row->imagen;
+                            ?>
+                            <div class="product product-single">
+                                <div class="product-thumb">
+                                    <div class="product-label">
+                                        <span class="sale"><?= !empty($row->onsales) ? 'Oferta' : ''; ?></span>
+                                    </div>
+                                    <button class="main-btn quick-view"><i class="fa fa-search-plus"></i> Ver m&aacute;s...</button>
+                                    <?= DwHtml::img("upload/productos/$foto_web", "", array('id' => 'img-productos', 'width' => '210', 'height' => '185')) ?>
+                                </div>
+                                <div class="product-body">
+                                    <h3 class="product-price"><?= $row->precio_venta ?> <del class="product-old-price"><?= $row->precio_distribuidor ?></del></h3>
+                                    <div class="product-rating">
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star-o empty"></i>
+                                    </div>
+                                    <h2 class="product-name"><a href="#"><?= $row->descripcion ?></a></h2>
+                                    <div class="product-btns">
+                                        <button class="main-btn icon-btn"><i class="fa fa-heart"></i></button>
+                                        <button class="main-btn icon-btn"><i class="fa fa-exchange"></i></button>
+                                        <button class="primary-btn add-to-cart"><i class="fa fa-shopping-cart"></i> Añadir</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php $cuenta2++; ?>
+                        <?php } ?>
+                        <!-- /Product Single -->
+
+                    </div>
+                </div>
+            </div>
+            <!-- /Product Slick -->
+        </div>
+        <!-- /row -->
+    </div>
+    <!-- /container -->
+</div>
+<!-- /section -->
+
+<!-- section -->
+<div class="section">
+    <!-- container -->
+    <div class="container">
+        <!-- row -->
+        <div class="row">
+            <!-- section title -->
+            <div class="col-md-12">
+                <div class="section-title">
+                    <h2 class="title">Listado de Productos</h2>
+                </div>
+            </div>
+            <!-- section title -->
+
+            <!-- Product Single -->
+            <?php $cuenta3 = 0; ?>
+            <?php foreach ($catalogo['catalogo'] as $key => $row) { ?>
+                <?php
+                if ($cuenta3 == 16) {
+                    break;
+                }
+                $foto_web = empty($row->imagen) ? 'default.jpg' : $row->imagen;
+                ?>
+                <div class="col-md-3 col-sm-6 col-xs-6">
+                    <div class="product product-single">
+                        <div class="product-thumb">
+                            <button class="main-btn quick-view"><i class="fa fa-search-plus"></i> Ver m&aacute;s...</button>
+                            <?= DwHtml::img("upload/productos/$foto_web", "", array('id' => 'img-productos', 'width' => '210', 'height' => '185')) ?>
+                        </div>
+                        <div class="product-body">
+                            <h3 class="product-price">$<?= $row->precio_venta ?></h3>
+                            <div class="product-rating">
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star-o empty"></i>
+                            </div>
+                            <h2 class="product-name"><a href="#"><?= substr($row->descripcion, 0, 60) ?></a></h2>
+                            <div class="product-btns">
+                                <button class="main-btn icon-btn"><i class="fa fa-heart"></i></button>
+                                <button class="main-btn icon-btn"><i class="fa fa-exchange"></i></button>
+                                <button class="primary-btn add-to-cart"><i class="fa fa-shopping-cart"></i> Añadir</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php $cuenta3++; ?>
+            <?php } ?>
+            <!-- /Product Single -->
+        </div>
+        <!-- /row -->
+
+        <!-- row -->
+        <div class="row">
+            <!-- section title -->
+            <div class="col-md-12">
+                <div class="section-title">
+                    <h2 class="title">Elegido para ti</h2>
+                </div>
+            </div>
+            <!-- section title -->
+
+            <!-- Product Single -->
+            <?php $cuenta4 = 0; ?>
+            <?php foreach ($catalogo['nuevo'] as $key => $row) { ?>
+                <?php
+                if ($cuenta4 == 12) {
+                    break;
+                }
+                $foto_web = empty($row->imagen) ? 'default.jpg' : $row->imagen;
+                ?>
+                <div class="col-md-3 col-sm-6 col-xs-6">
+                    <div class="product product-single">
+                        <div class="product-thumb">
+                            <button class="main-btn quick-view"><i class="fa fa-search-plus"></i> Ver M&aacute;s...</button>
+                            <?= DwHtml::img("upload/productos/$foto_web", "", array('id' => 'img-productos', 'width' => '210', 'height' => '185')) ?>
+                        </div>
+                        <div class="product-body">
+                            <h3 class="product-price">$<?= $row->precio_venta ?></h3>
+                            <div class="product-rating">
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star-o empty"></i>
+                            </div>
+                            <h2 class="product-name"><a href="#"><?= $row->descripcion ?></a></h2>
+                            <div class="product-btns">
+                                <button class="main-btn icon-btn"><i class="fa fa-heart"></i></button>
+                                <button class="main-btn icon-btn"><i class="fa fa-exchange"></i></button>
+                                <button class="primary-btn add-to-cart"><i class="fa fa-shopping-cart"></i> Añadir</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php $cuenta4++; ?>
+            <?php } ?>
+
+            <!-- /Product Single -->
+        </div>
+        <!-- /row -->
+    </div>
+    <!-- /container -->
+</div>

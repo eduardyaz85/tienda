@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="shortcut icon" href="<?php echo PUBLIC_PATH; ?>img/favicon.ico" type="image/x-icon" />
+        <title><?php echo APP_NAME; ?></title>
+        <?php Tag::css('frontend/googleapis.css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons'); ?>
+        <?php Tag::css('frontend/font-awesome.min'); ?>
+        <?php Tag::css('frontend/material-kit.css?v=2.0.5'); ?>
+        <?php Tag::css('frontend/demo'); ?>
+        <?php Tag::css('frontend/style'); ?>
+        <?php echo Html::includeCss(); ?>
+    </head>
+
+    <body class="login-page sidebar-collapse">
+
+        <nav class="navbar navbar-transparent navbar-color-on-scroll fixed-top navbar-expand-lg" color-on-scroll="100" id="sectionsNav">
+            <div class="container">
+                <div class="navbar-translate">
+                    <a href="/" class="js-url js-spinner js-link navbar-brand" ><i class="fa fa-pd-expand fa-home"></i> INICIO</a>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="dropdown nav-item">
+                            <div class="dropdown-menu dropdown-with-icons">
+                                <a href="#" class="dropdown-item">
+                                    <i class="material-icons">layers</i> Todos
+                                </a>
+                                <a href="#" class="dropdown-item">
+                                    <i class="material-icons">content_paste</i> Introducci&oacute;n
+                                </a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="tel:+593984022304" data-original-title="Llamar Celular"><i class="fa fa-phone"></i></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="https://api.whatsapp.com/send?phone=593984022304" target="_blank" data-original-title="Enviar WhatsApp"><i class="fa fa-whatsapp"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="page-header header-filter" style="background-image: url('../img/frontend/bg7.jpg'); background-size: cover; background-position: top center;">
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 ml-auto mr-auto">
+                        <div class="brand" align="center">
+                            <img src="/img/logo.png" alt="<?= APP_NAME ?>" class="avatar"/> 
+                            <h1>404</h1>
+                            <p>¡OOPS! Esta página no existe.</p>
+                            <p><a class="btn btn-danger" href="<?= PUBLIC_PATH ?>">Ir a la página de inicio</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <footer class="footer" data-background-color="black">
+            <div class="container">
+                <div class="copyright float-right">
+                    Copyright &copy;
+                    <script>
+                        document.write(new Date().getFullYear())
+                    </script>, Desarrollado por
+                    <a href="http://asdinec.com" target="_blank"><b>AsdinEc</b></a> Todos los derechos reservados.
+                    <b>Versión</b> 1        </div>
+            </div>
+        </footer>
+    </body>
+
+</html>

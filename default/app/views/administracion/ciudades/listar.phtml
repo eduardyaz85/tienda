@@ -1,0 +1,52 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<section class="content">
+
+    <div class="box">
+
+        <div class="box-header">
+            <?php if (Session::get('perfil_id') <= Perfil::SUPERVISOR) { ?>
+                <?php echo DwHtml::button("$modulo/agregar/", 'AGREGAR', array('class' => 'btn-success'), 'fa-plus', APP_AJAX); ?>
+            <?php } ?>
+        </div>
+
+        <div class="box-body">
+
+            <div id="example2_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+
+                <table class="table table-hover">
+                    <tbody>
+                        <tr>
+                            <th>NUM</th>
+                            <th>CIUDAD</th>
+                            <th>ESTADO</th>
+                            <?php if (Session::get('perfil_id') == Perfil::SUPER_USUARIO) { ?>
+                                <th>ACCIONES</th>
+                            <?php } ?>
+                        </tr>
+                        <?php foreach ($ciudades->items as $ciudad): ?>
+                            <?php $key_upd = Security::setKey($ciudad->id, 'upd_ciudad'); ?>
+                            <tr>
+                                <td><?php echo $ciudades->counter; ?></td>
+                                <td><?= $ciudad->ciudad; ?></td>
+                                <td><?= ($ciudad->activo == Ciudad::ACTIVO) ? '<span class="label label-success">Activo</span>' : '<span class="label label-danger">Bloqueado</span>'; ?></td>
+                                <td>
+                                    <?php echo DwHtml::buttonTable('Modificar ciudad', "$modulo/editar/$key_upd/", null, 'warning', 'fa-edit'); ?>
+                                </td>
+                            </tr>
+                            <?php $ciudades->counter++; ?>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+
+                <?php View::partial('paginators/default', false, array('page' => $ciudades, 'url' => "$modulo/listar/$order/")); ?>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>

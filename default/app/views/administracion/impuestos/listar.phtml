@@ -1,0 +1,70 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<section class="content">
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+
+                <div class="box-header">
+                    <?php if (Session::get('perfil_id') <= Perfil::ADMIN) { ?>
+                        <?php echo DwHtml::button("$modulo/agregar/", 'agregar', NULL, 'fa-check-square-o', APP_AJAX); ?>
+                    <?php } ?>
+                </div>
+
+                <div class="box-header">
+                    <h3 class="box-title">Lista de Impuestos</h3>
+                    <div class="box-tools">
+                        <?php echo DwForm::open("$modulo/buscar/", 'post'); ?>
+                        <div class="input-group input-group-sm" style="width: 150px;">
+                            <input type="text" name="value" class="form-control pull-right" placeholder="Buscar...">
+                            <div class="input-group-btn">
+                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                        <?php echo DwForm::close(); ?>
+                    </div>
+                </div>
+
+                <div class="box-body table-responsive no-padding">
+                    <table class="table table-hover">
+                        <tr>
+                            <th>NUM</th>
+                            <th>CODIGO</th>
+                            <th>IMPUESTO</th>
+                            <th>ESTADO</th>
+                            <?php if (Session::get('perfil_id') <= Perfil::ADMIN) { ?>
+                                <th>ACCIONES</th>
+                            <?php } ?>
+                        </tr>
+                        <?php $counter = 1; ?>
+                        <?php foreach ($impuestos as $key => $row): ?>
+                            <?php $key_show = Security::setKey($row->id, 'shw_impuesto'); ?>
+                            <?php $key_upd = Security::setKey($row->id, 'upd_impuesto'); ?>
+                            <tr>
+                                <td><?= $counter; ?></td>
+                                <td><?= $row->codigo; ?></td>
+                                <td><?= $row->titulo; ?></td>
+                                <td><?= ($row->activo == Impuestos::ACTIVO) ? '<span class="label label-success">Activo</span>' : '<span class="label label-danger">Bloqueado</span>'; ?></td>
+                                <?php if (Session::get('perfil_id') <= Perfil::ADMIN) { ?>
+                                    <td>
+                                        <?= DwHtml::buttonTable('Ver Impuesto', "$modulo/ver/$key_show/", null, 'info', 'fa-search'); ?>
+                                        <?php echo DwHtml::buttonTable('Modificar Impuesto', "$modulo/editar/$key_upd/", null, 'warning', 'fa-edit'); ?>
+                                    </td>
+                                <?php } ?>
+                            </tr>
+                            <?php $counter++; ?>
+                        <?php endforeach; ?>
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>

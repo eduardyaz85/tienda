@@ -1,0 +1,198 @@
+<?php View::flash(); ?>
+
+<?php
+$foto_web = empty($articulo->imagen) ? 'default.jpg' : $articulo->imagen;
+$titulo = strtolower($articulo->descripcion);
+
+if (!empty(Session::get('login')) && Session::get('perfil_id') == Perfil::DISTRIBUIDOR) {
+    $precio_vent = DwOnline::setPrecios($articulo->precio_distribuidor, $articulo->valor);
+} else {
+    $precio_vent = DwOnline::setPrecios($articulo->precio_venta, $articulo->valor);
+}
+//DwOnline::pr($articulo);
+//die();
+?>
+<script>
+    fbq('track', 'ViewContent', {
+        content_type: 'product',
+        content_ids: '<?= $articulo->id; ?>'
+    });
+</script>
+<div style="display: none;" itemtype="http://schema.org/Product" itemscope>
+    <meta itemprop="productID" content="<?= $articulo->mpn; ?>" />
+    <meta itemprop="sku" content="<?= $articulo->mpn; ?>" />
+    <meta itemprop="mpn" content="<?= $articulo->mpn; ?>" />
+    <meta itemprop="brand" content="<?= $articulo->marca; ?>" />
+    <meta itemprop="inventory" content="<?= $articulo->instock; ?>" />
+    <meta itemprop="condition" content="new" />
+    <meta itemprop="name" content="<?= substr($titulo, 0, 140); ?>" />
+    <span itemprop="description"><?= $titulo; ?></span>
+    <a href="http://asdinec.com/index/detalle/<?= $articulo->id ?>/<?= $articulo->brand ?>/" class="no-load btn main-btn quick-view" itemprop="url" tabindex="-1"><i class="fa fa-pd-expand fa-search-plus"></i> Ver más...</a>
+    <img src="http://asdinec.com/img/upload/productos/<?= $foto_web ?>" alt="" id="img-productos" class="imgen-store" itemprop="image">
+    <div itemprop="aggregateRating" itemtype="http://schema.org/AggregateRating" itemscope>
+        <meta itemprop="reviewCount" content="89" />
+        <meta itemprop="ratingValue" content="4.4" />
+    </div>
+    <div style="display: none;" itemprop="review" itemscope itemtype="http://schema.org/Review"> 
+        <span itemprop="name">Calificacion</span>
+        <span itemprop="author">Asdinec</span>
+        <span itemprop="reviewBody">Excelente producto</span>
+        <span itemprop="datePublished"><?= date("Y-m-d") ?></span>
+    </div>
+    <div style="display: none;" itemprop="offers" itemtype="http://schema.org/Offer" itemscope>
+        <link itemprop="url" href="http://asdinec.com/index/producto/sales/" />
+        <meta itemprop="availability" content="https://schema.org/InStock" />
+        <meta itemprop="priceCurrency" content="USD" />
+        <meta itemprop="itemCondition" content="https://schema.org/UsedCondition" />
+        <meta itemprop="price" content="<?= $precio_vent ?>" />
+        <meta itemprop="priceValidUntil" content="<?= date("Y-m-d") ?>" />
+    </div>
+</div>
+<div class="col-md-6">
+    <div id="product-main-view">
+        <div class="product-view">
+            <?= DwHtml::img("upload/productos/$foto_web") ?>
+        </div>
+    </div>
+    <div id="product-view">
+        <div class="product-view">
+            <?= DwHtml::img("upload/productos/$foto_web") ?>
+        </div>
+    </div>
+</div>
+<div class="col-md-6">
+    <div class="product-body">
+        <div class="product-label">
+            <?php if (!empty($articulo->nuevo)) { ?>
+                <span><?= !empty($articulo->nuevo) ? 'Nuevo' : ''; ?></span>
+            <?php } else if (!empty($articulo->onsales)) { ?>
+                <span class="sale"><?= !empty($articulo->onsales) ? 'Oferta' : ''; ?></span>
+            <?php } ?>
+        </div>
+        <h2 class="product-name"><?= ucwords(strtolower($articulo->descripcion)); ?></h2>
+        <h3 class="product-price">$<?= $precio_vent ?></h3>
+        <div>
+            <div class="product-rating">
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star-o empty"></i>
+            </div>
+            <a href="#">1 Calificaci&oacute;n (es) / Calificar</a>
+        </div>
+        <?php if (!empty(Session::get('login')) && Session::get('perfil_id') <= Perfil::SUPERVISOR) { ?>
+            <p><strong>SKU:</strong> <?= $articulo->sku ?></p>
+        <?php } ?>
+        <p><strong>Modelo:</strong> <?= $articulo->mpn ?></p>
+        <p><strong>Marca:</strong> <?= $articulo->marca ?></p>
+        <p><?= $articulo->detalle ?></p>
+        <div class="product-options">
+            <ul class="color-option">
+                <li><span class="text-uppercase">Color:</span></li>
+                <li class="active"><a href="#" style="background-color:#000000;"></a></li>
+                <li>Stock: <?= $articulo->instock ?></li>
+            </ul>
+        </div>
+
+        <div class="product-btns">
+            <?php echo DwForm::open('#', '', array('class' => 'no-ajax form-validate formulario', 'id' => 'formulario')); ?>
+            <fieldset>
+                <input type="hidden" name="href" value="<?= $articulo->id . '/' . $articulo->brand; ?>" />
+                <input type="hidden" name="imagen" value="<?= $foto_web; ?>" />
+                <input type="hidden" name="instock" value="<?= $articulo->instock ?>" />
+                <input type="hidden" name="codigo" value="<?= $articulo->id ?>" />
+                <input type="hidden" name="mpn" value="<?= $articulo->mpn ?>" />
+                <input type="hidden" name="cmd" value="_cart" />
+                <input type="hidden" name="articulo" value="<?= $articulo->descripcion ?>" />
+                <input type="hidden" name="amount" value="<?= $precio_vent ?>" />
+                <input type="hidden" name="discount_amount" value="0" />
+                <div class="item-add-qty">
+                    <span class="text-uppercase">Cantidad: </span>
+                    <input id="<?= $articulo->instock ?>" maxlength="3" class="addToCartQuantityBox mask-num" type="text" name="quantity" value="1" autocomplete="off" />
+                    <button type="submit" name="submit" class="primary-btn add-to-cart btn-add-item"><i class="fa fa-shopping-cart"></i> COMPRAR</button>
+                    <?= DwHtml::outLink("https://wa.me/593999301365?text=Me%20gustaría%20comprar%20el%20siguiente%20producto%20codigo:%20$articulo->mpn%20$articulo->descripcion", '<i class="fa fa-pd-expand fa-whatsapp"></i> Pedir x WatsApp', array('class' => 'primary-btn btn-success', 'target' => '_blank')); ?>
+                </div>
+            </fieldset>
+            <?php echo DwForm::close(); ?>
+        </div>
+    </div>
+</div>
+<div class="col-md-12">
+    <div class="product-tab">
+        <ul class="tab-nav">
+            <li class="active"><a data-toggle="tab" href="#tab1">Descripci&oacute;n</a></li>
+            <li><a data-toggle="tab" href="#tab1">Especificaciones</a></li>
+            <!--<li><a data-toggle="tab" href="#tab2">Calificaciones</a></li>-->
+        </ul>
+        <div class="tab-content">
+            <div id="tab1" class="tab-pane fade in active">
+                <p></p>
+            </div>
+            <div id="tab2" class="tab-pane fade in">
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="product-reviews">
+                            <div class="single-review">
+                                <div class="review-heading">
+                                    <div><a href="#"><i class="fa fa-user-o"></i> </a></div>
+                                    <div><a href="#"><i class="fa fa-clock-o"></i> </a></div>
+                                    <div class="review-rating pull-right">
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star-o empty"></i>
+                                    </div>
+                                </div>
+                                <div class="review-body">
+                                    <p></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 class="text-uppercase">Escribe tu Experiencia</h4>
+                        <p>Su dirección de correo electrónico no será publicada.</p>
+                        <form class="review-form">
+                            <div class="form-group">
+                                <input class="input" type="text" placeholder="Your Name" />
+                            </div>
+                            <div class="form-group">
+                                <input class="input" type="email" placeholder="Email Address" />
+                            </div>
+                            <div class="form-group">
+                                <textarea class="input" placeholder="Your review"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-rating">
+                                    <strong class="text-uppercase">Your Rating: </strong>
+                                    <div class="stars">
+                                        <input type="radio" id="star5" name="rating" value="5" /><label for="star5"></label>
+                                        <input type="radio" id="star4" name="rating" value="4" /><label for="star4"></label>
+                                        <input type="radio" id="star3" name="rating" value="3" /><label for="star3"></label>
+                                        <input type="radio" id="star2" name="rating" value="2" /><label for="star2"></label>
+                                        <input type="radio" id="star1" name="rating" value="1" /><label for="star1"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="primary-btn">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-12">
+    <div class="section-title">
+        <h2 class="title">Elegido para ti</h2>
+    </div>
+</div>
+<?php if (!empty($catalogo['recomendado'])) { ?>
+    <!-- Product Recomendado -->
+    <?php View::partial('catalogo/general', FALSE, array('catalogo' => $catalogo['recomendado'], 'pag' => 8)); ?>
+    <!-- /Product Recomendado -->
+<?php } ?>

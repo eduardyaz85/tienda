@@ -1,0 +1,235 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<section class="content">
+
+    <div class="box">
+
+        <div class="box-header">
+            <?php if (Session::get('perfil_id') <= Perfil::SUPERVISOR) { ?>
+                <?= DwHtml::button("catalogo/inventario/producto/listar/", 'PRODUCTOS', array('class' => 'btn-success'), 'fa-plus', APP_AJAX); ?>
+            <?php } ?>
+        </div>
+
+        <?= DwForm::open("$modulo/add/", 'post', array('id' => 'data-form', 'class' => 'no-ajax dw-validate clearfix')); ?>
+
+        <div class="box-header">
+            <h3 class="box-title">Resumen Pedido</h3>
+        </div>
+
+        <div class="row">
+            <div class="col-md-11">
+                <?php echo DwForm::dbSelect('orden.empresas_id', array('ruc', 'nombres', 'razon_social'), array('empresas', 'getListaEmpresas', Empresas::CLIENTE), NULL, array('class' => 'select2 input-required'), NULL, 'Cliente'); ?>
+            </div>
+            <div class="col-md-1">
+                <?= DwForm::label('<b>Editar Cliente.</b>', 'modifica'); ?>
+                <?= DwForm::check('orden.modifica', NULL, array('class' => 'modifica'), FALSE); ?>
+            </div>
+        </div>
+
+        <div id="list-datos"></div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <?php if (Session::get('perfil_id') <= Perfil::ADMIN) { ?>
+                    <?= DwForm::date('orden.fecha_emision', array('class' => 'mask-date show-error', 'maxlength' => '10'), date('Y-m-d'), 'Fecha Emisión'); ?>
+                <?php } else { ?>
+                    <?= DwForm::text('orden.fecha_emision', array('class' => 'input-readonly mask-date show-error', 'maxlength' => '10'), date('Y-m-d'), 'Fecha Emisión'); ?>
+                <?php } ?>
+            </div>
+            <div class="col-md-2">
+                <?= DwForm::select('orden.garantia', array('' => 'Seleccione', '1 AÑO' => '1 AÑO', '6 MESES' => '6 MESES', '3 MESES' => '3 MESES', '18 MESES' => '18 MESES', 'SIN GARANTIA' => 'SIN GARANTIA'), array('class' => 'input-required mask-pint show-errors'), NULL, 'Garantia'); ?>
+            </div>
+            <div class="col-md-2">
+                <?= DwForm::select('orden.vigencia', array('' => 'Seleccione', '5 DIAS' => '5 DIAS', '10 DIAS' => '10 DIAS', '15 DIAS' => '15 DIAS', '30 DIAS' => '30 DIAS', 'BAJO PEDIDO' => 'BAJO PEDIDO'), array('class' => 'input-required mask-pint show-errors'), NULL, 'Vigencia Dìas'); ?>
+            </div>
+            <div class="col-md-2">
+                <?= DwForm::text('orden.tiempo_entrega', array('class' => 'input-required mask-num show-error', 'maxlength' => '4'), NULL, 'Tiempo Entrega (Hrs)'); ?>
+            </div>
+            <div class="col-md-3">
+                <?= DwForm::select('orden.pagos', array('' => 'Seleccione', 'EFECTIVO' => 'EFECTIVO', 'CREDITO EMPRESAS' => 'CREDITO EMPRESAS', 'TARJETA CREDITO' => 'TARJETA CREDITO', 'PAYPHONE' => 'PAYPHONE'), array('class' => 'input-required mask-pint show-errors'), NULL, 'Forma de Pago'); ?>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <?= DwForm::textarea('orden.observacion', array('class' => 'mask-text show-error', 'maxlength' => '500'), NULL, 'Observacion'); ?>
+            </div>
+        </div>
+
+        <div class="box-body table-responsive no-padding">
+
+            <table class="table table-hover">
+                <tr>
+                    <th>Imagen</th>
+                    <th>Producto</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th>Total</th>
+                    <th></th>
+                </tr>
+                <tbody id="table-carrito">
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th class="empty" colspan="3"></th>
+                        <th>TOTAL</th>
+                        <th colspan="2" class="total">$<span id="total-compra"></span></th>
+                    </tr>
+                    <tr>
+                        <th class="empty" colspan="3"></th>
+                        <th>ENVÍO</th>
+                        <td colspan="2">Envío gratis</td>
+                    </tr>
+                </tfoot>
+            </table>
+
+        </div>
+        <!-- /.box-body -->
+
+        <input name="publicados" id="publicados" value="" type="hidden">
+        <?php echo DwForm::hidden('orden.tipo_orden', null, 'c') ?>
+
+        <div class="modal-footer">
+            <div class="box box-info">
+                <div class="box-footer">
+                    <?php echo DwForm::send('Guardar'); ?>
+                </div>
+            </div>
+        </div>
+
+        <?= DwForm::close(); ?>
+
+    </div>
+
+</section>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //Initialize Select2 Elements
+        $('.select2').select2();
+        cart = paypal.minicart.cart;
+        items = (cart.items());
+        total = 0;
+        // Count the number of each item in the cart
+        for (var i = 0, max = items.length; i < max; i++) {
+            data = items[i]._data;
+            totalu = 0;
+            var num = items[i]._total;
+            var totalu = num.toFixed(2);
+            total += items[i]._total;
+
+            if (data.quantity > data.instock) {
+                alert('La cantidad no puede ser mayor al Stock');
+            }
+            row = '<tr><td><img src="' + $.KumbiaPHP.publicPath + 'img/upload/productos/' + data.imagen + '" style="width:90px;"></td><td><a href="#">' + data.articulo + '</a><ul><li><span>Num Parte: ' + data.mpn + '</span></li><li><span>Stock: ' + data.instock + '</span></li></ul></td><td><strong>$' + data.amount + '</strong ><br><del class="font-weak"></del></td><td><input class="addToCartQuantityBox input-readonly" readonly="readonly" value="' + data.quantity + '"></td><td><strong class="primary-color">$' + totalu + '</strong></td><td><?= DwHtml::buttonTable('Eliminar articulo', "index/revision/", array('class' => 'minicart-remove delete-items', 'data-minicart-idx' => "' + i + '"), 'warning', 'fa-times'); ?></td></tr>';
+            $(row).appendTo("#table-carrito");
+        }
+        carro_items = ObtenerDatos(items);
+        $("#publicados").val(carro_items);
+        $("#total-compra").html(total.toFixed(2));
+    });
+
+    $(function () {
+        $('.delete-items').on('click', function (e) {
+            idx = $(this).attr('data-minicart-idx');
+            paypal.minicart.cart.remove(idx);
+        });
+        $('#empresa_tipo_documento').change(function () {
+            actual = $(this).val();
+            $.ajax({
+                type: "POST",
+                url: "<?php echo PUBLIC_PATH . 'items/input/'; ?>",
+                data: "tipo_id=" + actual,
+                success: function (data) {
+                    $("#div_tipo_documento").html(data);
+                }
+            });
+        });
+        $('#sucursal_ciudad_id').change(function () {
+            ciudad_id = $(this).val();
+            $.ajax({
+                type: "POST",
+                url: "<?php echo PUBLIC_PATH . 'items/region/'; ?>",
+                data: "ciudad_id=" + ciudad_id,
+                success: function (data) {
+                    data = JSON.parse(data);
+                    if (data.region == 'l') {
+                        $('#regiones-local').attr({'style': 'display: block'});
+                        $('#regiones-otras').attr({'style': 'display: none'});
+                    } else {
+                        $('#regiones-local').attr({'style': 'display: none'});
+                        $('#regiones-otras').attr({'style': 'display: block'});
+                    }
+                }
+            });
+        });
+        $('#add-ciudad').change(function () {
+            $("#flash-message").empty();
+            actual = $(this).val();
+            if (actual != 0) {
+                flashInfo('Seleccione una Ciudad');
+                $("#add-ciudad").val('0');
+            } else {
+                flashValid('Agregue una Region y Ciudad');
+                $("#add-ciudad").val('1');
+            }
+        });
+        $('#crear-cuenta').change(function () {
+            $("#flash-message").empty();
+            actual = $(this).val();
+            if (actual != 0) {
+                flashInfo('Sin Cuenta');
+                $("#crear-cuenta").val('0');
+            } else {
+                flashValid('Cuenta Nueva');
+                $("#crear-cuenta").val('1');
+            }
+        });
+        $('#terms').change(function () {
+            $("#flash-message").empty();
+            actual = $(this).val();
+            if (actual != 0) {
+                $("#terms").val('0');
+            } else {
+                $("#terms").val('1');
+            }
+        });
+        $("#checkout-form").on('submit', function () {
+            $("#flash-message").empty();
+            paypal.minicart.reset();
+            flashInfo('Almacenando Espere por favor...', 500);
+        });
+        $('#data-form').on('submit', function (e) { //use on if jQuery 1.7+
+            $("#flash-message").empty();
+            flashInfo('Almacenando Espere por favor...');
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.modifica').on('click', function () {
+            $("#flash-message").empty();
+            if ($(this).is(':checked')) {
+                $("#orden_modifica").val('1');
+                $(".input-break ").removeAttr("readonly").attr('required', 'required');
+                flashValid("Ingrese los datos del cliente");
+            } else {
+                $("#orden_modifica").val('0');
+                $(".input-break ").attr("readonly", "true");
+            }
+        });
+        $('#orden_empresas_id').change(function () {
+            actual = $(this).val();
+            $.ajax({
+                type: "POST",
+                url: "<?php echo PUBLIC_PATH . 'catalogo/orden/getDatosCliente/'; ?>",
+                data: "cliente=" + actual,
+                success: function (data) {
+                    $("#list-datos").html(data);
+                }
+            });
+        });
+    });
+</script>

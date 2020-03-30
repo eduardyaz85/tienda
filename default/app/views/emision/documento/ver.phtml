@@ -1,0 +1,71 @@
+<?php View::flash(); ?>
+
+<script type="text/javascript">
+    $(function () {
+        $('table').kgrid({
+            order_attr: '<?php echo (APP_AJAX) ? 'class="js-link js-spinner"' : ''; ?>',
+            order_to: $.KumbiaPHP.publicPath + '<?= $modulo ?>/listar/'
+        });
+    });
+</script>
+
+<div class="container shell-view">
+
+    <?php View::process($page_module, $page_title, $set_title); ?>
+
+    <?php View::partial('subnav/facturacion/principal', FALSE, array('id' => $factura->id)); ?>
+
+    <?php echo DwForm::open(); ?>
+
+    <ul class="nav nav-tabs hidden-xs">
+        <li class="active"><a href="#tab1" data-toggle="tab">Información factura</a></li>
+        <li><a href="#tab2" data-toggle="tab">Detalle Factura</a></li>
+    </ul>
+    <ul class="nav nav-pills nav-stacked visible-xs">    
+        <li class="active"><a href="#tab1" data-toggle="tab">Información factura</a></li>
+        <li><a href="#tab2" data-toggle="tab">Detalle Factura</a></li>
+    </ul>
+
+    <div class="tab-content">
+
+        <div class="tab-pane active" id="tab1">
+
+            <div class="row">
+                <div class="col-sm-4">
+                    <h3>Información Cliente</h3>
+                    <ul class="list-group">
+                        <li class="list-group-item"><?= DwForm::label('<b>Cédula/Ruc: </b>' . $factura->ruc, 'label'); ?></li>
+                        <li class="list-group-item"><?= DwForm::label('<b>Razón Social: </b>' . $factura->nombres . ' ' . $factura->apellidos, 'label'); ?></li>
+                        <li class="list-group-item"><?= DwForm::label('<b>Dirección: </b>' . $factura->ciudad . ', ' . $factura->direccion, 'label'); ?></li>
+                        <li class="list-group-item"><?= DwForm::label('<b><i class="fa fa-phone" aria-hidden="true"></i> </b><a href="tel: ' . $factura->telefono . '">' . $factura->telefono . '</a> <a href="tel: ' . $factura->telefono2 . '">' . $factura->telefono2 . '</a>  Ext. ' . $factura->ext . ' Celular: ' . $factura->celular, 'label'); ?></li>
+                        <li class="list-group-item"><?= DwForm::label('<a href="mailto:' . $factura->email . '"><i class="fa fa-envelope-o" aria-hidden="true"></i> ' . $factura->email . '</a>', 'label'); ?></li>
+                        <li class="list-group-item"><?= DwForm::label('<a href="mailto:' . $factura->email2 . '"><i class="fa fa-envelope-o" aria-hidden="true"></i> ' . $factura->email2 . '</a>', 'label'); ?></li>
+                    </ul>
+                </div><!-- /.col-sm-4 -->
+                <div class="col-sm-4">
+                    <h3>Información Factura</h3>
+                    <ul class="list-group">
+                        <li class="list-group-item"><?= DwForm::label('<b>Número Factura: </b>' . $factura->numero, 'label'); ?></li>
+                        <li class="list-group-item"><?= DwForm::label('<b>Fecha Emisión: </b>' . DwOnline::fechaCalendario($factura->fecha_emision), 'label'); ?></li>
+                        <li class="list-group-item"></li>
+                        <li class="list-group-item"><?= DwForm::label('<b>Estado Pago: </b>' . (($factura->estado >= FacturaCabecera::ENVIADO && $factura->estado != FacturaCabecera::ANULADO) ? '<span class="label label-success" rel="tooltip">Cancelado</span>' : '<span class="label label-danger" rel="tooltip">Pendiente</span>'), 'label'); ?></li>
+                        <li class="list-group-item"><?= DwForm::label('<b>Documento Electronico: </b>' . (($factura->electronica == FacturaCabecera::ACTIVO) ? '<span class="label label-success" rel="tooltip">Generado</span>' : '<span class="label label-danger" rel="tooltip">Pendiente</span>'), 'label'); ?></li>
+                    </ul>
+                </div><!-- /.col-sm-4 -->
+            </div>
+
+        </div>
+
+        <div class="tab-pane" id="tab2">
+
+            <?php echo DwImpuestos::getDetalleFactura($factura->id); ?>
+
+        </div>
+
+        <?php echo DwImpuestos::getPieFactura($factura->id); ?>
+
+        <?php echo DwForm::close(); ?>
+
+    </div>
+
+</div>

@@ -1,0 +1,23 @@
+body{
+    font-size: 9pt;
+    font-family: sans-serif;
+}
+@page {
+    size: auto;
+    odd-header-name: html_MyHeader1;
+    odd-footer-name: html_MyFooter1;
+}
+#tbl-header {
+    padding-top: 0cm;
+}
+.borde-tbl{
+    border-bottom: 1px dotted grey;
+    vertical-align: bottom;
+    font-family: serif;
+    font-size: 8pt;
+    color: #000000;
+    font-style: italic;
+}
+a{
+    color:  #7c7979;
+}

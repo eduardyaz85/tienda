@@ -1,0 +1,90 @@
+<?php View::flash(); ?>
+<?php echo DwForm::setStyleForm(); ?>
+<div class="row">
+    <div class="col-md-3">
+        <?= DwForm::text('detalle.instock', array('class' => 'input-break input-readonly show-error', 'maxlength' => '10'), NULL, 'Stock'); ?>
+    </div>
+    <div class="col-md-3">
+        <?= DwForm::text('detalle.precio_compra', array('class' => 'input-break input-readonly show-error', 'maxlength' => '10'), NULL, 'Precio Compra'); ?>
+    </div>
+    <div class="col-md-3">
+        <?= DwForm::text('detalle.precio_distribuidor', array('class' => 'input-break input-readonly input-required mask-num show-error', 'maxlength' => '10'), NULL, 'Precio Distribuidor'); ?>
+    </div>
+    <div class="col-md-3">
+        <?= DwForm::text('detalle.utilidad', array('class' => 'input-break input-readonly input-required mask-num show-error', 'maxlength' => '10'), NULL, 'Utilidad Valor ($)'); ?>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-2">
+        <?= DwForm::text('detalle.valor', array('class' => 'input-break input-readonly show-error', 'maxlength' => '10'), NULL, 'Iva %'); ?>
+    </div>
+    <div class="col-md-2">
+        <?= DwForm::text('detalle.cantidad', array('class' => 'input-break input-required mask-num show-error', 'maxlength' => '10'), NULL, 'Cantidad'); ?>
+    </div>
+    <div class="col-md-2">
+        <?= DwForm::text('detalle.porcentaje', array('class' => 'input-break mask-num show-error', 'maxlength' => '10'), NULL, 'Utilidad Porcentaje (%)'); ?>
+    </div>
+    <div class="col-md-3">
+        <?= DwForm::text('detalle.precio_venta', array('class' => 'input-break input-required mask-num show-error', 'maxlength' => '10'), NULL, 'Subtotal SIN IVA'); ?>
+    </div>
+    <div class="col-md-3">
+        <?= DwForm::text('total', array('class' => 'input-break input-required mask-num show-error', 'maxlength' => '10'), NULL, 'TOTAL CON IVA'); ?>
+    </div>
+</div>
+
+<?php echo DwForm::hidden('detalle.impuestos_id') ?>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        compra = $("#detalle_precio_compra").val();
+        venta = $("#detalle_precio_venta").val();
+        valor_iva = $("#detalle_valor").val();
+        utilidad = (parseFloat(venta) - parseFloat(compra));
+        costo = (parseFloat(venta) / parseFloat(compra)) - 1;
+        porcentaje = costo * 100;
+        iva = (parseFloat(venta) * valor_iva);
+        total = ((iva / 100) + parseFloat(venta));
+        $("#detalle_utilidad").val(utilidad.toFixed(2));
+        $("#detalle_porcentaje").val(porcentaje.toFixed(2));
+        $("#total").val(total.toFixed(2));
+
+        $("#detalle_porcentaje").change(function () {
+            compra = $("#detalle_precio_compra").val();
+            value = $(this).val();
+            valor_iva = $("#detalle_valor").val();
+            utilidad = (parseFloat(compra) * parseFloat(value)) / 100;
+            venta = (parseFloat(compra) + parseFloat(utilidad));
+            iva = (parseFloat(venta) * valor_iva);
+            total = ((iva / 100) + parseFloat(venta));
+            $("#detalle_utilidad").val(utilidad.toFixed(2));
+            $("#detalle_precio_venta").val(venta.toFixed(2));
+            $("#total").val(total.toFixed(2));
+        });
+        $("#detalle_precio_venta").change(function () {
+            compra = $("#detalle_precio_compra").val();
+            venta = $(this).val();
+            valor_iva = $("#detalle_valor").val();
+            utilidad = (parseFloat(venta) - parseFloat(compra));
+            costo = (parseFloat(venta) / parseFloat(compra)) - 1;
+            porcentaje = costo * 100;
+            iva = (parseFloat(venta) * valor_iva);
+            total = ((iva / 100) + parseFloat(venta));
+            $("#detalle_utilidad").val(utilidad.toFixed(2));
+            $("#detalle_porcentaje").val(porcentaje.toFixed(2));
+            $("#total").val(total.toFixed(2));
+        });
+        $("#total").change(function () {
+            compra = $("#detalle_precio_compra").val();
+            total = $(this).val();
+            iva = $("#detalle_valor").val();
+            venta = (parseFloat(total) / parseFloat(parseInt(1) + iva / 100));
+            utilidad = (parseFloat(venta) - parseFloat(compra));
+            costo = (parseFloat(venta) / parseFloat(compra)) - 1;
+            porcentaje = costo * 100;
+            $("#detalle_utilidad").val(utilidad.toFixed(2));
+            $("#detalle_precio_venta").val(venta.toFixed(2));
+            $("#detalle_porcentaje").val(porcentaje.toFixed(2));
+        });
+    });
+</script>

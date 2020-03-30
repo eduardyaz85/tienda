@@ -1,0 +1,62 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<section class="content">
+
+    <?= DwForm::open('', 'post', array('id' => 'form', 'class' => 'dw-validate  no-ajax')); ?>
+
+    <div class="box box-danger">
+
+        <div class="box-body">
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <h2 class="page-header">
+                        <i class="fa fa-cogs"></i> Establecimiento: <?= $sucursales->codigo_establecimiento; ?> | <?= $sucursales->sucursal; ?>
+                        <small class="pull-right">Fecha: <?= date('Y-m-d'); ?></small>
+                    </h2>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <?= DwForm::text('emision.codigo_emision', array('class' => 'input-required mask-pint show-error', 'maxlength' => '3', 'placeholder' => '001'), NULL, 'C&oacute;digo Emisi&oacute;n'); ?>
+                </div>
+                <div class="col-md-3">
+                    <?= DwForm::text('emision.codigo_numerico', array('class' => 'input-required mask-pint show-error', 'placeholder' => '00000035', 'maxlength' => '8'), NULL, 'C&oacute;digo Num&eacute;rico Factura Electr&oacute;nica'); ?>
+                </div>
+                <div class="col-md-3">
+                    <?= DwForm::text('emision.tiempo_espera', array('class' => 'input-required mask-pint show-error', 'placeholder' => '3', 'maxlength' => '1'), NULL, 'Tiempo M&aacute;ximo de Espera'); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <?= DwForm::dbSelect('emision.tipo_ambiente', 'titulo', array('tablas_tipos', 'getListadoTablasTipos', TablasTipos::TIPO_AMBIENTE), 'Seleccione una Opción', array('class' => 'input-xlarge input-required mask-pint show-errors'), NULL, 'Tipo de Ambiente'); ?>
+                </div>
+                <div class="col-md-3">
+                    <?= DwForm::dbSelect('emision.tipo_emision', 'titulo', array('tablas_tipos', 'getListadoTablasTipos', TablasTipos::TIPO_EMISION), 'Seleccione una Opción', array('class' => 'input-xlarge input-required mask-pint show-errors'), NULL, 'Tipo de Emisi&oacute;n'); ?>
+                </div>
+                <div class="col-md-3">
+                    <?= DwForm::dbSelect('emision.token', 'titulo', array('tablas_tipos', 'getListadoTablasTipos', TablasTipos::FIRMA_DIGITAL), 'Seleccione una Opción', array('class' => 'input-xlarge input-required mask-pint show-errors'), NULL, 'Token para Firmar'); ?>
+                </div>
+            </div>
+
+            <?= DwForm::hidden('emision.establecimientos_id', NULL, $sucursales->id); ?>
+
+            <div class="box box-info">
+                <div class="box-footer">
+                    <?php echo DwForm::send('Agregar Punto Emision'); ?>
+                    <?php echo DwForm::cancel(); ?>
+                    <?php echo DwForm::focus('emision.codigo_emision'); ?>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <?php echo DwForm::close(); ?>
+
+</section>

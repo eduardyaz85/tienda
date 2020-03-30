@@ -1,0 +1,178 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<?php echo Tag::js('jquery/ruc_jquery_validator.min') . PHP_EOL; ?>
+
+<section class="content">
+
+    <div class="row">
+
+        <div class="col-xs-12">
+            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#fa-home" data-toggle="tab">Empresa</a></li>
+                    <li><a href="#segunda" data-toggle="tab">Establecimientos</a></li>
+                </ul>
+
+                <div class="tab-content">
+
+                    <div class="tab-pane active" id="fa-home">
+
+                        <section id="new">
+                            <h4 class="page-header">Informaci&oacute;n</h4>
+                        </section>
+
+                        <?= DwForm::open('', 'post', array('id' => 'form', 'class' => 'dw-validate')); ?>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <?= DwForm::dbSelect('empresa.tipo_documento', 'titulo', array('tablas_tipos', 'getListadoTablasTipos', TablasTipos::TIPO_IDENTIFICACION), 'Seleccione una Opción', array('class' => 'input-xlarge input-required mask-pint show-errors'), NULL, 'Tipo de identificaci&oacute;n'); ?>
+                            </div>
+                            <div class="col-md-6" id="div_tipo_documento">
+                                <?= DwForm::text('empresa.ruc', array('class' => 'input-required mask-pint show-error', 'maxlength' => '13'), NULL, 'Ruc / C&eacute;dula'); ?>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <?= DwForm::text('empresa.nombres', array('class' => 'input-required mask-text show-error', 'maxlength' => '45'), NULL, 'Nombres'); ?>
+                            </div>
+                            <div class="col-md-6">
+                                <?= DwForm::text('empresa.razon_social', array('class' => 'input-required mask-text show-error', 'maxlength' => '150'), NULL, 'Raz&oacute;n Social / Apellidos'); ?>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <?= DwForm::text('empresa.representante', array('class' => 'input-required mask-text show-error', 'maxlength' => '100'), NULL, 'Representante Legal'); ?>
+                            </div>
+                            <div class="col-md-6">
+                                <?= DwForm::url('empresa.web', array('class' => 'show-error', 'maxlength' => '100'), NULL, 'Página web'); ?>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <?= DwForm::select('empresa.contabilidad', array('' => 'Seleccione', 'SI' => 'SI', 'NO' => 'NO'), array('class' => 'input-break input-required mask-pint show-errors'), NULL, 'Obligado llevar Contabilidad'); ?>
+                            </div>            
+                            <div class="col-md-4">
+                                <?= DwForm::select('empresa.especial', array('' => 'Seleccione', 'SI' => 'SI', 'NO' => 'NO'), array('class' => 'input-break input-required mask-pint show-errors'), NULL, 'Contribuyente Especial'); ?>
+                            </div>
+                            <div class="col-md-4">
+                                <?= DwForm::text('empresa.numero_especial', array('class' => 'mask-pint show-error', 'maxlength' => '5', 'placeholder' => '197'), NULL, 'Contribuyente Especial # Resolucion'); ?>
+                            </div>
+                        </div>
+
+                        <?= DwForm::hidden('empresa.id', NULL, $empresa->id); ?>
+
+                        <div class="row">
+                            <div class="form-actions">
+                                <?= DwButton::save('Guardar información', NULL, array('class' => 'btn-guarda-empresa')); ?>
+                            </div>
+                        </div>
+
+                        <?= DwForm::close(); ?>
+
+                    </div>
+
+                    <div class="tab-pane" id="segunda">
+
+                        <?php if ((Session::get('perfil_id') == Perfil::SUPER_USUARIO)) { ?>
+                            <div class="row no-print">
+                                <div class="col-xs-12">
+                                    <?php $key_add = Security::setKey($empresa->id, 'add_sucursal'); ?>
+                                    <?php echo DwHtml::button("$modulo/crear/$key_add/", 'item', array('class' => 'btn-success btn-agrega-articulod'), 'fa-plus', APP_AJAX); ?>
+                                </div>
+                            </div>
+                        <?php } ?>
+
+                        <div class="box-body table-responsive no-padding">
+
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>NUM</th>
+                                        <th>CODIGO</th>
+                                        <th>CIUDAD</th>
+                                        <th>AGENCIA</th>
+                                        <th>DIRECCION</th>
+                                        <th>TELEFONO</th>
+                                        <th>CELULAR</th>
+                                        <th>EMAIL</th>
+                                        <th>ESTADO</th>
+                                        <?php if (Session::get('perfil_id') <= Perfil::ADMIN) { ?>
+                                            <th class="btn-actions col-blocked text-center  ">ACCIONES</th>
+                                        <?php } ?>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php $counter = 1; ?>
+                                    <?php foreach ($establecimientos as $row): ?>
+                                        <?php $key_mod = Security::setKey($row->id, 'upd_sucursal'); ?>
+                                        <?php $key_shw = Security::setKey($row->id, 'shw_sucursal'); ?>
+                                        <tr>
+                                            <td><?= $counter; ?></td>
+                                            <td><?= $row->codigo_establecimiento; ?></td>
+                                            <td><?= $row->ciudad; ?></td>
+                                            <td><?= $row->sucursal; ?></td>
+                                            <td><?= $row->direccion; ?></td>
+                                            <td><?= $row->telefono; ?></td>
+                                            <td><?= $row->celular; ?></td>
+                                            <td><?= $row->email; ?></td>
+                                            <td><?= ($row->estado == Establecimientos::ACTIVO) ? '<span class="label label-success" rel="tooltip">Activo</span>' : '<span class="label label-danger" rel="tooltip">Bloqueado</span>'; ?></td>
+                                            <?php if (Session::get('perfil_id') <= Perfil::ADMIN) { ?>
+                                                <td class="btn-actions">
+                                                    <?= DwHtml::buttonTable('Ver Cuenta', "$modulo/ver/$key_shw/", null, 'info', 'fa-search'); ?>
+                                                    <?= DwHtml::buttonTable('Modificar', "$modulo/modificar/$key_mod/", NULL, 'warning', 'fa-edit'); ?>
+                                                </td>
+                                            <?php } ?>
+                                        </tr>
+                                        <?php $counter++; ?>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<script type="text/javascript">
+    $(function () {
+        /***** identificacion *****/
+        $("#empresa_ruc").validarCedulaEC({
+            onValid: function () {
+                $("#flash-message").empty();
+                $(".btn-guarda-empresa").removeClass('btn-danger').addClass('btn-success').removeAttr('disabled');
+            },
+            onInvalid: function () {
+                $("#flash-message").empty();
+                $("#empresa_ruc").val('');
+                $(".btn-guarda-empresa").removeClass('btn-success').addClass('btn-danger').attr('disabled', 'disabled');
+                flashError('Cédula o RUC Inválido.<br>Ingrese Nuevamente...');
+            }
+        });
+
+        $('#empresa_tipo_documento').change(function () {
+            actual = $(this).val();
+            $.ajax({
+                type: "POST",
+                url: "<?php echo PUBLIC_PATH . 'cuenta/items/input/'; ?>",
+                data: "tipo_id=" + actual,
+                success: function (data) {
+                    $("#div_tipo_documento").html(data);
+                }
+            });
+        });
+    });
+</script>

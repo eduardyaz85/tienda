@@ -1,0 +1,399 @@
+<?php View::flash(); ?>
+<style>
+    #drop{
+        background-color: #e5ffff;
+        border:2px dashed #bbb;
+        -moz-border-radius:5px;
+        -webkit-border-radius:5px;
+        border-radius:5px;
+        padding: 30px;
+        text-align:center;
+        font:20pt bold,"Vollkorn";color:#bbb
+    }
+    pre {
+        background-color: #fafbfb;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        border-radius: 4px;
+        display: block;
+        font-size: 15px;
+        line-height: 20px;
+        margin: 1px 52px 1px !important;
+        overflow-wrap: break-word;
+        padding: 10px 20px 0 20px;
+        white-space: pre-wrap;
+        word-break: break-all;
+    }
+    a { text-decoration: none }
+</style>
+
+<section class="content">
+
+    <div class="box">
+
+        <div class="box-header">
+            <?php if (Session::get('perfil_id') <= Perfil::ADMIN) { ?>
+                <?php echo DwHtml::button("catalogo/mailing/listar", 'regresar', NULL, 'fa-reply', APP_AJAX); ?>
+                <a href="<?php echo PUBLIC_PATH ?>files/upload/suscriptores.xlsx" target="_blank" class="btn no-ajax no-spinner btn-warning dw-text-bold"><i class="btn-icon-only fa fa-download"></i> <span class="hidden-phone">PLANTILLA EXCEL</span></a>
+                <?= DwHtml::button("#", 'GUARDAR', array('class' => 'no-ajax btn-success', 'id' => 'form-upload', 'style' => 'display: none'), 'fa-save', FALSE); ?>
+            <?php } ?>
+        </div>
+
+        <div class="row-fluid">
+            <div class="span1"></div>
+            <div class="span4" id="div-select" style="display: none;">
+                <?= DwForm::label('<b>Seleccione una opción:</b>', 'label'); ?>
+                <?= DwForm::select('format', array('json' => 'JSON'), array('class' => 'input-required show-errors', 'onchange' => 'setfmt()')); ?>
+            </div>
+        </div>
+
+        <div class="row-fluid">
+            <pre id="data-excel">
+            <div id="drop">Arrastre y suelte aquí en archivo en Excel o CSV</div>
+            <input type="file" name="xlfile" id="xlf" /> ... o click en examinar para subir el archivo
+            <input type="checkbox"  name="useworker" checked style="display: none;">
+            <input type="checkbox" name="xferable" checked style="display: none;">
+            <input type="checkbox" name="userabs" checked style="display: none;">
+            </pre>
+        </div>
+
+        <div class="container-overflow">
+            <pre id="out"></pre>
+            <div id="htmlout"></div><br><br>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- uncomment the next line here and in xlsxworker.js for encoding support -->
+<?php echo Tag::js('SheetJS/dist/cpexcel') . PHP_EOL; ?>
+<?php echo Tag::js('SheetJS/shim') . PHP_EOL; ?>
+<?php echo Tag::js('SheetJS/jszip') . PHP_EOL; ?>
+<?php echo Tag::js('SheetJS/xlsx') . PHP_EOL; ?>
+<script>
+    /*jshint browser:true */
+    /* eslint-env browser */
+    /* eslint no-use-before-define:0 */
+    /*global Uint8Array, Uint16Array, ArrayBuffer */
+    /*global XLSX */
+    var X = XLSX;
+    var XW = {
+        /* worker message */
+        msg: 'xlsx',
+        /* worker scripts */
+        rABS: '<?php echo PUBLIC_PATH . 'javascript/SheetJS/xlsxworker2.js'; ?>',
+        norABS: './xlsxworker1.js',
+        noxfer: './xlsxworker.js'
+    };
+
+    var rABS = typeof FileReader !== "undefined" && typeof FileReader.prototype !== "undefined" && typeof FileReader.prototype.readAsBinaryString !== "undefined";
+    if (!rABS) {
+        document.getElementsByName("userabs")[0].disabled = true;
+        document.getElementsByName("userabs")[0].checked = false;
+    }
+
+    var use_worker = typeof Worker !== 'undefined';
+    if (!use_worker) {
+        document.getElementsByName("useworker")[0].disabled = true;
+        document.getElementsByName("useworker")[0].checked = false;
+    }
+
+    var transferable = use_worker;
+    if (!transferable) {
+        document.getElementsByName("xferable")[0].disabled = true;
+        document.getElementsByName("xferable")[0].checked = false;
+    }
+
+    var wtf_mode = false;
+
+    function fixdata(data) {
+        var o = "", l = 0, w = 10240;
+        for (; l < data.byteLength / w; ++l)
+            o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w, l * w + w)));
+        o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w)));
+        return o;
+    }
+
+    function ab2str(data) {
+        var o = "", l = 0, w = 10240;
+        for (; l < data.byteLength / w; ++l)
+            o += String.fromCharCode.apply(null, new Uint16Array(data.slice(l * w, l * w + w)));
+        o += String.fromCharCode.apply(null, new Uint16Array(data.slice(l * w)));
+        return o;
+    }
+
+    function s2ab(s) {
+        var b = new ArrayBuffer(s.length * 2), v = new Uint16Array(b);
+        for (var i = 0; i != s.length; ++i)
+            v[i] = s.charCodeAt(i);
+        return [v, b];
+    }
+
+    function xw_noxfer(data, cb) {
+        var worker = new Worker(XW.noxfer);
+        worker.onmessage = function (e) {
+            switch (e.data.t) {
+                case 'ready':
+                    break;
+                case 'e':
+                    console.error(e.data.d);
+                    break;
+                case XW.msg:
+                    cb(JSON.parse(e.data.d));
+                    break;
+            }
+        };
+        var arr = rABS ? data : btoa(fixdata(data));
+        worker.postMessage({d: arr, b: rABS});
+    }
+
+    function xw_xfer(data, cb) {
+        var worker = new Worker(rABS ? XW.rABS : XW.norABS);
+        worker.onmessage = function (e) {
+            switch (e.data.t) {
+                case 'ready':
+                    break;
+                case 'e':
+                    console.error(e.data.d);
+                    break;
+                default:
+                    var xx = ab2str(e.data).replace(/\n/g, "\\n").replace(/\r/g, "\\r");
+                    console.log("done");
+                    cb(JSON.parse(xx));
+                    break;
+            }
+        };
+        if (rABS) {
+            var val = s2ab(data);
+            worker.postMessage(val[1], [val[1]]);
+        } else {
+            worker.postMessage(data, [data]);
+        }
+    }
+
+    function xw(data, cb) {
+        transferable = document.getElementsByName("xferable")[0].checked;
+        if (transferable)
+            xw_xfer(data, cb);
+        else
+            xw_noxfer(data, cb);
+    }
+
+    function get_radio_value(radioName) {
+        var radios = document.getElementsByName(radioName);
+        for (var i = 0; i < radios.length; i++) {
+            if (radios[i].checked || radios.length === 1) {
+                return radios[i].value;
+            }
+        }
+    }
+
+    function to_json(workbook) {
+        var result = {};
+        workbook.SheetNames.forEach(function (sheetName) {
+            var roa = X.utils.sheet_to_json(workbook.Sheets[sheetName]);
+            if (roa.length > 0) {
+                result[sheetName] = roa;
+            }
+        });
+        return result;
+    }
+
+    function to_csv(workbook) {
+        var result = [];
+        workbook.SheetNames.forEach(function (sheetName) {
+            var csv = X.utils.sheet_to_csv(workbook.Sheets[sheetName]);
+            if (csv.length > 0) {
+                result.push("SHEET: " + sheetName);
+                result.push("");
+                result.push(csv);
+            }
+        });
+        return result.join("\n");
+    }
+
+    function to_formulae(workbook) {
+        var result = [];
+        workbook.SheetNames.forEach(function (sheetName) {
+            var formulae = X.utils.get_formulae(workbook.Sheets[sheetName]);
+            if (formulae.length > 0) {
+                result.push("SHEET: " + sheetName);
+                result.push("");
+                result.push(formulae.join("\n"));
+            }
+        });
+        return result.join("\n");
+    }
+
+    var HTMLOUT = document.getElementById('htmlout');
+    function to_html(workbook) {
+        HTMLOUT.innerHTML = "";
+        workbook.SheetNames.forEach(function (sheetName) {
+            var htmlstr = X.write(workbook, {sheet: sheetName, type: 'binary', bookType: 'html'});
+            HTMLOUT.innerHTML += htmlstr;
+        });
+    }
+
+    var tarea = document.getElementById('b64data');
+    function b64it() {
+        if (typeof console !== 'undefined')
+            console.log("onload", new Date());
+        var wb = X.read(tarea.value, {type: 'base64', WTF: wtf_mode});
+        process_wb(wb);
+    }
+    window.b64it = b64it;
+
+    var OUT = document.getElementById('out');
+    var global_wb;
+    function process_wb(wb) {
+        global_wb = wb;
+        var output = "";
+        switch (get_radio_value("format")) {
+            case "json":
+                output = JSON.stringify(to_json(wb), 2, 2);
+                $('#htmlout').empty();
+                //$('#div-select').hide();
+                $('#form-upload').show();
+                flashInfo('Archivo Listo para guardar..');
+                return to_html(wb);
+                $('pre').show();
+                break;
+            case "form":
+                output = to_formulae(wb);
+                $('pre').show();
+                $('#form-upload').hide();
+                break;
+            case "html":
+                return to_html(wb);
+                $('#form-upload').hide();
+                $('pre').show();
+            default:
+                output = to_csv(wb);
+                $('pre').show();
+                $('#form-upload').hide();
+        }
+        if (OUT.innerText === undefined)
+            OUT.textContent = output;
+        else
+            OUT.innerText = output;
+        if (typeof console !== 'undefined')
+            console.log("output", new Date());
+    }
+    function setfmt() {
+        if (global_wb)
+            process_wb(global_wb);
+    }
+    window.setfmt = setfmt;
+
+    var drop = document.getElementById('drop');
+    function handleDrop(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        rABS = document.getElementsByName("userabs")[0].checked;
+        use_worker = document.getElementsByName("useworker")[0].checked;
+        var files = e.dataTransfer.files;
+        var f = files[0];
+        {
+            var reader = new FileReader();
+            //var name = f.name;
+            reader.onload = function (e) {
+                if (typeof console !== 'undefined')
+                    console.log("onload", new Date(), rABS, use_worker);
+                var data = e.target.result;
+                if (use_worker) {
+                    xw(data, process_wb);
+                } else {
+                    var wb;
+                    if (rABS) {
+                        wb = X.read(data, {type: 'binary'});
+                    } else {
+                        var arr = fixdata(data);
+                        wb = X.read(btoa(arr), {type: 'base64'});
+                    }
+                    process_wb(wb);
+                }
+            };
+            if (rABS)
+                reader.readAsBinaryString(f);
+            else
+                reader.readAsArrayBuffer(f);
+        }
+    }
+
+    function handleDragover(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy';
+    }
+
+    if (drop.addEventListener) {
+        drop.addEventListener('dragenter', handleDragover, false);
+        drop.addEventListener('dragover', handleDragover, false);
+        drop.addEventListener('drop', handleDrop, false);
+    }
+
+
+    var xlf = document.getElementById('xlf');
+    function handleFile(e) {
+        rABS = document.getElementsByName("userabs")[0].checked;
+        use_worker = document.getElementsByName("useworker")[0].checked;
+        var files = e.target.files;
+        var f = files[0];
+        {
+            var reader = new FileReader();
+            //var name = f.name;
+            reader.onload = function (e) {
+                if (typeof console !== 'undefined')
+                    console.log("onload", new Date(), rABS, use_worker);
+                var data = e.target.result;
+                if (use_worker) {
+                    xw(data, process_wb);
+                } else {
+                    var wb;
+                    if (rABS) {
+                        wb = X.read(data, {type: 'binary'});
+                    } else {
+                        var arr = fixdata(data);
+                        wb = X.read(btoa(arr), {type: 'base64'});
+                    }
+                    process_wb(wb);
+                }
+            };
+            if (rABS)
+                reader.readAsBinaryString(f);
+            else
+                reader.readAsArrayBuffer(f);
+        }
+    }
+
+    if (xlf.addEventListener)
+        xlf.addEventListener('change', handleFile, false);
+
+    $('#form-upload').on('click', function (e) {
+        $("#flash-message").empty();
+        e.stopImmediatePropagation();
+        guardaExcel($(this));
+        return false;
+    });
+
+    function guardaExcel(refer) {
+        flashInfo('Procesando Espere por favor..');
+        $.ajax({
+            type: "POST",
+            url: "<?php echo PUBLIC_PATH . 'catalogo/excel/suscriptores/'; ?>",
+            data: JSON.stringify(to_json(global_wb), 2, 2),
+            contentType: "application/json; charset=UTF-8",
+            success: function (response) {
+                $("#flash-message").empty();
+                console.log(response);
+                var data = JSON.parse(response);
+                if (data && data.success === true) {
+                    flashValid(data.message);
+                    flashInfo('Presione en listado para revisar!');
+                } else {
+                    flashError(data.message);
+                }
+            }
+        });
+    }
+</script>

@@ -1,0 +1,56 @@
+<?php View::flash(); ?>
+
+<div class="container shell-view">
+
+    <?php View::process($page_module, $page_title, $set_title); ?>
+
+    <?php echo DwForm::open(); ?>
+
+    <ul class="nav nav-tabs hidden-xs">
+        <li class="active"><a href="#tab1" data-toggle="tab">Información factura</a></li>
+    </ul>
+    <ul class="nav nav-pills nav-stacked visible-xs">    
+        <li class="active"><a href="#tab1" data-toggle="tab">Información factura</a></li>
+    </ul>
+
+    <div class="tab-content">
+
+        <div class="tab-pane active" id="tab1">
+
+            <div class="row">
+                <div class="col-sm-4">
+                    <h3>Información Cliente</h3>
+                    <ul class="list-group">
+                        <li class="list-group-item"><?= DwForm::label('<b>Cédula/Ruc: </b>' . $factura->ruc, 'label'); ?></li>
+                        <li class="list-group-item"><?= DwForm::label('<b>Razón Social: </b>' . $factura->nombres . ' ' . $factura->apellidos, 'label'); ?></li>
+                        <li class="list-group-item"><?= DwForm::label('<b>Dirección: </b>' . $factura->ciudad . ', ' . $factura->direccion, 'label'); ?></li>
+                        <li class="list-group-item"><?= DwForm::label('<b><i class="fa fa-phone" aria-hidden="true"></i> </b><a href="tel: ' . $factura->telefono . '">' . $factura->telefono . '</a> <a href="tel: ' . $factura->telefono2 . '">' . $factura->telefono2 . '</a>  Ext. ' . $factura->ext . ' Celular: ' . $factura->celular, 'label'); ?></li>
+                        <li class="list-group-item"><?= DwForm::label('<a href="mailto:' . $factura->email . '"><i class="fa fa-envelope-o" aria-hidden="true"></i> ' . $factura->email . '</a>', 'label'); ?></li>
+                        <li class="list-group-item"><?= DwForm::label('<a href="mailto:' . $factura->email2 . '"><i class="fa fa-envelope-o" aria-hidden="true"></i> ' . $factura->email2 . '</a>', 'label'); ?></li>
+                    </ul>
+                </div><!-- /.col-sm-4 -->
+                <div class="col-md-4">
+                    <?= DwForm::text('factura.fecha_emision', array('class' => 'mask-date input-readonly show-error', 'maxlength' => '10'), $factura->fecha_emision, 'Fecha Emisión'); ?>
+                    <?= DwForm::text('factura.numero', array('class' => 'input-readonly mask-num show-error', 'maxlength' => '9'), $factura->numero, 'Número Factura'); ?>
+                </div>
+                <div class="col-md-4">
+                    <?= DwForm::dbSelect('factura.forma_pago', 'titulo', array('params/tablas_tipos', 'getListadoTablasTipos', TablasTipos::FORMA_PAGO), 'Seleccione una Opción', array('class' => 'input-required show-errors'), $factura->forma_pago, 'Forma Pago'); ?>
+                </div>
+            </div>
+
+        </div>
+
+        <?php echo DwForm::hidden('factura.id', NULL, $factura->id); ?>
+        <?php echo DwForm::hidden('factura.tipo_comprobante', NULL, $factura->tipo_comprobante); ?>
+        <?php echo DwForm::hidden('factura.personas_id', NULL, $factura->personas_id); ?>
+
+        <div class="form-actions">
+            <?= DwButton::save('Guardar factura'); ?>
+            <?= DwButton::back("$modulo/listar/"); ?>
+        </div>
+
+    </div>
+
+    <?= DwForm::close(); ?>
+
+</div>

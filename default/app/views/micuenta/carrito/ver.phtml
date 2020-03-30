@@ -1,0 +1,209 @@
+<?php View::flash(); ?>
+<style>
+    @media (min-width: 1200px) {
+        .container {
+            width: 1078px;
+        }
+        .logo_products {
+            padding: 2em 0 1em;
+        }
+    }
+    .badge{
+        font-size: 18px;
+    }
+    .col-md-3 {
+        padding: 0;
+    }
+    .privacy {
+        padding-top: 0;
+    }
+</style>
+<div class="container shell-view">
+
+    <?php View::process($page_module, $page_title, $set_title); ?>
+
+    <?php View::partial('subnav/cliente/principal', FALSE, array('id' => Session::get('id'))); ?>
+
+    <?php $estado = empty($orden_carrito->id) ? '' : $orden_carrito->activo; ?>
+    <?php $class = empty($orden_carrito->id) ? '' : DwOnline::setEstadoCompraClass($orden_carrito->activo) ?>
+
+    <div class="btn-toolbar btn-toolbar-top">
+
+        <div class="row">
+            <div class="col-md-3">
+                <div class="list-group list-group-alternate">
+                    <a href="#" class="list-group-item"><span class="badge <?= $class ?>"><?= empty($direccion->tipo_envio) ? 'Sin Dirección' : $tabla_tipo->getNombreTabla($direccion->tipo_envio)->titulo ?></span> <i class="ti ti-email"></i> Enviar a </a> 
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="list-group list-group-alternate">
+                    <a href="#" class="list-group-item"><span class="badge <?= $class ?>"><?= $carrito_total->total ?></span> <i class="ti ti-email"></i> Articulos Adquiridos </a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="list-group list-group-alternate">
+                    <a href="#" class="list-group-item"><span class="badge <?= $class ?>">$ <?= $carrito_suma->total ?></span> <i class="ti ti-email"></i> Total a Pagar </a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="list-group list-group-alternate">
+                    <a href="#" class="list-group-item">Estado: <?= empty($orden_carrito->id) ? '' : DwOnline::setEstadoOrden($orden_carrito->activo) ?></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <div class="list-group list-group-alternate">
+                    <a href="#" class="list-group-item">Forma de Pago <?= empty($orden_carrito->forma_pago) ? 'Sin Forma de Pago' : $tabla_tipo->getNombreTabla($orden_carrito->forma_pago)->titulo ?> </a> 
+                    <a href="#" class="list-group-item">Cancelado $ <?= $orden_carrito->valor_cancelado ?></a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="list-group list-group-alternate">
+                    <a href="#" class="list-group-item">Documento# <?= $orden_carrito->documento ?><br><br></a>
+                    <a href="#" class="list-group-item">Institución <?= $orden_carrito->institucion ?></a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="list-group list-group-alternate">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="list-group list-group-alternate" style="padding-top: 5px; padding-left: 10px">
+                    <?php if ($estado == '0') { ?>
+                        <?php echo empty($orden_carrito->id) ? '' : DwHtml::button("cliente/cart/confirma/" . Security::setKey($orden_carrito->id, 'cnf_orden'), 'GENERAR PEDIDO', array('class' => 'btn-danger btn-confirma-compra', 'on-confirm' => 'iniciarSincronizacion'), 'fa-money', APP_AJAX); ?>
+                    <?php } else if ($estado == '1') { ?>
+                        <?php echo empty($orden_carrito->id) ? '' : DwHtml::link("cliente/cart/finalizar/" . Security::setKey($orden_carrito->id, 'fin_orden'), 'FINALIZAR COMPRA', array('class' => 'no-load btn btn-success btn-large'), 'fa fa-pd-expand fa-money', FALSE); ?>
+                    <?php } else if ($estado == '2') { ?>
+                        <?php if (Session::get('perfil_id') == Perfil::CLIENTE) { ?>
+                            <?php echo empty($orden_carrito->id) ? '' : DwHtml::link("cliente/cart/cancelar/" . Security::setKey($orden_carrito->id, 'can_orden'), 'CANCELAR COMPRA', array('class' => 'no-load btn btn-warning btn-large'), 'fa fa-pd-expand fa-money', FALSE); ?>
+                        <?php } ?>
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- resumen articulos -->
+    <div class="privacy">
+        <?php if ($orden_carrito) : ?>
+            <div class="privacy1">
+                <h4>PEDIDO N.º <?= $orden_carrito->codigo ?></h4>
+                <div class="banner-bottom-grid1 privacy1-grid">
+                    <?php foreach ($carrito_detalle->items as $carrito): ?>
+                        <?php $key_del = Security::setKey($carrito->id, 'eliminar_items'); ?>
+                        <?php $key_agr = Security::setKey($carrito->id, 'agrega_items'); ?>
+                        <?php $key_qui = Security::setKey($carrito->id, 'quita_items'); ?>
+                        <?php $foto = $galeria->getFotoProducto($carrito->mpn)->imagen; ?>
+                        <ul>
+                            <li><?= Html::img("upload/productos/$foto", '', 'class="home_section_icon" style="width: 50%;height:50%; "'); ?></li><br>
+                            <li><span><h5><?php echo $carrito_detalle->counter; ?>)  <?php echo $carrito->description; ?></h5></span></li><br>
+                            <li><span><h5>SKU: <?php echo $carrito->mpn; ?> | Marca: <?php echo $carrito->marca; ?></h5></span></li><br>
+                            <li><span><h5>Cantidad: <?php echo $carrito->cantidad; ?> | Precio: $ <?php echo $carrito->precio_venta; ?> | Total: $ <?php echo $carrito->cantidad * $carrito->precio_venta; ?></h5></span></li><br>
+                            <?php if ($orden_carrito->activo == CatalogoOrden::PENDIENTE) { ?>
+                                <li>
+                                    <?php echo DwHtml::buttonTable('Agregar articulo', "cliente/cart/agregar/$key_agr/", array('class' => 'js-remote', 'title' => 'Agregar artículo', 'data-toggle' => 'tooltip'), 'success', 'fa-plus-square'); ?>
+                                    <?php echo DwHtml::buttonTable('Quitar articulo', "cliente/cart/quitar/$key_qui/", array('class' => 'js-confirm', 'title' => 'Agregar artículo', 'data-toggle' => 'tooltip'), 'info', 'fa-minus-square'); ?>
+                                    <?php echo DwHtml::buttonTable('Eliminar articulo', "cliente/cart/eliminar/$key_del/", array('class' => 'js-confirm', 'title' => 'Eliminar artículo', 'data-toggle' => 'tooltip'), 'warning', 'fa-times'); ?>
+                                </li>
+                            <?php } ?>
+                            <?php $carrito_detalle->counter++; ?>
+                        </ul>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        <?php else : // Si no hay items  ?>
+
+            <div class="resultadoproductos">
+                <h2 align="center">No hay articulos en el carro!</h2>
+            </div>
+
+        <?php endif ?>
+    </div>
+    <!-- //resumen articulos -->
+
+
+</div>
+
+<div class="modal fade" tabindex="-1" id="form-sicroniza-compra" role="dialog" aria-labelledby="form-sicroniza-compra" aria-hidden="true">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <?php echo DwForm::open("", '', array('id' => 'form-modal-snc', 'class' => 'flash-validate', 'data-to' => 'flash-message')); ?>
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4>Confirmar Información de Pago!</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <?= DwForm::dbSelect('compra.forma_pago', 'titulo', array('tablas_tipos', 'getListadoTablasTipos', 'fdp'), 'Seleccione una Opción', array('class' => 'input-xlarge input-required mask-pint show-errors'), NULL, 'Forma de Pago'); ?>
+                    </div>
+                    <div class="col-md-6">
+                        <?php echo DwForm::text('compra.valor_cancelado', array('class' => 'input-required mask-num', 'maxlength' => '8', 'placeholder' => $carrito_suma->total), NULL, 'Valor Cancelado'); ?>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <?php echo DwForm::text('compra.documento', array('class' => 'mask-num', 'maxlength' => '12', 'placeholder' => 'Si es deposito/transferencia'), NULL, 'Número de Comprobante'); ?>
+                    </div>
+                    <div class="col-md-6">
+                        <?php echo DwForm::text('compra.institucion', array('class' => 'mask-text', 'maxlength' => '60', 'placeholder' => 'Si es deposito/transferencia'), NULL, 'Institución Financiera'); ?>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <?php echo DwForm::textarea('compra.observaciones', array('class' => 'mask-text', 'maxlength' => '200', 'placeholder' => 'Observación sobre entrega/pago'), NULL, 'Observaciones de Entrega/Pago'); ?>
+                    </div>
+                </div>
+            </div>
+
+            <?php echo DwForm::hidden('compra.id', NULL, $direccion->id); ?>
+
+            <div class="modal-footer">
+                <?php echo DwForm::submit("Enviar", array('class' => 'btn btn-primary')); ?>
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</button>
+            </div>
+            <?php echo DwForm::close(); ?>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    function iniciarSincronizacion(refer) {
+        $("#flash-message").empty();
+        $("#password").val('');
+        $("#form-modal-snc").attr('action', refer.attr('href')).attr('data-update', 'false');
+        $('#form-sicroniza-compra').modal('show');
+        form = $('#form-sicroniza-compra');
+        $('.input-break', form).val('');
+    }
+
+    $(function () {
+        $("#pagina-titulo").append("<?= $titulo ?>");
+
+        $('.btn-confirma-compra').on('click', function (e) {
+            $("#flash-message").empty();
+            var envio = <?= empty($direccion->tipo_envio) ? '0' : $direccion->tipo_envio ?>;
+            if (envio === 0) {
+                flashError('Debe Registrar una dirección...<br />Para el envío.');
+                flashInfo('Vaya a Mi Cuenta =>  Dirección.');
+                return false;
+            }
+            e.stopImmediatePropagation();
+            iniciarSincronizacion($(this));
+            return false;
+        });
+        $("#form-modal-snc").on('submit', function () {
+            $('#form-sicroniza-compra').modal('hide');
+            flashInfo('Enviando...<br />Espere por favor.');
+        });
+    });
+</script>

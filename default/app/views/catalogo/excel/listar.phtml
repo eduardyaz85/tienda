@@ -1,0 +1,168 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<section class="content">
+
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+
+                <div class="box-header">
+                    <?php if (Session::get('perfil_id') <= Perfil::ADMIN) { ?>
+                        <?php $key_snc = Security::setKey(Session::get('id'), 'snc_inventario'); ?>
+                        <?php echo DwHtml::button("catalogo/excel/index/", 'CARGAR EXCEL', array('class' => 'btn-success'), 'fa-upload', APP_AJAX); ?>
+                        <?php echo DwHtml::button("catalogo/excel/valida/$key_snc/", 'validar inventario', array('class' => 'btn-info no-ajax'), 'fa-check'); ?>
+                        <?php echo DwHtml::button("catalogo/excel/iniciar/$key_snc/", 'sincronizar Kardex', array('class' => 'btn-warning btn-inicio', 'on-confirm' => 'iniciarSincronizacion'), 'fa-database', APP_AJAX); ?>
+                    <?php } ?>
+                </div>
+
+                <div class="box-header">
+                    <h3 class="box-title">Lista Articulos & Servicios</h3>
+                    <div class="box-tools">
+                        <?php echo DwForm::open("$modulo/buscar/", 'post', array('class' => 'no-ajax')); ?>
+                        <div class="input-group input-group-sm" style="width: 150px;">
+                            <input type="text" name="value" class="form-control pull-right" placeholder="Buscar...">
+                            <div class="input-group-btn">
+                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                        <?php echo DwForm::close(); ?>
+                    </div>
+                </div>
+
+                <div class="box-body table-responsive no-padding">
+
+                    <table class="table table-bordered table-hover table-striped table-condensed table-responsive">
+                        <thead>
+                            <tr>
+                                <th>NUM</th>
+                                <th data-search="fila">CODIGO</th>
+                                <th data-order="nombre">NOMBRE</th>
+                                <th>STOCK</th>
+                                <th>PRECIO COMPRA</th>
+                                <th>PRECIO VENTA</th>
+                                <th data-order="categoria">CATEGORIA</th>
+                                <th>SUB CATEGORIA</th>
+                                <th data-order="marca">MARCA</th>
+                                <th data-order="unidad">UNIDAD</th>
+                                <th>STOCK MINIMO</th>
+                                <th>STOCK MAXIMO</th>
+                                <th>FECHA REGISTRO</th>
+                                <th>HORA REGISTRO</th>
+                                <th class="btn-actions no-responsive" style="width: 80px;">ACCIONES</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($articulos->items as $obj): ?>
+                                <?php $key_upd = Security::setKey($obj->id, 'upd_articulo'); ?>
+                                <?php $key_del = Security::setKey($obj->id, 'eliminar_articulo'); ?>
+                                <tr>
+                                    <td><?= $articulos->counter; ?></td>
+                                    <td><?= $obj->mpn; ?></td>
+                                    <td><?= $obj->nombre; ?></td>
+                                    <td><?= $obj->cantidad; ?></td>
+                                    <td><?= $obj->precio_compra; ?></td>
+                                    <td><?= $obj->precio_venta; ?></td>
+                                    <td><?= $obj->categoria; ?></td>
+                                    <td><?= $obj->sub_categoria; ?></td>
+                                    <td><?= $obj->marca; ?></td>
+                                    <td><?= $obj->unidad; ?></td>
+                                    <td><?= $obj->minimo; ?></td>
+                                    <td><?= $obj->maximo; ?></td>
+                                    <td><?php echo date("Y-m-d", strtotime($obj->creado_at)); ?></td>
+                                    <td><?php echo date("H:i:s", strtotime($obj->creado_at)); ?></td>
+                                    <td>
+                                        <?php echo DwHtml::buttonTable('Modificar articulo', "catalogo/excel/editar/$key_upd/", null, 'warning', 'fa-edit'); ?>
+                                        <?php echo DwHtml::buttonTable('Eliminar articulo', "catalogo/excel/eliminar/$key_del/", array('class' => 'js-confirm', 'confirm-title' => 'Eliminar articulo', 'confirm-body' => 'Está seguro de eliminar este articulo? <br />Recuerda que esta operación no se puede reversar.'), 'danger', 'fa-ban'); ?>
+                                    </td>
+                                </tr>
+                                <?php $articulos->counter++; ?>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+
+                </div>
+
+                <?php View::partial('paginators/default', false, array('page' => $articulos, 'url' => "catalogo/excel/listar/$order/")); ?>
+
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<div class="modal fade" tabindex="-1" id="form-sicroniza-catalogo" role="dialog" aria-labelledby="form-sicroniza-catalogo" aria-hidden="true">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <?php echo DwForm::open("", '', array('id' => 'form-modal-snc', 'class' => 'flash-validate', 'data-to' => 'flash-message')); ?>
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4>Ingrese su Contraseña</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                </div>
+                <div class="row">
+                    <div class="col-md-10">
+                        <?php echo DwForm::pass('password', array('class' => 'input-required'), '', 'Contraseña'); ?>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <?php echo DwForm::submit("Iniciar", array('class' => 'btn btn-primary btn-inicio-servicio')); ?>
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</button>
+            </div>
+            <?php echo DwForm::close(); ?>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    function iniciarSincronizacion(refer) {
+        $("#flash-message").empty();
+        $("#password").val('');
+        $("#form-modal-snc").attr('action', refer.attr('href')).attr('data-update', 'false');
+        $('#form-sicroniza-catalogo').modal('show');
+        form = $('#form-sicroniza-catalogo');
+        $('.input-break', form).val('');
+    }
+
+    function cambioPrecio(refer) {
+        $("#flash-message").empty();
+        $("#password").val('');
+        $("#form-modal-cambio").attr('action', refer.attr('href')).attr('data-update', 'false');
+        $('#form-cambio-precio').modal('show');
+        form = $('#form-cambio-precio');
+        $('.input-break', form).val('');
+    }
+
+    $(function () {
+        $('.btn-inicio').on('click', function (e) {
+            e.stopImmediatePropagation();
+            iniciarSincronizacion($(this));
+            return false;
+        });
+        $('.btn-cambio').on('click', function (e) {
+            e.stopImmediatePropagation();
+            cambioPrecio($(this));
+            return false;
+        });
+        $("#form-modal-snc").on('submit', function () {
+            $('#form-sicroniza-catalogo').modal('hide');
+            flashInfo('Almacenando...<br />Espere por favor.');
+        });
+        $("#form-modal-cambio").on('submit', function () {
+            $('#form-cambio-precio').modal('hide');
+            flashInfo('Almacenando...<br />Espere por favor.');
+        });
+    });
+</script>

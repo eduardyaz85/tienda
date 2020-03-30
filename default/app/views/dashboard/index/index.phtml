@@ -1,0 +1,35 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<section class="content">
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+
+                <div class="box-header">
+                    <h3 class="box-title">Inventario</h3>
+
+                    <div class="box-tools">
+                        <?= DwForm::open("catalogo/inventario/producto/buscar/", 'post', array('class' => 'no-ajax')); ?>
+                        <div class="input-group input-group-sm" style="width: 150px;">
+                            <input type="text" name="value" class="form-control pull-right" placeholder="Buscar...">
+                            <div class="input-group-btn">
+                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                        <?= DwForm::close(); ?>
+                    </div>
+                </div>
+
+                <div class="callout callout-success">
+                    <h4>Bienvenido!</h4>
+                    <p>Gesti&oacute;n Cat&aacute;logo.</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</section>

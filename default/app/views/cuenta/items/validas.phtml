@@ -1,0 +1,39 @@
+<?php View::flash(); ?>
+<?php echo Tag::js('jquery/ruc_jquery_validator.min') . PHP_EOL; ?>
+<?php $largo = empty($tabla->largo) ? '' : $tabla->largo; ?>
+<?php $codigo = empty($tabla->codigo) ? '' : $tabla->codigo; ?>
+<?php echo DwForm::setStyleForm(); ?>
+<?php if ($largo == '13' OR $largo == '10') { ?>
+    <?= DwForm::text('empresa.ruc', array('class' => 'input-required mask-pint show-error', 'maxlength' => $largo, 'placeholder' => '1712092939'), NULL, 'Cédula o RUC'); ?>
+
+    <script type="text/javascript">
+        /***** identificacion *****/
+        $("#empresa_ruc").validarCedulaEC({
+            onValid: function () {
+                $("#flash-message").empty();
+                $(".btn-guarda-empresa").removeClass('btn-danger').addClass('btn-success').removeAttr('disabled');
+            },
+            onInvalid: function () {
+                $("#flash-message").empty();
+                $("#empresa_ruc").val('');
+                $(".btn-guarda-empresa").removeClass('btn-success').addClass('btn-danger').attr('disabled', 'disabled');
+                flashError('Cédula o RUC Inválido.<br>Ingrese Nuevamente...');
+            }
+        });
+    <?php if ($largo == '13') { ?>
+            $("#empresa_ruc").on('change', function () {
+                var actual = $(this).val().length;
+                if (actual != 13) {
+                    flashInfo('El RUC debe tener 13 digitos');
+                    $('#empresa_ruc').val('');
+                }
+            });
+    <?php } ?>
+    </script>
+<?php } ?>
+<?php if ($largo == '2') { ?>
+    <?= DwForm::text('empresa.ruc', array('class' => 'input-required mask-alphanum show-error', 'maxlength' => '20', 'placeholder' => 'PASAPORTE'), NULL, 'PASAPORTE'); ?>
+<?php } ?>
+<?php if ($largo == '1') { ?>
+    <?= DwForm::text('empresa.ruc', array('class' => 'input-readonly  mask-pint show-error', 'maxlength' => '13', 'placeholder' => '1712092939'), '9999999999999', 'Cédula o RUC'); ?>
+<?php } ?>

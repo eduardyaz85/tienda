@@ -1,0 +1,49 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<section class="content">
+
+    <?= DwForm::open('', 'post', array('id' => 'form', 'class' => 'dw-validate  no-ajax')); ?>
+
+    <div class="box box-danger">
+
+        <div class="box-body">
+
+            <div class="row">
+                <div class="col-md-3">
+                    <?= DwForm::text('nombre', array('class' => 'input-readonly'), $tabla->nombre, 'Nombre Tabla'); ?>
+                </div>
+                <div class="col-md-3">
+                    <?= DwForm::text('tablas.codigo', array('class' => 'input-required mask-text show-error', 'maxlength' => '3'), NULL, 'Código Sistema'); ?>
+                </div>
+                <div class="col-md-3">
+                    <?= DwForm::text('tablas.titulo', array('class' => 'input-required mask-text show-error', 'maxlength' => '200'), NULL, 'Nombre Impuesto'); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <?= DwForm::number('tablas.orden', array('class' => 'input-required mask-num show-error', 'maxlength' => '2'), NULL, 'Orden'); ?>
+                </div>
+                <div class="col-md-3">
+                    <?= DwForm::select('tablas.activo', array('' => 'Seleccione', '1' => 'ACTIVO', '0' => 'BLOQUEADO'), array('class' => 'input-break input-required mask-pint show-errors'), NULL, 'Estado Tabla'); ?>
+                </div>
+            </div>
+
+            <?php echo DwForm::hidden('tablas.tablas_id', NULL, $tabla->id); ?>
+
+            <div class="box box-info">
+                <div class="box-footer">
+                    <?= DwButton::save('Guardar impuesto'); ?>
+                    <?php echo DwForm::cancel(); ?>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <?php echo DwForm::close(); ?>
+
+</section>

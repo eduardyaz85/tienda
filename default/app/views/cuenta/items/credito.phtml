@@ -1,0 +1,7 @@
+<?php View::flash(); ?>
+<?php echo DwForm::setStyleForm(); ?>
+<?php if (!empty($indica)) { ?>
+    <?= DwForm::select('empresa.tiempo', array('' => 'Seleccione', '30' => '30', '60' => '60', '90' => '90', '120' => '120'), array('class' => 'input-break input-medium input-required mask-pint show-errors'), NULL, 'Tiempo Dìas'); ?>
+<?php } else { ?>
+    <?= DwForm::select('empresa.tiempo', array('0' => '0'), array('class' => 'input-break input-medium input-required mask-pint show-errors'), NULL, 'Tiempo Dìas'); ?>
+<?php } ?>

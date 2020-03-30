@@ -1,0 +1,105 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<section class="content">
+
+    <div class="box-header">
+        <?php if (Session::get('perfil_id') <= Perfil::SUPERVISOR) { ?>
+            <?php echo DwHtml::button("$modulo/documento/", 'factura', NULL, 'fa-file', APP_AJAX); ?>
+        <?php } ?>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+
+                <div class="box-header">
+                    <h3 class="box-title">Lista Plan de Cuentas</h3>
+                    <div class="box-tools">
+                        <?php echo DwForm::open("$modulo/buscar/", 'post'); ?>
+                        <div class="input-group input-group-sm" style="width: 150px;">
+                            <input type="text" name="value" class="form-control pull-right" placeholder="Buscar...">
+                            <div class="input-group-btn">
+                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                        <?php echo DwForm::close(); ?>
+                    </div>
+                </div>
+
+                <div class="box-body table-responsive no-padding">
+                    <table class="table table-hover">
+                        <tr>
+                            <th>NUM</th>
+                            <th>DOCUMENTO</th>
+                            <th>NUMERO</th>
+                            <th>FECHA</th>
+                            <th>CEDULA/RUC</th>
+                            <th>CLIENTE</th>
+                            <th>SUBTOTAL</th>
+                            <th>IVA</th>
+                            <th>TOTAL</th>
+                            <th>ELECTRONICA</th>
+                            <th>ACCIONES</th>
+                        </tr>
+                        <?php foreach ($facturas->items as $factura): ?>
+                            <?php $key_shw = Security::setKey($factura->id, 'shw_factura'); ?>
+                            <?php $key_upd = Security::setKey($factura->id, 'upd_factura'); ?>
+                            <?php $key_det = Security::setKey($factura->id, 'det_factura'); ?>
+                            <?php $key_rem = Security::setKey($factura->id, 'rem_factura'); ?>
+                            <?php $key_anu = Security::setKey($factura->id, 'anu_factura'); ?>
+                            <?php $key_dwl = Security::setKey($factura->id, 'dwl_documento'); ?>
+                            <?php $key_new = Security::setKey($factura->id, 'new_documento'); ?>
+                            <?php $key_env = Security::setKey($factura->id, 'env_factura'); ?>
+                            <?php $key_com = Security::setKey($factura->id, 'com_factura'); ?>
+                            <?php $sub_factura = $detallefac->getTotalDetalleFactura($factura->id)->total; ?>
+                            <?php @$gestion = (new GestionDocumentos)->getInformacionGestionComprobante($factura->id)->siglas; ?>
+                            <?php $total_factura = (empty($sub_factura) ? '' : round(((string) $sub_factura * $factura->iva) / 100, 2)); ?>
+                            <tr>
+                                <td><?php echo $facturas->counter; ?></td>
+                                <td><?= $factura->tipo_comprobante; ?></td>
+                                <td><?= $factura->numero; ?></td>
+                                <td><?= DwOnline::fechaCalendario($factura->fecha_emision); ?></td>
+                                <td><?= $factura->ruc; ?></td>
+                                <td><?= $factura->nombres . ' ' . $factura->apellidos; ?></td>
+                                <td align='right'><?= $sub_factura; ?></td>
+                                <td align='right'><?= $total_factura; ?></td>
+                                <td align='right'><?= (empty($sub_factura) ? '0.00' : (string) $sub_factura + (string) $total_factura); ?></td>
+                                <td><?= ($factura->electronica == FacturaCabecera::ACTIVO) ? '<span class="label label-success" rel="tooltip">Generado</span>' : '<span class="label label-danger" rel="tooltip">Pendiente</span>'; ?></td>
+                                <td class="btn-actions">
+                                    <?php echo DwHtml::buttonTable('D. Electronico', "$modulo/firmar/$key_new/", NULL, 'success', 'fa-save'); ?>
+                                    <?php // echo DwHtml::buttonTable('IMPRIMIR', "reporte/pdf/documentos/$key_dwl/", array('class' => 'btn-info no-ajax no-spinner', 'target' => '_blank'), 'info', 'fa-download'); ?>
+                                    <?php // echo ($factura->estado >= FacturaCabecera::ACTIVO && $factura->estado != FacturaCabecera::ANULADO) ? DwHtml::buttonTable('Guia de Remision', "comprobantes/remision/agregar/$key_rem/", NULL, 'success', 'fa-list') : ''; ?>
+                                    <?php echo DwHtml::buttonTable('Detalle factura', "$modulo/detalle/$key_det/", NULL, 'info', 'fa-list'); ?>
+                                    <?php // echo DwHtml::buttonTable('Ver factura', "$modulo/ver/$key_shw/", NULL, 'warning', 'fa-search'); ?>
+                                    <?php if ($factura->estado == FacturaCabecera::ACTIVO) { ?>
+                                        <?php echo DwHtml::buttonTable('FE', "$modulo/electronico/$key_new/", NULL, 'info', 'fa-check'); ?>
+                                    <?php } ?>
+                                    <?php if ($factura->estado == FacturaCabecera::FINALIZADO) { ?>
+                                        <?php echo DwHtml::buttonTable('Enviar', "$modulo/enviar/$key_env/", NULL, 'success', 'fa-check'); ?>
+                                    <?php } ?>
+                                    <?php if ($factura->estado == FacturaCabecera::ENVIADO and $gestion == 'PPR') { ?>
+                                        <?php // echo DwHtml::buttonTable('Comprobar', "$modulo/comprobar/$key_com/", NULL, 'success', 'fa-check'); ?>
+                                    <?php } ?>
+                                    <?php if (Session::get('perfil_id') <= Perfil::ADMIN AND $factura->estado == FacturaCabecera::INACTIVO) { ?>
+                                        <?php echo DwHtml::buttonTable('Modificar factura', "$modulo/editar/$key_upd/", NULL, 'warning', 'fa-edit'); ?>
+                                    <?php } ?>
+                                    <?php if ($factura->estado == FacturaCabecera::ACTIVO) { ?>
+                                        <?php // echo DwHtml::buttonTable('Anular Factura', "$modulo/anular/$key_anu/", NULL, 'danger', 'fa-check'); ?>
+                                    <?php } ?>
+                                </td>
+                            </tr>
+                            <?php $facturas->counter++; ?>
+                        <?php endforeach; ?>
+                    </table>
+                    <?php View::partial('paginators/default', false, array('page' => $facturas, 'url' => "$modulo/listar/$order/")); ?>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>

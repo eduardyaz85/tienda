@@ -1,0 +1,220 @@
+<section class="content">
+
+    <div class="box">
+
+        <div class="box-header">
+            <?php if (Session::get('perfil_id') <= Perfil::SUPERVISOR) { ?>
+                <?= DwHtml::button("$modulo/agregar/", 'PRODUCTOS', array('class' => 'btn-success'), 'fa-plus', APP_AJAX); ?>
+                <?= DwHtml::button("$modulo/crear/", 'SERVICIOS', array('class' => 'btn-success btn-crea-servicios', 'data-toggle' => 'modal'), 'fa-plus'); ?>
+                <?= DwHtml::button("catalogo/excel/index", 'upload', array('class' => 'btn-danger btn-cargarexcel'), 'fa-cloud-upload'); ?>
+            <?php } ?>
+            <?php if (Session::get('perfil_id') <= Perfil::ADMIN) { ?>
+                <?php $key_snc = Security::setKey(Session::get('id'), 'snc_catalogo'); ?>
+                <?php $key_url = Security::setKey(Session::get('id'), 'url_catalogo'); ?>
+                <?php $key_prc = Security::setKey(Session::get('id'), 'new_precios'); ?>
+                <?= DwHtml::button("catalogo/sincroniza/iniciar/$key_snc/", 'WS', array('class' => 'btn-info btn-inicio', 'on-confirm' => 'iniciarSincronizacion'), 'fa-refresh', APP_AJAX); ?>
+                <?= DwHtml::button("catalogo/sincroniza/keyurl/$key_url/", 'URL', array('class' => 'btn-warning'), 'fa-cloud', APP_AJAX); ?>
+                <?= DwHtml::button("$modulo/conexion/", 'CON', NULL, 'fa-check-square-o', APP_AJAX); ?>
+                <?php // echo DwHtml::button("$modulo/imagen/", 'CARGA FOTOS', NULL, 'fa-check-square-o', APP_AJAX); ?>
+                <?= DwHtml::button("catalogo/orden/listar/", 'ORDENES', array('class' => 'btn-primary'), 'fa-list', APP_AJAX); ?>
+                <?php echo DwHtml::button("$modulo/producto/listar/", 'ver todo', array('class' => 'btn-info'), 'fa-search'); ?>
+                <?php echo DwHtml::button("$modulo/producto/galeria/", 'sin imagen', array('class' => 'btn-danger'), 'fa-globe'); ?>
+                <?php echo DwHtml::button("$modulo/producto/saldos/", 'Saldos', array('class' => 'btn-warning'), 'fa-globe'); ?>
+                <?php echo DwHtml::button("$modulo/producto/nuevo/", 'Nuevo', array('class' => 'btn-success'), 'fa-globe'); ?>
+            <?php } ?>
+        </div>
+
+
+        <div class="box-header">
+            <h3 class="box-title">Inventario</h3>
+
+            <div class="box-tools">
+                <?= DwForm::open("$modulo/producto/buscar/", 'post', array('class' => 'no-ajax')); ?>
+                <div class="input-group input-group-sm" style="width: 150px;">
+                    <input type="text" name="value" class="form-control pull-right" placeholder="Buscar...">
+                    <div class="input-group-btn">
+                        <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                    </div>
+                </div>
+                <?= DwForm::close(); ?>
+            </div>
+        </div>
+
+        <div class="box-body table-responsive no-padding">
+
+            <table class="table table-hover">
+                <tr>
+                    <th>NUM</th>
+                    <th>IMAGEN</th>
+                    <th>STORE</th>
+                    <th>MARCA</th>
+                    <th>CATEGORIA</th>
+                    <th>NUM PARTE</th>
+                    <th>SKU</th>
+                    <th>DESCRIPCION</th>
+                    <th>PRECIO VENTA</th>
+                    <th>PRECIO DISTRIBUIDOR</th>
+                    <th>STOCK</th>
+                    <th>WEB</th>
+                    <th>MANUAL</th>
+                    <?php if (Session::get('perfil_id') <= Perfil::ADMIN) { ?>
+                        <th style="width: 100px;">ACCIONES</th>
+                    <?php } ?>
+                </tr>
+                <?php foreach ($catalogo->items as $row): ?>
+                    <?php $key_show = Security::setKey($row->id, 'show_articulo'); ?>
+                    <?php $key_upd = Security::setKey($row->id, 'upd_articulo'); ?>
+                    <?php $key_img = Security::setKey($row->id, 'upd_foto'); ?>
+                    <?php
+                    //precios de venta con impuesto
+                    $precio_comp = DwOnline::setPrecios($row->precio_compra, $row->valor);
+                    $precio_vent = DwOnline::setPrecios($row->precio_venta, $row->valor);
+                    $precio_dist = DwOnline::setPrecios($row->precio_distribuidor, $row->valor);
+
+                    $foto_web = empty($row->imagen) ? 'default.jpg' : $row->imagen;
+                    $foto_url = DwHtml::img("upload/productos/$foto_web", "", array('id' => 'img-productos', 'width' => '50'));
+                    $class = '';
+                    if (!empty($row->onsales)) {
+                        $class = '#F9A400';
+                    }
+                    if (!empty($row->nuevo)) {
+                        $class = '#57D700';
+                    }
+                    ?>
+                    <tr>
+                        <td><?php echo $catalogo->counter; ?></td>
+                        <td><?php echo DwHtml::link("$modulo/foto/$key_img/", $foto_url); ?></td>
+                        <td>
+                            <?php echo DwForm::open('#', '', array('class' => 'no-ajax form-validate formulario', 'id' => 'formulario')); ?>
+                            <fieldset>
+                                <input type="hidden" name="href" value="<?= $row->id; ?>" />
+                                <input type="hidden" name="imagen" value="<?= $foto_web; ?>" />
+                                <input type="hidden" name="instock" value="<?= $row->instock ?>" />
+                                <input type="hidden" name="codigo" value="<?= $row->id ?>" />
+                                <input type="hidden" name="mpn" value="<?= $row->mpn ?>" />
+                                <input type="hidden" name="cmd" value="_cart" />
+                                <input type="hidden" name="articulo" value="<?= $row->descripcion ?>" />
+                                <input type="hidden" name="amount" value="<?= $precio_vent ?>" />
+                                <input type="hidden" name="discount_amount" value="0" />
+                                <div class="item-add-qty">
+                                    <input id="1" maxlength="3" class="addToCartQuantity mask-num" type="text" name="quantity" value="1" autocomplete="off" />
+                                    <input type="submit" name="submit" value="+" class="btn-medium btn-info btn-add-item" />
+                                </div>
+                            </fieldset>
+                            <?php echo DwForm::close(); ?>
+                        </td>
+                        <td><?= $row->marca; ?></td>
+                        <td><?= $row->category; ?></td>
+                        <td><p class="text-info"><?= empty($row->mpn) ? $row->codigo : $row->mpn; ?></p></td>
+                        <td><p class="text-info"><?= $row->sku; ?></p></td>
+                        <td><?= $row->descripcion; ?></td>
+                        <td><span class="label label-success" rel="tooltip" data-original-title="COMPRA <?= $precio_comp; ?>"><?= $precio_vent; ?></span></td>
+                        <td><span class="label label-info" rel="tooltip" data-original-title="COMPRA <?= $precio_comp; ?>"><?= $precio_dist; ?></span></td>
+                        <td><?= $row->instock; ?></td>
+                        <td style="background-color: <?= $class ?>">
+                            <?php if ($row->frontend == CatMaster::ACTIVO) { ?>
+                                <?= DwForm::check('publicados[]', $row->frontend, array('class' => 'id_publicados', 'data-publicados' => $row->id), TRUE); ?>
+                            <?php } else { ?>
+                                <?= DwForm::check('publicados[]', $row->frontend, array('class' => 'id_publicados', 'data-publicados' => $row->id)); ?>
+                            <?php } ?>
+                        </td>
+                        <td><?= ($row->pre_man == 1) ? '<span class="label label-success">SI</span>' : '<span class="label label-danger">NO</span>'; ?></td>
+                        <?php if (Session::get('perfil_id') <= Perfil::ADMIN) { ?>
+                            <td>
+                                <?php echo DwHtml::buttonTable('Ver articulo', "$modulo/ver/$key_show/", null, 'info', 'fa-search'); ?>
+                                <?php echo DwHtml::buttonTable('Modificar articulo', "$modulo/editar/$key_upd/", null, 'warning', 'fa-edit'); ?>
+                            </td>
+                        <?php } ?>
+                    </tr>
+                    <?php $catalogo->counter++; ?>
+                <?php endforeach; ?>
+            </table>
+
+            <?php View::partial('paginators/default', false, array('page' => $catalogo, 'url' => "$modulo/producto/$url/")); ?>
+
+        </div>
+        <!-- /.box-body -->
+
+    </div>
+
+</section>
+
+<div class="modal fade" id="form-sicroniza-catalogo">
+
+    <div class="modal-dialog">
+
+        <?= DwForm::open('', 'post', array('id' => 'form-modal-snc', 'class' => 'no-ajax dw-validate')); ?>
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                <h4>Sincronizar Catalogo Proveedor</h4>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4">
+                        <?= DwForm::dbSelect('proveedor', 'razon_social', array('empresas', 'getListaEmpresas', Empresas::PROVEEDOR), 'Ninguno', array('class' => 'input-required input-xlarge mask-pint show-errors'), NULL, 'Proveedor'); ?>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4">
+                        <?php echo DwForm::pass('password', array('class' => 'input-required'), '', 'Contraseña'); ?>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <div class="box box-info">
+                    <div class="box-footer">
+                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cerrar</button>
+                        <?php echo DwForm::submit("Iniciar", array('class' => 'btn btn-primary btn-inicio-servicio')); ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php echo DwForm::close(); ?>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("input[class=id_publicados]").click(function () {
+            $("#flash-message").empty();
+            ids = $(this).attr('data-publicados');
+            value = $(this).is(':checked');
+            $.ajax({
+                url: "<?= PUBLIC_PATH . 'catalogo/inventario/publica/'; ?>",
+                type: "POST",
+                data: 'data=' + ids + '-' + value,
+                success: function (data) {
+                    flashValid('Articulo publicado correctamente');
+                }
+            });
+        });
+    });
+    function iniciarSincronizacion(refer) {
+        $("#flash-message").empty();
+        $("#password").val('');
+        $("#form-modal-snc").attr('action', refer.attr('href')).attr('data-update', 'false');
+        $('#form-sicroniza-catalogo').modal('show');
+        form = $('#form-sicroniza-catalogo');
+        $('.input-break', form).val('');
+    }
+    $(function () {
+        $("[rel=tooltip]").tooltip();
+        $('.btn-inicio').on('click', function (e) {
+            e.stopImmediatePropagation();
+            iniciarSincronizacion($(this));
+            return false;
+        });
+    });
+</script>

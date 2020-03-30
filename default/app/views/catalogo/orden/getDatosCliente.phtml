@@ -1,0 +1,29 @@
+<?php View::flash(); ?>
+<?php echo DwForm::setStyleForm(); ?>
+
+<div class="row">
+    <div class="col-md-6">
+        <?= DwForm::text('orden.nombres', array('class' => 'input-break input-readonly mask-text show-error', 'maxlength' => '200'), NULL, 'Nombres'); ?>
+    </div>
+    <div class="col-md-6">
+        <?= DwForm::text('orden.razon_social', array('class' => 'input-break input-readonly input-required mask-text show-error', 'maxlength' => '200'), NULL, 'Raz&oacute;n Social / Apellidos'); ?>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-2">
+        <?= DwForm::dbSelect('orden.tipo_documento', 'titulo', array('params/tablas_tipos', 'getListadoTablasTipos', TablasTipos::TIPO_IDENTIFICACION), 'Seleccione una Opción', array('class' => 'input-break input-readonly show-errors'), NULL, 'Tipo Documento'); ?>
+    </div>
+    <div class="col-md-2">
+        <?= DwForm::text('orden.ruc', array('class' => 'input-break input-readonly mask-num show-error', 'maxlength' => '13'), NULL, 'Cédula o RUC'); ?>
+    </div>
+    <div class="col-md-2">
+        <?= DwForm::text('orden.telefono', array('class' => 'input-break input-readonly input-required mask-num show-error', 'maxlength' => '9'), NULL, 'Télefono'); ?>
+    </div>
+    <div class="col-md-3"> 
+        <?= DwForm::text('orden.email', array('class' => 'input-break input-readonly input-required mask-email show-error', 'maxlength' => '60'), NULL, 'Email'); ?>
+    </div>
+    <div class="col-md-3"> 
+        <?= DwForm::textarea('orden.direccion', array('class' => 'input-break input-readonly input-required mask-text show-error', 'maxlength' => '60'), NULL, 'Direccion'); ?>
+    </div>
+</div>

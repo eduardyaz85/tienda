@@ -1,0 +1,72 @@
+<?php View::flash(); ?>
+
+<div class="row">
+
+    <div class="col-md-12">
+        <div class="order-summary clearfix">
+            <div class="section-title">
+                <h3 class="title">RESUMEN PEDIDO</h3>
+            </div>
+            <table class="shopping-cart-table table">
+                <thead>
+                    <tr>
+                        <th>Imagen</th>
+                        <th>Producto</th>
+                        <th class="text-center">Precio</th>
+                        <th class="text-center">Cantidad</th>
+                        <th class="text-center">Total</th>
+                        <th class="text-right"></th>
+                    </tr>
+                </thead>
+                <tbody id="table-carrito">
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th class="empty" colspan="3"></th>
+                        <th>TOTAL</th>
+                        <th colspan="2" class="total">$<span id="total-compra"></span></th>
+                    </tr>
+                </tfoot>
+            </table>
+            <div class="pull-right">
+                <?php echo DwHtml::button("$modulo/factura/", 'Generar Pedido', array('class' => 'primary-btn btn-success'), 'fa-cubes', APP_AJAX); ?>
+                <?php echo DwHtml::button("$modulo/cotizacion/", 'Solicitar Cotizacion', array('class' => 'primary-btn btn-danger'), 'fa-file-pdf-o', APP_AJAX); ?>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        cart = paypal.minicart.cart;
+        items = (cart.items());
+        total = 0;
+        // Count the number of each item in the cart
+        for (var i = 0, max = items.length; i < max; i++) {
+            data = items[i]._data;
+            totalu = 0;
+            var num = items[i]._total;
+            var totalu = num.toFixed(2);
+            total += items[i]._total;
+
+            if (data.quantity > data.instock) {
+                alert('La cantidad no puede ser mayor al Stock');
+            }
+            row = '<tr><td class="thumb"><img src="' + $.KumbiaPHP.publicPath + 'img/upload/productos/' + data.imagen + '" style="width:90px;"></td><td class="details"><a href="' + $.KumbiaPHP.publicPath + 'index/detalle/' + data.href + '">' + data.articulo + '</a><ul><li><span>Num Parte: ' + data.mpn + '</span></li><li><span>Stock: ' + data.instock + '</span></li></ul></td><td class="price text-center"><b>$' + data.amount + '</b><br><del class="font-weak"></del></td><td class="qty text-center"><input class="addToCartQuantityBox input-readonly" readonly="readonly" value="' + data.quantity + '"></td><td class="total text-center"><spam class="primary-color">$' + totalu + '</spam></td><td class="text-right"><?= DwHtml::buttonTable('Eliminar articulo', "orden/", array('class' => 'minicart-remove delete-items', 'data-minicart-idx' => "' + i + '"), 'warning', 'fa-times'); ?></td></tr>';
+            $(row).appendTo("#table-carrito");
+        }
+        carro_items = ObtenerDatos(items);
+        $("#publicados").val(carro_items);
+        $("#total-compra").html(total.toFixed(2));
+    });
+
+    $(function () {
+        $('.delete-items').on('click', function (e) {
+            idx = $(this).attr('data-minicart-idx');
+            paypal.minicart.cart.remove(idx);
+            actualizaCarrito();
+        });
+    });
+</script>

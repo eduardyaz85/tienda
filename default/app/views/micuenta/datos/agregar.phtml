@@ -1,0 +1,130 @@
+<?php View::flash(); ?>
+<style>
+    @media (min-width: 1200px) {
+        .container {
+            width: 1000px;
+        }
+    }
+</style>
+<div class="container shell-view">
+
+    <?php View::process($page_module, $page_title, $set_title); ?>
+
+    <?php View::partial('subnav/cliente/principal', FALSE, array('id' => Session::get('id'))); ?>
+
+    <ul class="nav nav-tabs hidden-xs">
+        <li class="active"><a href="#tab1" data-toggle="tab">Registro Dirección Envió y Facturación</a></li>
+    </ul>
+    <ul class="nav nav-pills nav-stacked visible-xs">    
+        <li class="active"><a href="#tab1" data-toggle="tab">Registro Dirección Envió y Facturación</a></li>
+    </ul>
+
+    <div class="tab-content">
+
+        <div class="tab-pane active" id="tab1">
+
+            <?php echo DwForm::open(); ?>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <?= DwForm::dbSelect('cliente.tipo_documento', 'titulo', array('tablas_tipos', 'getListadoTablasTipos', 'tid'), 'Seleccione una Opción', array('class' => 'input-xlarge input-required mask-pint show-errors'), NULL, 'Tipo de identificación'); ?>
+                </div>
+                <div class="col-md-3" id="div_tipo_documento">
+                    <?php echo DwForm::text('cliente.ruc', array('class' => 'input-required mask-alphanum'), NULL, 'Ruc/Cédula'); ?>
+                </div>
+                <div class="col-md-3">
+                    <?php echo DwForm::dbSelect('cliente.ciudad_id', 'ciudad', array('ciudad', 'getListadoCiudad', Ciudad::ACTIVO), NULL, array('class' => 'input-required'), NULL, 'Ciudad'); ?>
+                </div>
+                <div class="col-md-3">
+                    <?= DwForm::dbSelect('cliente.tipo_cliente', 'titulo', array('tablas_tipos', 'getListadoTablasTipos', TablasTipos::TIPO_CLIENTE), 'Seleccione una Opción', array('class' => 'input-xlarge input-required show-errors'), NULL, 'Tipo Cliente'); ?>
+                </div>
+            </div>
+
+            <div class="row" id="div_tipo_cliente">
+                <div class="col-md-4">
+                    <?php echo DwForm::text('cliente.nombres', array('class' => 'input-required mask-alphanum'), empty($usuario->nombre) ? '' : $usuario->nombre, 'Nombres'); ?>
+                </div>
+                <div class="col-md-4">
+                    <?php echo DwForm::text('cliente.apellidos', array('class' => 'input-required mask-alphanum'), empty($usuario->apellido) ? '' : $usuario->apellido, 'Apellidos'); ?>
+                </div>
+                <div class="col-md-4">
+                    <?= DwForm::text('cliente.siglas', array('class' => 'mask-alpha show-error', 'maxlength' => '60', 'placeholder' => 'Nombre Comercial'), NULL, 'Nombre Comercial'); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <?php echo DwForm::email('cliente.email', array('class' => 'mask-email input-required show-error'), empty($usuario->email) ? $usuario->email : $usuario->email, 'Email 1'); ?>
+                </div>
+                <div class="col-md-6">
+                    <?php echo DwForm::email('cliente.email2', array('class' => 'mask-email show-error'), NULL, 'Email 2'); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <?php echo DwForm::text('cliente.celular', array('class' => 'input-required mask-num'), NULL, 'Celular'); ?>
+                </div>
+                <div class="col-md-4">
+                    <?php echo DwForm::text('cliente.telefono', array('class' => 'mask-num'), NULL, 'Teléfono'); ?>
+                </div>
+                <div class="col-md-4">
+                    <?php echo DwForm::text('cliente.ext', array('class' => 'mask-num'), NULL, 'Extensión'); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <?php echo DwForm::textarea('cliente.direccion', array('class' => 'input-required mask-text'), NULL, 'Dirección'); ?>
+                </div>
+            </div>
+
+            <?php echo DwForm::hidden('cliente.usuario_id', NULL, $usuario->id); ?>
+
+            <div class="row">
+                <div class="form-actions">
+                    <div class="text-right">
+                        <?php echo DwForm::send('Guardar cliente'); ?>
+                        <?php echo DwForm::cancel(); ?>
+                        <?php echo DwForm::focus('cliente.nombres'); ?>
+                    </div>
+                </div>
+            </div>
+
+            <?php echo DwForm::close(); ?>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("#pagina-titulo").append("<?= $titulo ?>");
+
+        $('#cliente_tipo_documento').change(function () {
+            actual = $(this).val();
+            $.ajax({
+                type: "POST",
+                url: "<?php echo PUBLIC_PATH . 'micuenta/datos/input/'; ?>",
+                data: "tipo_id=" + actual,
+                success: function (data) {
+                    $("#div_tipo_documento").html(data);
+                }
+            });
+        });
+
+        $('#cliente_tipo_cliente').change(function () {
+            actual = $(this).val();
+            $.ajax({
+                type: "POST",
+                url: "<?php echo PUBLIC_PATH . 'micuenta/datos/input/'; ?>",
+                data: "tipo_id=" + actual,
+                success: function (data) {
+                    $("#div_tipo_cliente").html(data);
+                }
+            });
+        });
+    });
+</script>

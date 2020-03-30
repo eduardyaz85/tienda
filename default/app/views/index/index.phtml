@@ -1,0 +1,141 @@
+<?php View::flash(); ?>
+
+<div class="section">
+    <!-- container -->
+    <div class="container">
+        <!-- row -->
+        <div class="row">
+            <!-- section-title -->
+            <div class="col-md-12">
+                <div class="section-title">
+                    <h2 class="title">PRODUCTOS NUEVOS</h2>
+                    <div class="pull-right">
+                        <div class="product-slick-dots-1 custom-dots"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- /section-title -->
+
+            <!-- banner -->
+            <div class="col-md-3 col-sm-6 col-xs-6">
+                <div class="banner banner-2">
+                    <?= DwHtml::img("frontend/new.jpg", NULL, array('id' => 'img-banner')); ?>
+                    <div class="banner-caption">
+                        <?php echo DwHtml::link('index/producto/nuevo/', 'Lista Completa', array('class' => 'no-load btn  primary-btn'), 'fa-shopping-cart', FALSE); ?>
+                    </div>
+                </div>
+            </div>
+            <!-- /banner -->
+
+            <div class="col-md-9 col-sm-6 col-xs-6">
+                <div class="row">
+                    <div id="product-slick-1" class="product-slick">
+                        <!-- Product New -->
+                        <?php if (!empty($catalogo['nuevo'])) { ?>
+                            <?php View::partial('catalogo/carrito', FALSE, array('catalogo' => $catalogo['nuevo'], 'pag' => 16)); ?>
+                            <!-- /Product New -->
+                        </div>
+                        <?php echo DwHtml::link("index/producto/nuevo", 'Ver m&aacute;s...', array('class' => 'no-load btn primary-btn quick-view'), 'fa-search-plus', FALSE); ?>
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
+        <!-- /row -->
+
+        <!-- row -->
+        <div class="row">
+            <!-- section title -->
+            <div class="col-md-12">
+                <div class="section-title">
+                    <h2 class="title">OFERTAS DEL D&Iacute;A</h2>
+                    <div class="pull-right">
+                        <div class="product-slick-dots-2 custom-dots">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- section title -->
+
+            <!-- Product Sales -->
+            <div class="col-md-3 col-sm-6 col-xs-6">
+                <div class="product product-single product-hot">
+
+                    <div class="product-thumb">
+                        <div class="product-label">
+                            <span class="sale">Productos en Oferta</span>
+                        </div>
+                        <button class="main-btn quick-view"><i class="fa fa-search-plus"></i> Ver Lista</button>
+                        <?= DwHtml::img("frontend/sales.jpg", NULL, array('id' => 'img-banner')); ?>
+                    </div>
+                    <div class="product-body">
+                        <div class="product-btns">
+                            <?php echo DwHtml::link('index/producto/sales/', 'Lista Completa', array('class' => 'no-load btn  primary-btn'), 'fa-shopping-cart', FALSE); ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /Product Single -->
+
+            <!-- Product Slick -->
+            <div class="col-md-9 col-sm-6 col-xs-6">
+                <div class="row">
+                    <div id="product-slick-2" class="product-slick">
+                        <!-- Product Sales -->
+                        <?php if (!empty($catalogo['sales'])) { ?>
+                            <?php View::partial('catalogo/carrito', FALSE, array('catalogo' => $catalogo['sales'], 'pag' => 16)); ?>
+                            <!-- /Product Sales -->
+                        </div>
+                        <?php echo DwHtml::link("index/producto/sales", 'Ver m&aacute;s...', array('class' => 'no-load btn primary-btn quick-view'), 'fa-search-plus', FALSE); ?>
+                    <?php } ?>
+                </div>
+            </div>
+            <!-- /Product Slick -->
+        </div>
+        <!-- /row -->
+    </div>
+    <!-- /container -->
+</div>
+<!-- /section -->
+
+<!-- section -->
+<div class="section">
+    <!-- container -->
+    <div class="container">
+        <!-- row -->
+        <div class="row">
+            <!-- section title -->
+            <div class="col-md-12">
+                <div class="section-title">
+                    <h2 class="title">Listado de Productos</h2>
+                </div>
+            </div>
+            <!-- section title -->
+            <?php if (!empty($catalogo['catalogo'])) { ?>
+                <!-- Product General -->
+                <?php View::partial('catalogo/general', FALSE, array('catalogo' => $catalogo['catalogo'], 'pag' => 8)); ?>
+                <!-- /Product General -->
+                <?php echo DwHtml::link("index/producto/catalogo", 'Ver m&aacute;s...', array('class' => 'no-load btn primary-btn quick-view'), 'fa-search-plus', FALSE); ?>
+            <?php } ?>
+        </div>
+        <!-- /row -->
+
+        <!-- row -->
+        <div class="row">
+            <!-- section title -->
+            <div class="col-md-12">
+                <div class="section-title">
+                    <h2 class="title">Elegido para ti</h2>
+                </div>
+            </div>
+            <!-- section title -->
+            <?php if (!empty($catalogo['recomendado'])) { ?>
+                <!-- Product Recomendado -->
+                <?php View::partial('catalogo/general', FALSE, array('catalogo' => $catalogo['recomendado'], 'pag' => 8)); ?>
+                <!-- /Product Recomendado -->
+                <?php echo DwHtml::link("index/producto/recomendado", 'Ver m&aacute;s...', array('class' => 'no-load btn primary-btn quick-view'), 'fa-search-plus', FALSE); ?>
+            <?php } ?>
+        </div>
+        <!-- /row -->
+    </div>
+    <!-- /container -->
+</div>

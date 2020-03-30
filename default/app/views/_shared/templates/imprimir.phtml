@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <?php Tag::css('backend/themes/template/bootstrap.min'); ?>
+        <?php Tag::css('font-awesome.min'); ?>
+        <?php Tag::css('printer'); ?>
+        <?php echo Html::includeCss(); ?>
+        <?php echo Tag::js('jquery/jquery.min') . PHP_EOL; ?>
+        <script type="text/javascript">
+            function changeTitle(title) {
+                if ($(document).attr('title') != title) {
+                    $(document).attr('title', title);
+                }
+            }
+            $(function () {
+                window.print();
+            });
+        </script>
+    </head>
+    <body>
+        <div class="section">
+            <div class="container">
+                <div class="row">
+                    <div class="product product-details clearfix">
+
+                        <?php View::content(); ?>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </body>
+</html>

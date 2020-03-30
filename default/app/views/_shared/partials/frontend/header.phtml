@@ -1,0 +1,125 @@
+<?php
+require_once CORE_PATH . 'extensions/helpers/form.php';
+?>
+<header>
+    <div id="top-header">
+        <div class="container">
+            <div class="pull-left">
+                <span>Bienvenido a Asdin!</span>
+            </div>
+
+            <div class="pull-right">
+                <ul class="header-top-links">
+                    <li><a href="#">Tienda</a></li>
+                    <li>
+                        <?php echo DwHtml::link('index/boletines/', 'Suscripcion', array('class' => 'btn-suscipcion')); ?>
+                    </li>
+                    <li><a href="#">Ayuda</a></li>
+                    <?php if (!empty(Session::get('login')) && Session::get('perfil_id') <= Perfil::ADMIN) { ?>
+                        <li><?php echo DwHtml::link('dashboard/index/', 'BACKEND', array('class' => 'no-load btn btn-danger'), 'fa-won', FALSE); ?></li>
+                    <?php } ?>
+                    <?php if (!empty(Session::get('login'))) { ?>
+                        <li>
+                            <?php echo DwHtml::link('cuenta/login/salir/', 'Salir', array('class' => 'no-load btn btn-danger'), 'fa-power-off', FALSE); ?>
+                        </li>
+                    <?php } ?>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- /top Header -->
+
+    <!-- header -->
+    <div id="header">
+        <div class="container">
+            <div class="pull-left">
+                <!-- Logo -->
+                <div class="header-logo">
+                    <?php echo DwHtml::link('', DwHtml::img("frontend/estatico/logo_form.png", APP_NAME, array('class' => 'logo', 'style' => 'height: 60px; margin-top: 0px;')), '', '', FALSE); ?>
+                </div>
+                <!-- /Logo -->
+
+                <!-- Search -->
+                <div class="header-search">
+                    <?php echo DwForm::open("index/buscar/", '', array('class' => 'flash-validate no-ajax')); ?>
+                    <input type="text" class="input search-input" name="value" value="Buscar Producto..." onfocus="this.value = '';" onblur="if (this.value == '') {
+                                this.value = 'Buscar Producto...';
+                            }" required="">
+                    <button class="search-btn"><i class="fa fa-search"></i></button>
+                    <?php echo DwForm::close(); ?>
+                </div>
+                <!-- /Search -->
+            </div>
+            <div class="pull-right">
+                <ul class="header-btns">
+                    <!-- Account -->
+                    <li class="header-account dropdown default-dropdown">
+                        <div class="dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="true">
+                            <div class="header-btns-icon">
+                                <i class="fa fa-user"></i>
+                            </div>
+                            <strong class="text-uppercase">Mi Cuenta <i class="fa fa-caret-down"></i></strong>
+                        </div>
+                        <?php if (!empty(Session::get('login'))) { ?>
+                            <?php
+                            $data_nom = explode(' ', Session::get('nombre')); //el formato es 1-4 = recurso-rol
+                            $data_ape = explode(' ', Session::get('apellido')); //el formato es 1-4 = recurso-rol
+                            $nombre = $data_nom[0];
+                            $apellido = $data_ape[0];
+                            ?>
+                            <?= DwHtml::link('cuenta/cliente/datos/', $nombre . ' ' . $apellido, array('class' => 'text-uppercase no-load')); ?>
+                        <?php } else { ?>
+                            <?= DwHtml::link('cuenta/login/entrar', 'Ingresar', array('class' => 'text-uppercase no-load', 'title' => 'Ingresar')); ?> / 
+                            <?= DwHtml::link('index/registro/', 'Regístro', array('class' => 'text-uppercase no-load', 'title' => 'Registrarme'), 'fa-edit', FALSE); ?>
+                        <?php } ?>
+                        <ul class="custom-menu">
+                            <?php if (!empty(Session::get('login'))) { ?>
+                                <li>
+                                    <?= DwHtml::link('cuenta/cliente/datos/', 'Mi Cuenta', array('class' => 'no-load'), 'fa-user', FALSE); ?>
+                                </li>
+                            <?php } ?>
+                            <li>
+                                <?= DwHtml::link('cuenta/cliente/deseos/', 'Mi Lista de Deseos', array('class' => 'no-load'), 'fa-heart-o', FALSE); ?>
+                            </li>
+                            <li>
+                                <?= DwHtml::link('#', 'Comparar', array('class' => 'no-load'), 'fa-exchange', FALSE); ?>
+                            </li>
+                            <li>
+                                <?= DwHtml::link('cuenta/cliente/carro/', 'Checkout', array('class' => 'no-load'), 'fa-check', FALSE); ?>
+                            </li>
+                            <?php if (!empty(Session::get('login'))) { ?>
+                                <li>
+                                    <?php echo DwHtml::link('cuenta/login/salir/', 'Salir', array('class' => 'no-load'), 'fa-power-off', FALSE); ?>
+                                </li>
+                            <?php } ?>
+                        </ul>
+                    </li>
+                    <!-- /Account -->
+
+                    <!-- Cart -->
+                    <li class="header-cart dropdown default-dropdown resumen-cart">
+                        <a id="viewcart" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                            <div class="header-btns-icon">
+                                <i class="fa fa-shopping-cart"></i>
+                                <span class="qty label label-warning item-orden">0</span>
+                            </div>
+                            <strong class="text-uppercase mi-carro">Mi Carro:</strong>
+                            <br>
+                            <span class="cart-total">$00.00</span>
+                        </a>
+                    </li>
+                    <!-- /Cart -->
+
+                    <!-- Mobile nav toggle-->
+                    <li class="nav-toggle">
+                        <button class="nav-toggle-btn main-btn icon-btn"><i class="fa fa-bars"></i></button>
+                    </li>
+                    <!-- / Mobile nav toggle -->
+                </ul>
+            </div>
+        </div>
+        <!-- header -->
+    </div>
+    <!-- container -->
+</header>

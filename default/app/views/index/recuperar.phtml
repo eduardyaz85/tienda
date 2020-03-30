@@ -1,0 +1,44 @@
+<?php View::flash(); ?>
+
+<div class="row">
+
+    <?= DwForm::open('', 'post', array('id' => 'data-form', 'class' => 'no-ajax dw-validate clearfix')); ?>
+
+    <div class="col-md-6">
+        <div class="billing-details">
+            <p>¿Ya eres cliente?  
+                <?php if (empty(Session::get('login'))) { ?>
+                    <?= DwHtml::link('cuenta/login/entrar', 'Iniciar sesión', array('class' => 'no-load', 'title' => 'Ingresar')); ?>
+                <?php } ?>
+            </p>
+            <div class="section-title">
+                <h3 class="title">Recuperar Contraseña</h3>
+            </div>
+
+            <div class="form-group">
+                <?= DwForm::email('email_or_username', array('class' => 'input-required input-lower input-email mask-email show-error', 'placeholder' => 'Email', 'maxlength' => '200', 'autocomplete' => 'off'), NULL, 'Email Recuperar Contraseña'); ?>
+            </div>
+
+            <?php echo DwForm::hidden('mode', null, 'auth'); ?>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="order-summary clearfix">
+            <?php echo DwButton::submit('Recuperar', 'fa-save', array('class' => 'primary-btn btn-danger btn-guarda-orden'), 'Recuperar'); ?>
+        </div>
+
+    </div>
+
+    <?= DwForm::close(); ?>
+
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $('#data-form').on('submit', function (e) { //use on if jQuery 1.7+
+            $("#flash-message").empty();
+            flashInfo('Enviando Espere por favor...');
+        });
+    });
+</script>

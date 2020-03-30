@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="<?php echo APP_CHARSET; ?>">
+        <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
+        <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <title><?php echo $page_title; ?></title>
+        <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
+        <!--     Fonts and icons     -->
+        <?php Tag::css('frontend/googleapis.css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons'); ?>
+        <?php Tag::css('frontend/font-awesome.min'); ?>
+        <?php Tag::css('frontend/material-kit.css?v=2.0.5'); ?>
+        <?php Tag::css('frontend/demo'); ?>
+        <?php Tag::css('frontend/style'); ?>
+        <?php echo Html::includeCss(); ?>
+    </head>
+
+    <body class="login-page sidebar-collapse">
+
+        <?php View::partial('frontend/header'); ?>
+
+        <div class="page-header header-filter" style="background-image: url('../../../img/frontend/bg7.jpg'); background-size: cover; background-position: top center;">
+            <?php View::content(); ?>
+        </div>
+
+        <!--  End Modal -->
+        <?php View::partial('frontend/footer'); ?>
+
+        <!--   Core JS Files   -->
+        <?php echo Tag::js('frontend/core/jquery.min') . PHP_EOL; ?>
+        <?php echo Tag::js('frontend/core/popper.min') . PHP_EOL; ?>
+        <?php echo Tag::js('frontend/core/bootstrap-material-design.min') . PHP_EOL; ?>
+        <?php echo Tag::js('frontend/plugins/moment.min') . PHP_EOL; ?>
+        <?php echo Tag::js('frontend/plugins/bootstrap-datetimepicker') . PHP_EOL; ?>
+        <?php echo Tag::js('frontend/plugins/nouislider.min') . PHP_EOL; ?>
+        <?php echo Tag::js('frontend/material-kit.js?v=2.0.5') . PHP_EOL; ?>
+        <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
+    </body>
+
+</html>

@@ -1,0 +1,191 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<section class="content">
+
+    <div class="row">
+        <div class="col-xs-12">
+
+            <div class="box">
+                <!-- The time line -->
+                <ul class="timeline">
+                    <!-- timeline time label -->
+                    <li class="time-label">
+                        <span class="bg-red">
+                            <?= $articulo->descripcion; ?>
+                        </span>
+                    </li>
+                    <!-- /.timeline-label -->
+                    <!-- timeline item -->
+                    <li>
+                        <!-- timeline icon -->
+                        <i class="fa fa-database bg-blue"></i>
+                        <div class="timeline-item">
+                            <span class="time"><i class="fa fa-clock-o"></i> <?= date("Y-m-d", strtotime($articulo->registro_at)) ?></span>
+
+
+                            <h3 class="timeline-header"><a href="#">Creado</a> ...</h3>
+
+                            <div class="timeline-body">
+                                <!-- info row -->
+                                <div class="row invoice-info">
+                                    <div class="col-sm-4 invoice-col">
+                                        <address>
+                                            <strong>PROVEEDOR: </strong><?= $articulo->nombres; ?><br>
+                                            <strong>CODIGO SISTEMA: </strong><?= $articulo->codigo; ?><br>
+                                            <strong>SKU: </strong><?= $articulo->sku; ?><br>
+                                            <strong>NUMERO PARTE: </strong><?= $articulo->mpn; ?><br>
+                                            <strong>DESCRIPCION: </strong><?= $articulo->descripcion; ?><br>
+                                            <strong>DETALLE: </strong><?= $articulo->detalle; ?><br>
+                                        </address>
+                                    </div>
+                                    <div class="col-sm-4 invoice-col">
+                                        <address>
+                                            <strong>CATEGORIA: </strong><?= $articulo->category; ?><br>
+                                            <strong>MARCA: </strong><?= $articulo->marca; ?><br>
+                                            <strong>U. MEDIDA: </strong><?= $articulo->simbolo; ?><br>
+                                            <strong>TIPO ARTICULO: </strong><?= $articulo->tipo_articulo; ?><br>
+                                            <strong>TIPO: </strong><?= $articulo->type; ?><br>
+                                            <strong>PRECIO MANUAL: </strong><?= (!empty($articulo->pre_man) ? '<span class="label label-success">SI</span>' : '<span class="label label-danger">NO</span>'); ?><br>
+                                            <strong>UTILIDAD: </strong><?= $articulo->porcentaje; ?><br>
+                                            <strong>IMPUESTO: </strong><?= $articulo->impuesto; ?><br>
+                                        </address>
+                                    </div>
+                                    <?php
+                                    //precios de venta con impuesto
+                                    $precio_comp = DwOnline::setPrecios($articulo->precio_compra, $articulo->valor);
+                                    $precio_vent = DwOnline::setPrecios($articulo->precio_venta, $articulo->valor);
+                                    $precio_dist = DwOnline::setPrecios($articulo->precio_distribuidor, $articulo->valor);
+                                    ?>
+                                    <div class="col-sm-4 invoice-col">
+                                        <address>
+                                            <strong>PRECIO COMPRA: </strong><span class="label label-primary">$ <?= $precio_comp; ?></span><br>
+                                            <strong>PRECIO VENTA: </strong><span class="label label-success">$ <?= $precio_vent; ?></span><br>
+                                            <strong>PRECIO DISTRIBUIDOR: </strong><span class="label label-warning">$ <?= $precio_dist; ?></span><br>
+                                            <strong>STOCK: </strong><span class="label label-danger"><?= $articulo->instock; ?></span><br>
+                                            <strong>DESCUENTO: </strong><?= (!empty($articulo->onsales) ? '<span class="label label-success">SI</span>' : '<span class="label label-danger">NO</span>'); ?><br>
+                                            <strong>NUEVO: </strong><?= (!empty($articulo->nuevo) ? '<span class="label label-success">SI</span>' : '<span class="label label-danger">NO</span>'); ?><br>
+                                            <strong>WEB: </strong><?= (!empty($articulo->web) ? '<span class="label label-success">SI</span>' : '<span class="label label-danger">NO</span>'); ?><br>
+                                            <strong>ESTADO: </strong><?= (!empty($articulo->estado) ? '<span class="label label-success">ACTIVO</span>' : '<span class="label label-danger">INACTIVO</span>'); ?><br>
+                                        </address>
+                                    </div>
+                                </div>
+                                <!-- /.row -->
+                            </div>
+
+                        </div>
+                    </li>
+                    <!-- END timeline item -->
+                    <!-- timeline item -->
+                    <li>
+                        <i class="fa fa-camera bg-purple"></i>
+
+                        <div class="timeline-item">
+                            <span class="time"><i class="fa fa-clock-o"></i> <?= date("Y-m-d", strtotime($articulo->registro_at)) ?></span>
+
+                            <h3 class="timeline-header"><a href="#">Subir Imagen</a> ...</h3>
+
+                            <div class="timeline-body">
+
+                                <div class="row">
+                                    <div class="col-md-8 fileupload-buttonbar">
+
+                                        <div class="col-md-4">
+                                            <span class="btn btn-success fileinput-button">
+                                                <i class="icon-plus icon-white"></i>
+                                                <span>Seleccionar fotografía...</span>
+                                                <input id="fotografia" type="file" name="fotografia" class="input-large">
+                                            </span>
+                                        </div>
+
+                                        <div id="upload-progress" class="col-md-4 span4 fileupload-progress fade">                                                    
+                                            <div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                                                <div class="bar" style="width:0%;"></div>
+                                            </div>
+                                        </div>
+                                        <?php $foto = empty($articulo->imagen) ? 'default.jpg' : $articulo->imagen; ?>
+                                        <div class="span5 dw-text-right">
+                                            <div class="span5 dw-picture-profile dw-text-center dw-text-middle dw-shadow-dark" style="margin-top: 5px"> 
+                                                <?= DwHtml::img("upload/productos/$foto", "$articulo->descripcion", array('id' => 'img-productos')); ?>
+                                            </div>
+                                        </div>
+
+                                    </div>                   
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </li>
+                    <!-- END timeline item -->
+                </ul>
+                <div class="box box-info">
+                    <div class="box-footer text-right">
+                        <?php $key_edi = Security::setKey($articulo->id, 'show_articulo'); ?>
+                        <?= DwHtml::button("$modulo/ver/$key_edi", 'REGRESAR', array('class' => 'btn-info'), 'fa-reply'); ?>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<?php View::partial('jquery.file-upload'); ?>
+
+<script type="text/javascript">
+    $('#fotografia').fileupload({
+        url: '<?php echo PUBLIC_PATH . "catalogo/inventario/uploadimg/" . Security::setKey($articulo->id, 'upl_foto'); ?>',
+        dataType: 'json',
+        maxFileSize: 9999999, //2MB
+        acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+        start: function () {
+            $("#flash-message").empty();
+            $('#upload-progress').removeClass('fade');
+            $('.bar').parent().removeClass('progress-danger').addClass('progress-success');
+            $('[type=submit]').attr('disabled', 'disabled');
+        },
+        progress: function (e, data) {
+            var progress = parseInt(data.loaded / data.total * 100, 10);
+            $('.bar').css('width', progress + '%');
+        },
+        add: function (e, data) {
+            var jqXHR = data.submit()
+                    .done(function (result, textStatus, jqXHR) {
+                        console.log(result);
+                        console.log(textStatus);
+                        if (textStatus != 'success' || result.error != false) {
+                            $('.bar').parent().removeClass('progress-success').addClass('progress-danger');
+                            flashError('Oops! el archivo no se ha podido cargar. <br />Detalle del error: ' + (result.error != false) ? result.error : textStatus);
+                        } else {
+                            flashValid('El archivo se ha cargado correctamente!');
+                            $("#catalogo_fotografia").val(result.name);
+                            $("#img-productos").attr('src', '<?= PUBLIC_PATH; ?>img/upload/productos/' + result.name);
+                        }
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        if (textStatus != null) {
+                            flashError('Oops! el archivo no se ha podido cargar. <br />Detalle del error: ' + textStatus);
+                            $('.bar').parent().removeClass('progress-success').addClass('progress-danger');
+                            setTimeout(function () {
+                                $('#upload-progress').addClass('fade');
+                            }, 1000);
+                        } else {
+                            flashWarning('Oops! al parecer el archivo no es una imágen válida. <br />Intenta con otro archivo.');
+                            $('.bar').parent().removeClass('progress-success').addClass('progress-danger');
+                            $('#upload-progress').addClass('fade');
+                        }
+                    })
+                    .always(function () {
+                        setTimeout(function () {
+                            $('#upload-progress').addClass('fade');
+                            $('.bar').css('width', '0%');
+                        }, 1000);
+                        $('[type=submit]').removeAttr('disabled');
+                    });
+        }
+    });
+</script>

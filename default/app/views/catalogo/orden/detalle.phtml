@@ -1,0 +1,332 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<section class="content">
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+
+                <?php $key_upd = Security::setKey($orden->id, 'upd_orden'); ?>
+                <?php $key_dwl = Security::setKey($orden->id, 'dwl_orden'); ?>
+                <?php $key_add = Security::setKey($orden->id, 'add_items'); ?>
+                <?php $key_fin = Security::setKey($orden->id, 'procesado_orden'); ?>
+                <?php $key_apr = Security::setKey($orden->id, 'aprobado_orden'); ?>
+                <?php $key_fac = Security::setKey($orden->id, 'facturado_orden'); ?>
+
+                <ul class="timeline">
+                    <li class="time-label">
+                        <span class="bg-red">
+                            <?= $orden->numero; ?>
+                        </span>
+                    </li>
+                    <li>
+                        <!-- timeline icon -->
+                        <i class="fa fa-database bg-blue"></i>
+                        <div class="timeline-item">
+                            <span class="time"><i class="fa fa-clock-o"></i> <?= date("Y-m-d", strtotime($orden->fecha_at)) ?></span>
+
+
+                            <h3 class="timeline-header"><a href="#">Creado</a> ...</h3>
+
+                            <div class="timeline-body">
+                                <!-- info row -->
+                                <div class="row invoice-info">
+                                    <div class="col-sm-4 invoice-col">
+                                        <address>
+                                            <strong>ENTREGA: </strong><?= $orden->entregas; ?><br>
+                                            <strong>VALOR ENTREGA: </strong><?= $orden->envios; ?><br>
+                                            <strong>DETALLE ENTREGA: </strong><?= $orden->observacion; ?><br>
+                                            <strong>FORMA PAGO: </strong><?= $orden->pagos; ?><br>
+                                            <strong>TELEFONO: </strong><?= $orden->telefono; ?><br>
+                                            <strong>EMAIL: </strong><?= $orden->email; ?><br>
+                                        </address>
+                                    </div>
+                                    <div class="col-sm-4 invoice-col">
+                                        <address>
+                                            <strong>CIUDAD: </strong><?= $orden->ciudad; ?><br>
+                                            <strong>DIRECCION: </strong><?= $orden->direccion; ?><br>
+                                            <strong>TOTAL: </strong><?= $orden->total; ?><br>
+                                            <strong>ESTADO: </strong><?= DwOnline::setEstadoOrden($orden->estado_orden); ?><br>
+                                        </address>
+                                    </div>
+                                </div>
+                                <!-- /.row -->
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="timeline-footer">
+                    <div class="box box-info">
+                        <div class="box-footer text-left">
+                            <?= DwHtml::button("$modulo/listar/", 'REGRESAR', array('class' => 'btn-info'), 'fa-reply'); ?>
+                            <?php if ($orden->estado_orden != OrdEstados::FACTURADO && Session::get('perfil_id') <= Perfil::SUPERVISOR) { ?>
+                                <?= DwHtml::buttonTable('Modificar Material', "$modulo/editar/$key_upd/", null, 'warning', 'fa-edit'); ?>
+                            <?php } ?>
+                            <?php if ($orden->estado_orden != OrdEstados::FACTURADO && Session::get('perfil_id') <= Perfil::SUPERVISOR) { ?>
+                                <?= DwHtml::button("catalogo/items/agregar/$key_add/", 'Agregar', array('class' => 'btn-success btn-add-items', 'data-toggle' => 'modal'), 'fa-plus'); ?>
+                            <?php } ?>
+                            <?php if (!empty($detalle) && $orden->estado_orden == OrdEstados::GENERADO && Session::get('perfil_id') <= Perfil::SUPERVISOR) { ?>
+                                <?= DwHtml::button("$modulo/estado/procesado/$key_fin/", 'Finalizar', array('class' => 'btn-danger', 'data-toggle' => 'modal'), 'fa-check'); ?>
+                            <?php } ?>
+                            <?php if ($orden->estado_orden == OrdEstados::PROCESADO && Session::get('perfil_id') <= Perfil::SUPERVISOR) { ?>
+                                <?= DwHtml::button("$modulo/estado/aprobado/$key_apr/", 'Aprobado', array('class' => 'btn-danger', 'data-toggle' => 'modal'), 'fa-check'); ?>
+                            <?php } ?>
+                            <?php if ($orden->estado_orden == OrdEstados::APROBADO && Session::get('perfil_id') <= Perfil::SUPERVISOR) { ?>
+                                <?= DwHtml::button("$modulo/estado/facturado/$key_fac/", 'Facturar', array('class' => 'btn-success', 'data-toggle' => 'modal'), 'fa-check'); ?>
+                            <?php } ?>
+                            <?php if (!empty($detalle)) { ?>
+                                <?= DwHtml::button("reporte/ordenes/pdf/$key_dwl/", 'imprimir', array('class' => 'btn-danger btn-no-ajax no-spinner', 'target' => '_blank'), 'fa-file-pdf-o'); ?>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+                <!-- data -->
+                <div class="box-body">
+                    <?php View::partial('catalogo/detalle', FALSE, array('orden' => $orden, 'detalle' => $detalle)); ?>
+                </div>
+                <!-- data -->
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="form-detalle-items">
+
+    <div class="modal-dialog">
+
+        <?= DwForm::open('', 'post', array('id' => 'form-modal-items', 'class' => 'dw-validate no-ajax')); ?>
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">INVENTARIO</h4>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <?= DwForm::label('<b>Producto/Servicio:</b>', 'label'); ?>
+                        <?= DwForm::dbSelect('detalle.cat_master_id', array('instock', 'mpn', 'marca', 'descripcion'), array('cat_master', 'getListadoCatalogo'), 'Seleccione una Opción', array('class' => 'mySelect2 input-break input-required mask-pint show-errors'), NULL); ?>
+                    </div>
+                </div>
+
+                <div id="list-datos">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <?= DwForm::text('detalle.instock', array('class' => 'input-break input-readonly show-error', 'maxlength' => '10'), NULL, 'Stock'); ?>
+                        </div>
+                        <div class="col-md-3">
+                            <?= DwForm::text('detalle.precio_compra', array('class' => 'input-break input-readonly show-error', 'maxlength' => '10'), NULL, 'Precio Compra'); ?>
+                        </div>
+                        <div class="col-md-3">
+                            <?= DwForm::text('detalle.precio_distribuidor', array('class' => 'input-break input-readonly input-required mask-num show-error', 'maxlength' => '10'), NULL, 'Precio Distribuidor'); ?>
+                        </div>
+                        <div class="col-md-3">
+                            <?= DwForm::text('detalle.utilidad', array('class' => 'input-break input-readonly input-required mask-num show-error', 'maxlength' => '10'), NULL, 'Utilidad Valor ($)'); ?>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-2">
+                            <?= DwForm::text('detalle.valor', array('class' => 'input-break input-readonly show-error', 'maxlength' => '10'), NULL, 'Iva %'); ?>
+                        </div>
+                        <div class="col-md-2">
+                            <?= DwForm::text('detalle.cantidad', array('class' => 'input-break input-required mask-num show-error', 'maxlength' => '10'), NULL, 'Cantidad'); ?>
+                        </div>
+                        <div class="col-md-2">
+                            <?= DwForm::text('detalle.porcentaje', array('class' => 'input-break mask-num show-error', 'maxlength' => '10'), NULL, 'Utilidad Porcentaje (%)'); ?>
+                        </div>
+                        <div class="col-md-3">
+                            <?= DwForm::text('detalle.precio_venta', array('class' => 'input-break input-required mask-num show-error', 'maxlength' => '10'), NULL, 'Subtotal SIN IVA'); ?>
+                        </div>
+                        <div class="col-md-3">
+                            <?= DwForm::text('total', array('class' => 'input-break input-required mask-num show-error', 'maxlength' => '10'), NULL, 'TOTAL CON IVA'); ?>
+                        </div>
+                    </div>
+
+                    <?php echo DwForm::hidden('detalle.impuestos_id') ?>
+                </div>
+
+            </div>
+
+            <?php echo DwForm::hidden('detalle.ord_cabecera_id', NULL, $orden->id) ?>
+
+            <div class="modal-footer">
+                <div class="box box-info">
+                    <div class="box-footer">
+                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cerrar</button>
+                        <?php echo DwForm::send('Guardar', 'fa-save', array('id' => 'btn-submit-item', 'class' => 'btn btn-primary'), 'Guardar'); ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php echo DwForm::close(); ?>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        compra = $("#detalle_precio_compra").val();
+        venta = $("#detalle_precio_venta").val();
+        valor_iva = $("#detalle_valor").val();
+        utilidad = (parseFloat(venta) - parseFloat(compra));
+        costo = (parseFloat(venta) / parseFloat(compra)) - 1;
+        porcentaje = costo * 100;
+        iva = (parseFloat(venta) * valor_iva);
+        total = ((iva / 100) + parseFloat(venta));
+        $("#detalle_utilidad").val(utilidad.toFixed(2));
+        $("#detalle_porcentaje").val(porcentaje.toFixed(2));
+        $("#total").val(total.toFixed(2));
+
+        $("#detalle_porcentaje").change(function () {
+            compra = $("#detalle_precio_compra").val();
+            value = $(this).val();
+            valor_iva = $("#detalle_valor").val();
+            utilidad = (parseFloat(compra) * parseFloat(value)) / 100;
+            venta = (parseFloat(compra) + parseFloat(utilidad));
+            iva = (parseFloat(venta) * valor_iva);
+            total = ((iva / 100) + parseFloat(venta));
+            $("#detalle_utilidad").val(utilidad.toFixed(2));
+            $("#detalle_precio_venta").val(venta.toFixed(2));
+            $("#total").val(total.toFixed(2));
+        });
+        $("#detalle_precio_venta").change(function () {
+            compra = $("#detalle_precio_compra").val();
+            venta = $(this).val();
+            valor_iva = $("#detalle_valor").val();
+            utilidad = (parseFloat(venta) - parseFloat(compra));
+            costo = (parseFloat(venta) / parseFloat(compra)) - 1;
+            porcentaje = costo * 100;
+            iva = (parseFloat(venta) * valor_iva);
+            total = ((iva / 100) + parseFloat(venta));
+            $("#detalle_utilidad").val(utilidad.toFixed(2));
+            $("#detalle_porcentaje").val(porcentaje.toFixed(2));
+            $("#total").val(total.toFixed(2));
+        });
+        $("#total").change(function () {
+            compra = $("#detalle_precio_compra").val();
+            total = $(this).val();
+            iva = $("#detalle_valor").val();
+            venta = (parseFloat(total) / parseFloat(parseInt(1) + iva / 100));
+            utilidad = (parseFloat(venta) - parseFloat(compra));
+            costo = (parseFloat(venta) / parseFloat(compra)) - 1;
+            porcentaje = costo * 100;
+            $("#detalle_utilidad").val(utilidad.toFixed(2));
+            $("#detalle_precio_venta").val(venta.toFixed(2));
+            $("#detalle_porcentaje").val(porcentaje.toFixed(2));
+        });
+    });
+    $(function () {
+        $('.btn-add-items').on('click', function (e) {
+            e.stopImmediatePropagation();
+            addItems($(this));
+            return false;
+        });
+        $('#detalle_cat_master_id').change(function () {
+            actual = $(this).val();
+            $.ajax({
+                type: "POST",
+                url: "<?php echo PUBLIC_PATH . 'catalogo/orden/getPrecioProducto/'; ?>",
+                data: "producto=" + actual,
+                success: function (data) {
+                    $("#list-datos").html(data);
+                }
+            });
+        });
+        //Guardado
+        $("#form-modal-items").on('submit', function (e) {
+            $("#flash-message").empty();
+            jsSpinner('hide');
+
+            if ($("#btn-submit-item").hasClass('btn-danger')) {
+                return false;
+            }
+            este = $(this);
+            source = {
+                url: $(this).attr('action'),
+                change_url: false,
+                spinner: true,
+                method: 'post',
+                response: 'json',
+                data: $(this).serialize()
+            }
+
+            request = $.kload(source);
+            if (request && request.success == true) {
+                row = '<tr id="row-items-' + request.id + '" data-movement="' + request.id + '"><td class="borde-tbl" align="center">' + request.cantidad + '</td><td class="borde-tbl">' + request.mpn + '</td><td colspan="6" class="borde-tbl">' + request.descripcion + '</td><td class="borde-tbl" align="right">' + request.precio_venta + '</td><td class="borde-tbl" align="right">' + request.descuento + '</td><td class="borde-tbl" align="right">$ ' + request.valor_total + '</td><td class="borde-tbl" align="right"><?= DwHtml::buttonTable("Editar articulo", "catalogo/items/editar/'+request.key_upd+'/", array("class" => "upd-items", "data-to" => PUBLIC_PATH . "catalogo/items/editar/'+request.key_upd+'/"), "warning", "fa-edit"); ?>  <?= DwHtml::buttonTable("Anular registro", "#", array("class" => "js-confirm", "confirm-title" => "Anular registro", "confirm-body" => "Está seguro de eliminar este registro? <br />Recuerda que esta operación no se puede reversar.", 'on-confirm' => 'removeItem'), "danger", "fa-ban"); ?></td></tr>';
+                if (este.attr('data-update') == true || este.attr('data-update') == 'true') {
+                    $('#row-items-' + request.id).replaceWith(row);
+                } else {
+                    $(row).appendTo("#table-items");
+                }
+                $('.input-break', este).val('');
+            } else {
+                texto = (request.message != undefined) ? request.message : 'Oops! no hemos podido establecer la conexión con el servidor. <br />Intenta nuevamente.';
+                flashError(texto);
+            }
+            $('#form-detalle-items').modal('hide');
+            $('.modal-backdrop').removeClass('in').hide();
+            return false;
+        });
+        //Modificar
+        $('#table-items').on('click', '.upd-items', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            este = $(this);
+            $.getJSON(este.attr('data-to'), function (data) {
+                $("#form-modal-items").attr('action', este.attr('data-to')).attr('data-update', 'true');
+                $("#detalle_cat_master_id").val(data.cat_master_id);
+                $("#detalle_cantidad").val(data.cantidad);
+                $("#detalle_precio_compra").val(data.precio_compra);
+                $("#detalle_porcentaje").val(data.porcentaje);
+                $("#detalle_utilidad").val(data.utilidad);
+                $("#detalle_precio_venta").val(data.precio_venta);
+                $("#detalle_precio_distribuidor").val(data.precio_distribuidor);
+                $("#total").val(data.valor_total);
+                $("#detalle_instock").val(data.instock);
+                $("#detalle_valor").val(data.valor);
+                $("#detalle_impuestos_id").val(data.impuestos_id);
+                $("#flash-message").empty();
+                $('#form-detalle-items').modal('show');
+            });
+        });
+
+    });
+    //Eliminar
+    function removeItem(elem) {
+        $("#flash-message").empty();
+        fila = elem.parents('tr:first');
+
+        source = {
+            url: '<?= PUBLIC_PATH; ?>catalogo/items/anular/<?= Security::setKey($orden->id, 'del_item'); ?>/',
+            change_url: false,
+            spinner: true,
+            method: 'post',
+            response: 'json',
+            data: {items: fila.attr('data-movement')}
+        };
+        request = $.kload(source);
+        console.log(request);
+        if (request && request.success == true) {
+            flashValid(request.message);
+            fila.remove();
+        } else {
+            texto = (request.message != undefined) ? request.message : 'Oops! no hemos podido establecer la conexión con el servidor. <br />Intenta nuevamente.';
+            flashError(texto);
+        }
+    }
+    /***** Funciones para abrir los dialogos *****/
+    function addItems(refer) {
+        $("#flash-message").empty();
+        $('.input-break').val('');
+        $("#form-modal-items").attr('action', refer.attr('href')).attr('data-update', 'false');
+        $('#form-detalle-items').modal('show');
+    }
+</script>

@@ -1,0 +1,79 @@
+<?php View::flash(); ?>
+<style>
+    @media (min-width: 1200px) {
+        .container {
+            width: 1078px;
+        }
+        .logo_products {
+            padding: 2em 0 1em;
+        }
+    }
+    .badge{
+        font-size: 15px;
+    }
+</style>
+<div class="container shell-view">
+
+    <?php View::process($page_module, $page_title, $set_title); ?>
+
+    <?php View::partial('subnav/cliente/principal', FALSE, array('id' => Session::get('id'))); ?>
+
+    <ul class="nav nav-tabs hidden-xs">
+        <li class="active"><a href="#tab1" data-toggle="tab">Cambiar Contraseña</a></li>
+    </ul>
+    <ul class="nav nav-pills nav-stacked visible-xs">
+        <li class="active"><a href="#tab1" data-toggle="tab">Cambiar Contraseña</a></li>
+    </ul>
+
+    <div class="tab-content">
+
+        <div class="tab-pane active" id="tab1">
+
+            <?php echo DwForm::open(); ?>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <?php echo DwForm::text('usuario.email', array('class' => 'input-lower'), $usuarios->email, 'E-mail'); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <?php echo DwForm::text('usuario.login', array('class' => 'input-readonly input-lower'), $usuarios->login, 'Usuario'); ?>
+                </div>
+                <div class="col-md-6">
+                    <?php echo DwForm::pass('oldpassword', array('class' => ''), '', 'Contraseña anterior'); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <?php echo DwForm::pass('usuario.password', array('class' => 'input-pass'), NULL, 'Nueva Contraseña'); ?>
+                </div>
+                <div class="col-md-6">
+                    <?php echo DwForm::pass('repassword', array('class' => 'input-repass', 'data-equalto' => 'usuario_password'), '', 'Confirmar Contraseña'); ?>
+                </div>
+            </div>
+
+            <?php echo DwForm::hidden('usuario.id', NULL, $usuarios->id); ?>
+
+            <div class="row">
+                <div class="form-actions">
+                    <?php echo DwForm::send('Guardar'); ?>
+                    <?php echo DwButton::back(); ?>
+                </div>
+            </div>
+
+            <?php echo DwForm::close(); ?>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("#pagina-titulo").append("<?= $titulo ?>");
+    });
+</script>

@@ -1,0 +1,514 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<?= Tag::js('jquery/ruc_jquery_validator.min') . PHP_EOL; ?>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/1.3.1/vue-resource.min.js"></script>
+
+<section class="invoice">
+    <!--<div class="container"> 
+           <h1> Lista de prodoctos </h1> 
+           <form action="" method="post"> 
+              <table id="lista_productos" class="table table-striped"> 
+                 <thead>
+                    <tr>
+                       <th> Nombre </th>
+                       <th> Descripción </th>
+                       <th> Precio </th> 
+                       <th>  </th> 
+                    </tr> 
+                 </thead> 
+                 <tbody> 
+                    <tr>
+                       <td>
+                          <input type="text" name="nombre[]" class="nombre" placeholder="Nombre" />
+                       </td> 
+                       <td> 
+                          <textarea name="descripcion[]" class="descripcion" placeholder="Descripción" width="100%"></textarea> 
+                       </td> 
+                       <td> 
+                          <input type="number" name="precio[]" class="precio" placeholder="Precio" />  
+                       </td> 
+                       <td>  
+                          <button type="button" class="btn btn-danger button_eliminar_producto"> Eliminar </button>
+                       </td> 
+                    </tr> 
+                 </tbody> 
+                 <tfoot> 
+                    <tr> 
+                       <td colspan="3">  </td>
+                       <td> 
+                          <button type="button" class="btn btn-success button_agregar_producto"> Agregar </button> 
+                       </td> 
+                   </tr> 
+                </tfoot> 
+            </table> 
+        </form> 
+     </div> -->
+    <?php // echo Tag::js('backend/fac/productos') . PHP_EOL; ?>
+    <!-- <script type="text/javascript"> 
+        $(document).ready(function(){
+           productos(); 
+        }); 
+     </script>-->
+    <div class="row">
+        <div class="col-xs-12">
+            <h2 class="page-header">
+                <i class="fa fa-list"></i> FACTURA #<?= $numero ?>
+                <small class="pull-right">FECHA: <?= date('Y-m-d') ?></small>
+            </h2>
+        </div>
+    </div>
+
+    <section id="new">
+        <h4 class="page-header">Informaci&oacute;n CLIENTE</h4>
+    </section>
+
+
+    <div class="row invoice-info">
+
+        <div id="form-orden" class="box-body">
+
+            <?= DwForm::open("facturacion/items/agregar/", '', array('id' => 'form-cliente', 'class' => 'flash-validate', 'data-to' => 'flash-message', '@submit.prevent' => 'enviaCliente')); ?>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <?= DwForm::dbSelect('cliente.tipo_documento', 'titulo', array('params/tablas_tipos', 'getListaTablasActivas', TablasTipos::TIPO_IDENTIFICACION), 'Seleccione una Opción', array('class' => 'input-break input-required show-errors', 'v-model' => 'cliente_tipo_documento'), NULL, 'Tipo Documento'); ?>
+                </div>
+                <div class="col-md-3" id="div_tipo_documento">
+                    <?= DwForm::text('cliente.ruc', array('class' => 'input-break mask-pint show-error', 'autocomplete' => 'off', 'maxlength' => '13', 'placeholder' => '1712092939', 'v-model' => 'cliente_ruc'), NULL, 'Buscar: Cédula o RUC'); ?>
+                </div>
+                <div class="col-md-3">
+                    <?= DwForm::dbSelect('cliente.ciudad_id', 'ciudad', array('config/ciudad', 'getListadoCiudad', Recurso::ACTIVO), 'Seleccione una Ciudad', array('class' => 'input-break input-required mask-pint show-errors', 'v-model' => 'cliente_ciudad_id'), 14, 'Ciudad'); ?>
+                </div>
+                <div class="col-md-3">
+                    <?= DwForm::dbSelect('cliente.tipo_cliente', 'titulo', array('params/tablas_tipos', 'getListaTablasActivas', TablasTipos::TIPO_CLIENTE), 'Seleccione una Opción', array('class' => 'input-break input-required show-errors', 'v-model' => 'cliente_tipo_cliente'), NULL, 'Tipo Cliente'); ?>
+                </div>
+            </div>
+
+            <div class="row" id="div_tipo_cliente">
+                <div class="col-md-6">
+                    <?= DwForm::text('cliente.nombres', array('class' => 'input-break mask-text show-error', 'autocomplete' => 'off', 'maxlength' => '60', 'placeholder' => 'Nombres Cliente', 'v-model' => 'cliente_nombres'), NULL, 'Nombres Cliente'); ?>
+                </div>
+                <div class="col-md-6">                    
+                    <?= DwForm::text('cliente.apellidos', array('class' => 'input-break input-required mask-text show-error', 'autocomplete' => 'off', 'maxlength' => '150', 'placeholder' => 'Apellidos / Razon Social', 'v-model' => 'cliente_apellidos'), NULL, 'Apellidos Cliente / Razón Social'); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <?= DwForm::text('cliente.direccion', array('class' => 'input-break input-required mask-text show-error', 'maxlength' => '200', 'placeholder' => 'Calle principal, Numero, Calle Secunadaria', 'v-model' => 'cliente_direccion'), NULL, 'Dirección'); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2">
+                    <?= DwForm::text('cliente.telefono', array('class' => 'input-break mask-pint show-error', 'maxlength' => '9', 'placeholder' => '022652109', 'v-model' => 'cliente_telefono'), NULL, 'Teléfono 1'); ?>
+                </div>
+                <div class="col-md-2">
+                    <?= DwForm::text('cliente.celular', array('class' => 'input-break mask-pint show-error', 'maxlength' => '10', 'placeholder' => '0983323210', 'v-model' => 'cliente_celular'), NULL, 'Celular'); ?>
+                </div>
+                <div class="col-md-4">
+                    <?= DwForm::email('cliente.email', array('class' => 'input-break input-required mask-email show-error', 'autocomplete' => 'off', 'maxlength' => '100', 'placeholder' => 'info@dominio.com', 'v-model' => 'cliente_email'), NULL, 'Email 1'); ?>
+                </div>
+                <div class="col-md-4">
+                    <?= DwForm::email('cliente.email2', array('class' => 'input-break mask-email show-error', 'autocomplete' => 'off', 'maxlength' => '100', 'placeholder' => 'info@dominio.com', 'v-model' => 'cliente_email2'), NULL, 'Email 2'); ?>
+                </div>
+            </div>
+
+            <?= DwForm::hidden('cliente.id', array('v-model' => 'cliente_id')); ?>
+
+            <div class="box box-info">
+                <div class="box-footer">
+                    <?= DwButton::save('Guardar cliente', 'fa-save', array('class' => 'btn-guarda-cliente pull-right', 'v-if' => 'validaCliente')); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <table class="table table-bordered table-hover table-striped table-condensed table-responsive">
+                    <thead>
+                        <tr>
+                            <th>ITEM</th>
+                            <th>CANTIDAD</th>
+                            <th>DESCRIPCION</th>
+                            <th>P. UNIDAD</th>
+                            <th>DESCUENTO</th>
+                            <th class="ocultar">TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-detalle">
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row">
+                <div id='div-precio-articulo'>
+                    <div class="col-md-1">
+                        <?= DwForm::text('detalle.cantidad', array('class' => 'input-break input-readonly mask-num show-error', 'autocomplete' => 'off', 'maxlength' => '4'), NULL, 'Cantidad'); ?>
+                    </div>
+                    <div class="col-md-2">
+                        <?= DwForm::text('detalle.valor_unitario', array('class' => 'input-break input-readonly input-required show-error', 'autocomplete' => 'off', 'maxlength' => '15'), NULL, 'Precio'); ?>
+                    </div>
+                    <div class="col-md-2">
+                        <?= DwForm::text('con_iva', array('class' => 'input-break input-readonly show-error', 'maxlength' => '15'), NULL, 'PRECIO CON IVA'); ?>
+                    </div>
+                    <div class="col-md-2">
+                        <?= DwForm::text('precio_venta', array('class' => 'input-break input-readonly input-required show-error', 'maxlength' => '15'), NULL, 'PRECIO SUGERIDO'); ?>
+                    </div>
+                    <div class="col-md-2">
+                        <?= DwForm::text('detalle.descuento', array('class' => 'input-break input-readonly show-error', 'maxlength' => '15'), NULL, 'Descuento %'); ?>
+                    </div>
+                    <div class="col-md-1">
+                        <?= DwForm::text('stock', array('class' => 'input-break input-required input-readonly show-error', 'maxlength' => '15'), NULL, 'Stock'); ?>
+                    </div>
+                </div>
+                <div class="col-md-2 text-center">
+                    <?= DwForm::label('<b>boton guardar: </b>', 'label', array('style' => 'color: #ffffff;')); ?>
+                    <?= DwForm::send('Agregar', 'fa-save', array('id' => 'btn-guarda-articulo', 'class' => 'btn btn-success btn-guarda-articulo')); ?>
+                </div>
+            </div>
+
+
+            <?= DwForm::close(); ?>
+
+            <section id="new">
+                <h4 class="page-header">Detalle Factura</h4>
+            </section>
+<!--            <pre>
+                {{$data | json}}
+            </pre>-->
+            <?php // echo DwImpuestos::getDetalleFactura($factura->id); ?>
+
+            <?php // echo DwImpuestos::getPieFactura($factura->id); ?>
+
+
+            <div class="col-sm-4 invoice-col">
+                From
+                <address>
+                    <strong>Admin, Inc.</strong><br>
+                    795 Folsom Ave, Suite 600<br>
+                    San Francisco, CA 94107<br>
+                    Phone: (804) 123-5432<br>
+                    Email: info@almasaeedstudio.com
+                </address>
+            </div>
+            <!-- /.col -->
+            <div class="col-sm-4 invoice-col">
+                To
+                <address>
+                    <strong>John Doe</strong><br>
+                    795 Folsom Ave, Suite 600<br>
+                    San Francisco, CA 94107<br>
+                    Phone: (555) 539-1037<br>
+                    Email: john.doe@example.com
+                </address>
+            </div>
+            <!-- /.col -->
+            <div class="col-sm-4 invoice-col">
+                <b>Invoice #007612</b><br>
+                <br>
+                <b>Order ID:</b> 4F3S8J<br>
+                <b>Payment Due:</b> 2/22/2014<br>
+                <b>Account:</b> 968-34567
+            </div>
+            <!-- /.col -->
+        </div>
+
+        <div class="row">
+            <!-- accepted payments column -->
+            <div class="col-xs-6">
+                <p class="lead">Payment Methods:</p>
+                <img src="../../dist/img/credit/visa.png" alt="Visa">
+                <img src="../../dist/img/credit/mastercard.png" alt="Mastercard">
+                <img src="../../dist/img/credit/american-express.png" alt="American Express">
+                <img src="../../dist/img/credit/paypal2.png" alt="Paypal">
+
+                <p class="text-muted well well-sm no-shadow" style="margin-top: 10px;">
+                    Etsy doostang zoodles disqus groupon greplin oooj voxy zoodles, weebly ning heekya handango imeem plugg
+                    dopplr jibjab, movity jajah plickers sifteo edmodo ifttt zimbra.
+                </p>
+            </div>
+            <!-- /.col -->
+            <div class="col-xs-6">
+                <p class="lead">Amount Due 2/22/2014</p>
+                <button type="button" class="btn btn-success pull-right" onclick="traer()"><i class="fa fa-credit-card"></i> Traer Articulos
+                </button>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ITEM</th>
+                                <th>ARTICULO</th>
+                                <td>CANTIDAD</td>
+                                <td>PRECIO</td>
+                            </tr>                            
+                        </thead>
+                        <tbody id="contenido">
+                            <tr>
+                                <th>Shipping:</th>
+                                <td>$5.80</td>
+                                <td>$5.80</td>
+                                <td>$5.80</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+
+        <!-- this row will not appear when printing -->
+        <div class="row no-print">
+            <div class="col-xs-12">
+                <a href="invoice-print.html" target="_blank" class="btn btn-default"><i class="fa fa-print"></i> Print</a>
+                <button type="button" class="btn btn-success pull-right"><i class="fa fa-credit-card"></i> Submit Payment
+                </button>
+                <button type="button" class="btn btn-primary pull-right" style="margin-right: 5px;">
+                    <i class="fa fa-download"></i> Generate PDF
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="invoice">
+    <div class="row">
+        <div class="col-xs-12">
+
+            <div id="app">
+                <table class="table table-stripped">
+                    <thead>
+                        <tr>
+                            <th style="width:3%;">ITEM</th>
+                            <th style="width:40%;">DESCRIPCION</th>
+                            <th style="width:5%;">CANTIDAD</th>
+                            <th>P. UNIDAD</th>
+                            <th>DESCUENTO</th>
+                            <th>TOTAL</th>
+                            <th style="width:40px;">¿Cancelado?<th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="2">
+                                <input type="text" class="form-control" v-model="newEntry.name" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" v-model="newEntry.amount" />
+                            </td>
+                            <td>
+                                <button @click="add()" type="button" class="btn btn-success btn-block">Agregar</button>
+                            </td>
+                        </tr>
+                        <tr v-if="items.length === 0">
+                            <td colspan="4" class="text-center">
+                                No hay registros por mostrar
+                            </td>
+                        </tr>
+                        <tr v-for="item, index in items">
+                            <td>
+                                <button 
+                                    @click="remove(index)"
+                                    type="button" class="btn btn-danger btn-xs">
+                                    <i class="glyphicon glyphicon-trash"></i>
+                                </button>
+                            </td>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.amount.toFixed(2) }}</td>
+                            <td class="text-center" :title="item.paid ? 'Si' : 'No'">
+                                <button
+                                    @click="changeToPaid(item)"
+                                    class="btn btn-default btn-sm"
+                                    :class="{ 'btn-success': item.paid  }">
+
+                                    <i v-if="item.paid" class="glyphicon glyphicon-ok"></i>
+                                    <i v-if="!item.paid" class="glyphicon glyphicon-remove"></i>
+
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="text-danger">
+                            <td></td>
+                            <td class="text-right">Por pagar</td>
+                            <td>{{ totalAmount(0) }}</td>
+                            <td></td>
+                        </tr>
+                        <tr class="text-success">
+                            <td></td>
+                            <td class="text-right">Pagado</td>
+                            <td>{{ totalAmount(1) }}</td>
+                            <td></td>
+                        </tr>
+                        <tr class="text-info">
+                            <td></td>
+                            <td class="text-right">Total</td>
+                            <td>{{ totalAmount(2) }}</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script src="https://unpkg.com/vue"></script>
+<script>
+                    var app = new Vue({
+                        el: '#app', // Elemento
+                        data: {// Parametros
+                            newEntry: {
+                                name: '',
+                                amount: 0
+                            },
+                            items: [{
+                                    name: 'Servicios',
+                                    amount: 200,
+                                    paid: false
+                                },
+                                {
+                                    name: 'Hosting de Anexsoft',
+                                    amount: 90,
+                                    paid: true
+                                },
+                            ]
+                        },
+                        methods: {
+                            remove: function (index) {
+                                this.items.splice(index, 1);
+                            },
+                            // Ecmascript 6 syntax
+                            add() {
+                                this.items.push({
+                                    name: this.newEntry.name,
+                                    amount: parseFloat(this.newEntry.amount),
+                                    paid: false
+                                });
+
+                                this.newEntry.name = '';
+                                this.newEntry.amount = 0;
+                            },
+                            changeToPaid(item) {
+                                item.paid = !(item.paid);
+                            },
+                            totalAmount(t) {
+                                var total = this.items.reduce(function (a, b) {
+                                    switch (t) {
+                                        case 0:
+                                            return a + (!b.paid ? b.amount : 0);
+                                        case 1:
+                                            return a + (b.paid ? b.amount : 0);
+                                        case 2:
+                                            return a + b.amount;
+                                    }
+                                }, 0);
+
+                                return total.toFixed(2);
+                            }
+                        }
+                    });
+</script>
+<div id="main" class="container">
+    <div class="row">
+        <div class="col-sm-4">
+            <h1>Lista VUEjs - AJAX</h1>
+            <ul class="list-group">
+                <li v-for="item in lists" class="list-group-item">						
+                    {{ item.nombre }}
+                </li>
+            </ul>
+        </div>
+        <div class="col-sm-8">
+            <h1>JSON</h1>
+            <pre>
+                {{ $data | json }}
+            </pre>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var urlUsers = 'http://localhost:8977/wsfirma/facturacion/items/getCatalogo/';
+    new Vue({
+        el: '#main',
+        created: function () {
+            this.getCatalogo();
+        },
+        data: {
+            lists: []
+        },
+        methods: {
+            getCatalogo: function () {
+                this.$http.get(urlUsers).then(function (response) {
+                    this.lists = response.data;
+                });
+            }
+        }
+    });
+</script>
+
+<script type="text/javascript">
+    //busco cliente en la base
+    $(document).ready(function () {
+        $("#cliente_ruc").focus();
+        $("#cliente_ruc").on('change', function () {
+            var codigo = $(this).val();
+            $.ajax({
+                async: true,
+                type: "POST",
+                dataType: "json",
+                contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                url: "<?= PUBLIC_PATH . 'facturacion/items/getClienteFactura/'; ?>",
+                data: "numero=" + codigo,
+                beforeSend: antesEnvio,
+                success: mostrarDatos,
+                timeout: 4000,
+                error: errorEnvio
+            });
+            return false;
+        });
+    });
+
+    function antesEnvio() {
+
+    }
+    function errorEnvio() {
+        flashError('Error en el envio');
+    }
+    function mostrarDatos(datos) {
+        $("#flash-message").empty();
+        form = $('#form-articulo');
+        if (datos.success === true) {
+            $("#cliente_id").val(datos.id);
+            $("#cliente_nombres").val(datos.nombres);
+            $("#cliente_apellidos").val(datos.apellidos);
+            $("#cliente_direccion").val(datos.direccion);
+            $("#cliente_telefono").val(datos.telefono);
+            $("#cliente_celular").val(datos.celular);
+            $("#cliente_email").val(datos.email);
+            $("#cliente_email2").val(datos.email2);
+            $("#cliente_tipo_documento").append(datos.tipo_select).val(datos.tipo_documento);
+            $("#cliente_tipo_cliente").append(datos.tipo_select).val(datos.tipo_cliente);
+            $("#cliente_ciudad_id").append(datos.tipo_select).val(datos.ciudad_id);
+            flashValid('Existe Cliente...');
+        } else {
+            $('.input-break', form).val('');
+            flashError('Cliente nuevo...');
+        }
+    }
+</script>
+
+<?php
+// Tag::js('backend/fac/orden') . PHP_EOL; ?>

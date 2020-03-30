@@ -1,0 +1,51 @@
+<?php View::flash(); ?>
+
+<?php if (empty($estatus)) { ?>
+    <?php echo DwForm::open('', '', array('class' => 'no-ajax dw-validate', 'id' => 'formulario')); ?>
+    <div class="row">
+        <h2 class="text-center">Suscripci&oacute;n a Ofertas, Productos Nuevos</h2>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <?= DwForm::text('suscribe.nombres', array('class' => 'input-required mask-text show-error', 'maxlength' => '100', 'placeholder' => 'Ingrese su nombre', 'autocomplete' => 'off'), NULL, 'Nombres'); ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <?= DwForm::email('correo', array('class' => 'input-required mask-email show-error', 'maxlength' => '100', 'placeholder' => 'Ingrese su correo electronico', 'autocomplete' => 'off'), NULL, 'Correo'); ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <div class="input-checkbox">
+                <input id="pide-nuevo" name="suscribe[nuevo]" type="checkbox" value="0">
+                <label class="font-weak"><b>Deseo Recibir sobre productos nuevos!</b></label>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <div class="input-checkbox">
+                <input id="pide-oferta" name="suscribe[promo]" type="checkbox" value="0">
+                <label class="font-weak"><b>Deseo Recibir sobre promociones!</b></label>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="box-footer">
+            <?php echo DwForm::submit("Suscribir", array('class' => 'btn btn-primary btn-inicio-servicio')); ?>
+        </div>
+    </div>
+    <?php echo DwForm::close(); ?>
+<?php } else { ?>
+    <h2 class="text-center">Registro finalizado exitosamente!</h2>
+<?php } ?>

@@ -1,0 +1,65 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+
+<section class="content">
+
+    <div class="box">
+
+        <div class="box-body">
+
+            <div class="row invoice-info">
+                <div class="col-sm-4 invoice-col">
+                    <address>
+                        <strong>USUARIO: </strong><?= $usuario->nombre; ?> <?= $usuario->apellido; ?><br>
+                    </address>
+                </div>
+            </div>
+
+            <div class="box-body table-responsive no-padding">
+
+                <table class="table table-hover">
+                    <tbody>
+                        <tr>
+                            <th>NUM</th>
+                            <th>TABLA</th>
+                            <th>TIPO</th>
+                            <th>FECHA</th>
+                            <th>HORA</th>
+                            <th>NAVEGADOR</th>
+                            <th>IP</th>
+                            <th>ACCION</th>
+                        </tr>
+                        <?php foreach ($auditorias->items as $row): ?>
+                            <tr>
+                                <td><?= $auditorias->counter; ?></td>
+                                <td><?= $row->tabla_afectada; ?></td>
+                                <td><?= $row->tipo; ?></td>
+                                <td><?= date("Y-m-d", strtotime($row->fecha_at)); ?></td>
+                                <td><?= date("H:i:s", strtotime($row->fecha_at)); ?></td>
+                                <td><?= $row->navegador; ?></td>
+                                <td class="text-capitalize"><?= $row->ip; ?></td>
+                                <td>
+                                    <?php
+                                    $json = json_decode($row->accion_realizada, JSON_PRETTY_PRINT);
+                                    foreach ($json as $key => $val) {
+                                        echo '<span class="laber text-danger">' . $key . ': ' . $val . '<span><br>';
+                                    }
+                                    ?>
+                                </td>
+                            </tr>
+                            <?php $auditorias->counter++; ?>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+
+                <?php View::partial('paginators/default', false, array('page' => $auditorias, 'url' => "$modulo/usuario/$keyUsr/$order/")); ?>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>

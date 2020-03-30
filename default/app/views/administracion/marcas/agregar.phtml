@@ -1,0 +1,36 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<section class="content">
+
+    <?= DwForm::open('', 'post', array('id' => 'form', 'class' => 'dw-validate  no-ajax')); ?>
+
+    <div class="box box-danger">
+
+        <div class="box-body">
+
+            <div class="row">
+                <div class="col-md-4">
+                    <?= DwForm::text('marca.marca', array('class' => 'input-medium input-required mask-text show-error', 'maxlength' => '60'), NULL, 'Marca'); ?>
+                </div>
+                <div class="col-md-4">
+                    <?= DwForm::text('marca.brand', array('class' => 'input-medium input-required mask-text show-error', 'maxlength' => '10'), NULL, 'Abreviatura'); ?>
+                </div>
+            </div>
+
+            <div class="box box-info">
+                <div class="box-footer">
+                    <?php echo DwForm::send('Agregar marca'); ?>
+                    <?php echo DwForm::cancel(); ?>
+                    <?php echo DwForm::focus('marca.marca'); ?>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <?php echo DwForm::close(); ?>
+
+</section>

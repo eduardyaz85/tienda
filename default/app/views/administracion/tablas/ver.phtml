@@ -1,0 +1,106 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<section class="content">
+
+    <div class="box box-danger">
+
+        <div class="box-body">
+
+            <ul class="nav nav-tabs hidden-xs">
+                <li class="active"><a href="#tab1" data-toggle="tab">Información de Tabla</a></li>
+            </ul>
+            <ul class="nav nav-pills nav-stacked visible-xs">
+                <li class="active"><a href="#tab1" data-toggle="tab">Información de Tabla</a></li>
+            </ul>
+            <div class="tab-content">
+
+                <div class="tab-pane active" id="tab1">
+
+                    <?php echo DwForm::open(); ?>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <?php echo DwForm::text('tablas.abreviatura', array('class' => 'input-readonly'), $tablas->abreviatura, 'Nombre Corto'); ?>
+                        </div>
+                        <div class="col-md-3">
+                            <?php echo DwForm::text('tablas.nombre', array('class' => 'input-readonly'), $tablas->nombre, 'Nombre Tabla'); ?>
+                        </div>
+                        <div class="col-md-3">
+                            <?php echo DwForm::text('tablas.detalle', array('class' => 'input-readonly'), $tablas->detalle, 'Detalle'); ?>
+                        </div>
+                        <div class="col-md-3">
+                            <?php echo DwForm::text('tablas.codigo', array('class' => 'input-readonly'), $tablas->detalle, 'Codigo'); ?>
+                        </div>
+                    </div>
+
+                    <?php $key_upd = Security::setKey($tablas->id, 'upd_tabla'); ?>
+
+                    <div class="box box-info">
+                        <div class="box-footer">
+                            <div class="pull-left">
+                                <?php echo DwButton::back("$modulo/listar"); ?>
+                            </div>
+                            <?= DwHtml::button("$modulo/editar/$key_upd/", 'MODIFICAR', array('class' => 'btn-warning'), 'fa-edit'); ?>
+                        </div>
+                    </div>
+
+                    <?php echo DwForm::close(); ?>
+
+
+                    <div class="btn-toolbar btn-toolbar-top">
+                        <div class="btn-actions">
+                            <?php if ((Session::get('perfil_id') == Perfil::SUPER_USUARIO)) { ?>
+                                <?php $key_add = Security::setKey($tablas->id, 'add_item'); ?>
+                                <?php echo DwHtml::button("$modulo/crear/$key_add/", 'item', array('class' => 'btn-success btn-agrega-articulod'), 'fa-plus', APP_AJAX); ?>
+                            <?php } ?>
+                        </div>
+                    </div>
+
+                    <table class="table table-bordered table-hover table-striped table-condensed table-responsive">
+                        <thead>
+                            <tr>
+                                <th>NUM</th>
+                                <th>ORDEN</th>
+                                <th>CODIGO</th>
+                                <th>TITULO</th>
+                                <th>VALIDA</th>
+                                <th>VALOR</th>
+                                <th>DETALLE</th>
+                                <th>ESTADO</th>
+                                <?php if (Session::get('perfil_id') == Perfil::SUPER_USUARIO) { ?>
+                                    <th class="btn-actions col-blocked text-center  ">ACCIONES</th>
+                                <?php } ?>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $counter = 1; ?>
+                            <?php foreach ($tbldetalle as $tbl): ?>
+                                <?php $key_mod = Security::setKey($tbl->id, 'mod_item'); ?>
+                                <tr>
+                                    <td><?php echo $counter; ?></td>
+                                    <td><?php echo $tbl->orden; ?></td>
+                                    <td><?php echo $tbl->codigo; ?></td>
+                                    <td><?php echo $tbl->titulo; ?></td>
+                                    <td><?php echo $tbl->valida; ?></td>
+                                    <td><?php echo $tbl->largo; ?></td>
+                                    <td><?php echo $tbl->detalle; ?></td>
+                                    <td><?= ($tbl->activo == TablasTipos::ACTIVO) ? '<span class="label label-success" rel="tooltip">Activo</span>' : '<span class="label label-danger" rel="tooltip">Bloqueado</span>'; ?></td>
+                                    <td class="btn-actions">
+                                        <?= DwHtml::buttonTable('Modificar tabla', "$modulo/modificar/$key_mod/", NULL, 'info', 'fa-edit'); ?>
+                                    </td>
+                                </tr>
+                                <?php $counter++; ?>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>

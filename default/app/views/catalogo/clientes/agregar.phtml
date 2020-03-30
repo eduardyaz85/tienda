@@ -1,0 +1,129 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<?php echo Tag::js('jquery/ruc_jquery_validator.min') . PHP_EOL; ?>
+
+<section class="content">
+
+    <?= DwForm::open('', 'post', array('id' => 'form', 'class' => 'dw-validate no-ajax')); ?>
+
+    <div class="box box-danger">
+
+        <div class="box-body">
+
+            <div class="row">
+                <div class="col-md-3">
+                    <?= DwForm::dbSelect('sucursal.ciudad_id', 'ciudad', array('ciudad', 'getListadoCiudad'), 'Seleccione una Ciudad', array('class' => 'form-control select2 input-required mask-pint show-errors'), NULL, 'Ciudad'); ?>
+                </div>
+                <div class="col-md-3">
+                    <?= DwForm::dbSelect('empresa.tipo_documento', 'titulo', array('tablas_tipos', 'getListaTablasActivas', 'tid'), 'Seleccione una Opción', array('class' => 'input-xlarge input-required mask-pint show-errors'), NULL, 'Tipo de identificación'); ?>
+                </div>
+                <div class="col-md-3" id="div_tipo_documento">
+                    <?php echo DwForm::text('empresa.ruc', array('class' => 'input-required mask-pint show-error', 'maxlength' => '13'), NULL, 'Ruc/Cédula'); ?>
+                </div>
+                <div class="col-md-3">
+                    <?= DwForm::select('empresa.contabilidad', array('' => 'Seleccione', 'SI' => 'SI', 'NO' => 'NO'), array('class' => 'input-break input-required mask-pint show-errors'), NULL, 'Obligado llevar Contabilidad'); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <?php echo DwForm::text('empresa.nombres', array('class' => 'input-required mask-text show-error', 'maxlength' => '45'), NULL, 'Nombres'); ?>
+                </div>
+                <div class="col-md-6">
+                    <?php echo DwForm::text('empresa.razon_social', array('class' => 'input-required mask-text show-error', 'maxlength' => '150'), NULL, 'Raz&oacute;n Social / Apellidos'); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <?php echo DwForm::email('sucursal.email', array('class' => 'input-required mask-email show-error', 'maxlength' => '100'), NULL, 'Email'); ?>
+                </div>
+                <div class="col-md-6">
+                    <?php echo DwForm::email('sucursal.email2', array('class' => 'mask-email show-error', 'maxlength' => '100'), NULL, 'Email 2'); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <?php echo DwForm::text('sucursal.direccion', array('class' => 'input-xxlarge input-required mask-text show-error', 'maxlength' => '150'), NULL, 'Dirección'); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <?php echo DwForm::text('sucursal.telefono', array('class' => 'input-numeric mask-pint show-error', 'maxlength' => '10'), NULL, 'Teléfono 1'); ?>
+                </div>            
+                <div class="col-md-3">
+                    <?php echo DwForm::text('sucursal.telefono2', array('class' => 'input-numeric mask-pint show-error', 'maxlength' => '10'), NULL, 'Teléfono 2'); ?>
+                </div>            
+                <div class="col-md-3">
+                    <?php echo DwForm::text('sucursal.ext', array('class' => 'input-numeric mask-pint show-error', 'maxlength' => '20'), NULL, 'Extensión'); ?>
+                </div>            
+                <div class="col-md-3">
+                    <?php echo DwForm::text('sucursal.celular', array('class' => 'input-numeric mask-pint show-error', 'maxlength' => '10'), NULL, 'Celular'); ?>
+                </div>
+                <div class="col-md-2">
+                    <?= DwForm::select('empresa.credito', array('' => 'Seleccione', '1' => 'SI', '0' => 'NO'), array('class' => 'input-break input-required mask-pint show-errors'), NULL, 'Tiene Crèdito'); ?>
+                </div>
+                <div class="col-md-2" id="tiempo">
+                    <?= DwForm::select('empresa.tiempo', array('0' => '0'), array('class' => 'input-break input-required mask-pint show-errors'), NULL, 'Tiempo Dìas'); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-actions">
+                    <?= DwButton::save('Guardar información', NULL, array('class' => 'btn-guarda-empresa')); ?>
+                    <?php echo DwForm::cancel(); ?>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <?= DwForm::close(); ?>
+
+</section>
+
+<script type="text/javascript">
+    $(function () {
+        $('.select2').select2();
+        /***** identificacion *****/
+        $("#empresa_ruc").validarCedulaEC({
+            onValid: function () {
+                $("#flash-message").empty();
+                $(".btn-guarda-empresa").removeClass('btn-danger').addClass('btn-success').removeAttr('disabled');
+            },
+            onInvalid: function () {
+                $("#flash-message").empty();
+                $(".btn-guarda-empresa").removeClass('btn-success').addClass('btn-danger').attr('disabled', 'disabled');
+                flashError('Cédula o RUC Inválido.<br>Ingrese Nuevamente...');
+            }
+        });
+
+        $('#empresa_tipo_documento').change(function () {
+            actual = $(this).val();
+            $.ajax({
+                type: "POST",
+                url: "<?php echo PUBLIC_PATH . 'cuenta/items/input/'; ?>",
+                data: "tipo_id=" + actual,
+                success: function (data) {
+                    $("#div_tipo_documento").html(data);
+                }
+            });
+        });
+        $('#empresa_credito').change(function () {
+            actual = $(this).val();
+            $.ajax({
+                type: "POST",
+                url: "<?php echo PUBLIC_PATH . 'cuenta/items/credito/'; ?>",
+                data: "tipo_id=" + actual,
+                success: function (data) {
+                    $("#tiempo").html(data);
+                }
+            });
+        });
+    });
+</script>

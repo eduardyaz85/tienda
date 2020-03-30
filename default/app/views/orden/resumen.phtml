@@ -1,0 +1,17 @@
+<?php View::flash(); ?>
+
+<?php $key_dwl = Security::setKey($orden->id, 'dwl_orden'); ?>
+
+<div class="btn-toolbar btn-toolbar-top">
+    <div class="btn-actions">
+        <?= DwHtml::button("reporte/ordenes/pdf/$key_dwl/", 'imprimir', array('class' => 'btn-danger btn-no-ajax no-spinner', 'target' => '_blank'), 'fa-file-pdf-o'); ?>
+    </div>
+</div>
+
+<?php View::partial('catalogo/detalle', FALSE, array( 'orden' => $orden, 'detalle' => $detalle)); ?>
+
+<div class="btn-toolbar btn-toolbar-top">
+    <div class="btn-actions">
+        <?= DwHtml::button("reporte/ordenes/pdf/$key_dwl/", 'imprimir', array('class' => 'btn-danger btn-no-ajax no-spinner', 'target' => '_blank'), 'fa-file-pdf-o'); ?>
+    </div>
+</div>

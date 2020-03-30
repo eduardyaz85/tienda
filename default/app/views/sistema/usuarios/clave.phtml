@@ -1,0 +1,167 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<section class="content">
+
+    <div class="box box-danger">
+
+        <div class="box-body">
+
+            <div class="box-header">
+                <?php View::partial('subnav/usuario/principal', FALSE, array('id' => $usuario->id)); ?>
+            </div>
+
+            <?php echo DwForm::open(); ?>
+
+            <ul class="nav nav-tabs hidden-xs">
+                <li class="active"><a href="#tab1" data-toggle="tab">Información personal</a></li>
+                <li><a href="#tab2" data-toggle="tab">Información de la cuenta</a></li>
+                <li><a href="#tab3" data-toggle="tab">Cargar imágen</a></li>
+            </ul>
+            <ul class="nav nav-pills nav-stacked visible-xs">    
+                <li class="active"><a href="#tab1" data-toggle="tab">Información personal</a></li>
+                <li><a href="#tab2" data-toggle="tab">Información de la cuenta</a></li>
+                <li><a href="#tab3" data-toggle="tab">Cargar imágen</a></li>
+            </ul>
+
+            <div class="tab-content">
+
+                <div class="tab-pane active" id="tab1">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <?php echo DwForm::pass('usuario.password', array('class' => 'input-pass'), '', 'Contraseña'); ?>
+                        </div>
+                        <div class="col-md-6">
+                            <?php echo DwForm::pass('repassword', array('class' => 'input-repass'), '', 'Confirmación'); ?>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <?= DwForm::dbSelect('usuario.establecimientos_id', array('sucursal', 'direccion'), array('establecimientos', 'getListadoEstablecimientos'), 'Seleccione Establecimiento', array('class' => 'form-control select2 input-required mask-pint show-errors'), NULL, 'Establecimiento'); ?>
+                        </div>
+                        <div class="col-md-3">
+                            <?= DwForm::dbSelect('usuario.tipo_documento', 'titulo', array('tablas_tipos', 'getListadoTablasTipos', 'tid'), 'Seleccione una Opción', array('class' => 'input-xlarge input-required mask-pint show-errors'), NULL, 'Tipo de identificación'); ?>
+                        </div>
+                        <div class="col-md-3" id="div_tipo_documento">
+                            <?php echo DwForm::text('usuario.ruc', array('class' => 'input-required mask-alphanum'), NULL, 'Ruc/Cédula'); ?>
+                        </div>
+                        <div class="col-md-3">
+                            <?= DwForm::dbSelect('usuario.ciudad_id', 'ciudad', array('ciudad', 'getListadoCiudad'), 'Seleccione una Ciudad', array('class' => 'form-control select2 input-required mask-pint show-errors'), NULL, 'Ciudad'); ?>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">                    
+                            <?php echo DwForm::text('usuario.nombre', array('class' => 'input-required mask-alphanum'), $usuario->nombre, 'Nombre'); ?>
+                        </div>
+                        <div class="col-md-6">
+                            <?php echo DwForm::text('usuario.apellido', array('class' => 'input-required mask-alphanum'), $usuario->apellido, 'Apellido'); ?>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <?php echo DwForm::email('usuario.email', array('class' => 'input-required mask-email'), $usuario->email, 'Email'); ?>
+                        </div>
+                        <div class="col-md-3">
+                            <?php echo DwForm::text('usuario.telefono', array('class' => 'mask-num'), $usuario->telefono, 'Telefono'); ?>
+                        </div>
+                        <div class="col-md-3">
+                            <?php echo DwForm::text('usuario.celular', array('class' => 'mask-num'), $usuario->celular, 'Celular'); ?>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <?php echo DwForm::textarea('usuario.direccion', array('class' => 'input-required mask-text'), NULL, 'Dirección'); ?>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="tab-pane" id="tab2">
+
+                    <div class="row">
+                        <div class="col-md-6">                    
+                            <?php echo DwForm::text('usuario.login', array('class' => 'input-lower input-readonly'), $usuario->login, 'Usuario'); ?>
+                        </div>
+                        <div class="col-md-6">
+                            <?php echo DwForm::dbSelect('usuario.perfil_id', 'perfil', array('sistema/perfil', 'getListadoPerfil', Perfil::ACTIVO), NULL, array('class' => 'input-xxlarge input-required input-lists'), $usuario->perfil_id, 'Perfil'); ?>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <?php echo DwForm::number('usuario.datagrid', array('class' => 'input-numeric input-required mask-pint'), $usuario->datagrid, 'Cantidad de datos por página', 'Esta información se utiliza en los listados de informaciones y reportes'); ?>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <?php echo DwForm::select('usuario.app_ajax', array('1' => 'On', '0' => 'Off'), array('class' => 'input-list input-required'), $usuario->app_ajax, 'App con AJAX', 'Deshabilitar para conexiones lentas'); ?>
+                        </div>
+                        <div class="col-md-6">
+                            <?php //echo DwForm::select('usuario.tema', $temas, array('class'=>'input-list input-required'), $usuario->tema, 'Apariencia'); ?>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="tab-pane" id="tab3">
+
+                    <div class="row fileupload-buttonbar">
+
+                        <div class="col-md-6" style="margin-bottom: 20px;">
+
+                            <div class="row">
+
+                                <div class="col-md-6">
+                                    <?php echo DwForm::upload('fotografia', array('data-to' => PUBLIC_PATH . 'cuenta/usuarios/upload/', 'data-size' => 5000000, 'data-files' => 'images', 'data-success' => 'loadImg'), 'Fotografía'); ?>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="picture-profile text-center text-middle shadow-dark" style="margin: 5px auto 0px;">
+                                        <?php echo DwHtml::img("upload/personas/$usuario->fotografia", "Fotografía", array('id' => 'img-usuario')); ?>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <?php // echo DwForm::hidden('usuario.id', NULL, $usuario->id); ?>
+                    <?php echo DwForm::hidden('usuario.fotografia', NULL, $usuario->fotografia); ?>
+
+                </div>        
+
+            </div>
+
+            <div class="box box-info">
+                <div class="box-footer">
+                    <?php echo DwForm::send('Editar usuario'); ?>
+                    <?php echo DwForm::cancel(); ?>
+                    <?php echo DwForm::focus('usuario.nombre'); ?>            
+                </div>
+            </div>
+
+            <?php echo DwForm::close(); ?>
+
+        </div>
+
+    </div>
+
+</section>
+
+<script type="text/javascript">
+
+    function loadImg(result, input) {
+        $("#usuario_fotografia").val(result.name);
+        $("#img-usuario").attr('src', '<?php echo PUBLIC_PATH; ?>img/upload/personas/' + result.name);
+    }
+
+</script>

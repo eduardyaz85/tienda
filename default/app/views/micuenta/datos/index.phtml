@@ -1,0 +1,89 @@
+<?php View::flash(); ?>
+<style>
+    @media (min-width: 1200px) {
+        .container {
+            width: 1078px;
+        }
+        .logo_products {
+            padding: 2em 0 1em;
+        }
+    }
+</style>
+<div class="container shell-view">
+
+    <?php View::process($page_module, $page_title, $set_title); ?>
+
+    <?php View::partial('subnav/cliente/principal', FALSE, array('id' => Session::get('id'))); ?>
+
+
+    <ul class="nav nav-tabs hidden-xs">
+        <li class="active"><a href="#tab1" data-toggle="tab">Información Mi Cuenta</a></li>
+    </ul>
+    <ul class="nav nav-pills nav-stacked visible-xs">    
+        <li class="active"><a href="#tab1" data-toggle="tab">Información Mi Cuenta</a></li>
+    </ul>
+
+    <div class="tab-content">
+
+        <div class="tab-pane active" id="tab1">
+
+            <div class="row">
+
+                <div class="col-sm-6">
+                    <ul class="list-group">
+                        <a href="<?php echo PUBLIC_PATH ?>cliente/carrito/listar/" class="js-url js-spinner js-link no-load">
+                            <li class="list-group-item">
+                                <h3>Tus Pedidos</h3><br>Rastrea paquetes, devuelve pedidos o compras<br>
+                            </li>
+                        </a>
+                    </ul>
+                </div>
+
+                <div class="col-sm-6">
+                    <ul class="list-group">
+                        <a href="<?php echo PUBLIC_PATH ?>micuenta/datos/cambio/<?php echo Security::setKey(Session::get('id'), 'upd_clave') ?>" class="js-url js-spinner js-link no-load">
+                            <li class="list-group-item">
+                                <h3>Inicio de Session y Seguridad</h3><br>Edita nombre de usuario y email<br>
+                            </li>
+                        </a>
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-sm-6">
+                    <ul class="list-group">
+                        <a href="<?php echo PUBLIC_PATH ?>micuenta/datos/direcciones/<?php echo Security::setKey(Session::get('id'), 'shw_direccion') ?>" class="js-url js-spinner js-link no-load">
+                            <li class="list-group-item">
+                                <h3>Direcciones</h3><br>Editar direcciones para los pedidos<br>
+                            </li>
+                        </a>
+                    </ul>
+                </div>
+
+                <div class="col-sm-6">
+                    <ul class="list-group">
+                        <a href="<?php echo PUBLIC_PATH ?>micuenta/datos/" class="js-url js-spinner js-link no-load">
+                            <li class="list-group-item">
+                                <h3>Opciones de pago</h3><br>Editar o agregar métodos de pago.<br>
+                            </li>
+                        </a>
+                    </ul>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("#pagina-titulo").append("<?= $titulo ?>");
+        $("#usuario_password").val("");
+    });
+</script>

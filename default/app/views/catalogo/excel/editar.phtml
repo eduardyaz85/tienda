@@ -1,0 +1,100 @@
+<?php View::flash(); ?>
+
+<div class="container shell-view">
+
+    <?php View::process($page_module, $page_title, $set_title); ?>
+
+    <?php echo DwForm::open(); ?>
+
+    <div class="row">
+        <div class="col-md-2">
+            <?= DwForm::text('articulo.sku', array('class' => 'input-required mask-text show-error', 'maxlength' => '60'), NULL, 'CODIGO PRINCIPAL'); ?>
+        </div>
+        <div class="col-md-2">
+            <?= DwForm::text('articulo.mpn', array('class' => 'input-required mask-text show-error', 'maxlength' => '45'), NULL, 'CODIGO AUXILIAR'); ?>
+        </div>
+        <div class="col-md-3">
+            <?= DwForm::select('articulo.tipo_articulo', array('' => 'Seleccione', 'S' => 'SERVICIO', 'A' => 'ARTICULO'), array('class' => 'input-break input-medium input-required mask-pint show-errors'), NULL, 'Tipo de Articulo'); ?>
+        </div>
+        <div class="col-md-2">
+            <?= DwForm::select('articulo.aplica_iva', $tiposImpuestos, array('class' => 'input-required show-errors'), NULL, 'Apllca IVA'); ?>
+        </div>
+        <div class="col-md-2">
+            <?php 
+            if ( $articulo->tipo_articulo == 'A' ) {
+                echo DwForm::dbSelect('articulo.aplica_ice', 'titulo', array('params/tablas_tipos', 'getListadoTablasTipos', 'ice'), 'Seleccione una Opción', array('class' => 'show-errors'), NULL, 'Aplica ICE'); 
+            }
+            ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <?= DwForm::text('articulo.categoria', array('class' => 'input-required mask-text show-error', 'maxlength' => '45'), NULL, 'Categorìa'); ?>
+        </div>
+        <div class="col-md-3">
+            <?= DwForm::text('articulo.sub_categoria', array('class' => 'input-required mask-text show-error', 'maxlength' => '60'), NULL, 'Sub-categorìa'); ?>
+        </div>
+        <div class="col-md-3">
+            <?= DwForm::text('articulo.marca', array('class' => 'input-required mask-text show-error', 'maxlength' => '45'), NULL, 'Marca'); ?>
+        </div>
+        <div class="col-md-3">
+            <?= DwForm::text('articulo.unidad', array('class' => 'input-required mask-text show-error', 'maxlength' => '45'), NULL, 'Unidad'); ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <?= DwForm::textarea('articulo.nombre', array('class' => 'input-required mask-text show-error', 'maxlength' => '200'), NULL, 'Nombre'); ?>
+        </div>
+        <div class="col-md-6">
+            <?= DwForm::textarea('articulo.detalle', array('class' => 'mask-text show-error', 'maxlength' => '300'), NULL, 'Detalle'); ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-2">
+            <?= DwForm::text('articulo.cantidad', array('class' => 'input-required mask-num show-error', 'maxlength' => '5'), NULL, 'Stock Actual'); ?>
+        </div>
+        <div class="col-md-2" id="label_precio_compra">
+            <?php if ($articulo->tipo_articulo == 'A') { ?>
+                <?= DwForm::text('articulo.precio_compra', array('class' => 'input-required mask-num show-error', 'maxlength' => '20'), NULL, 'Precio Compra'); ?>
+            <?php } ?>
+        </div>
+        <div class="col-md-2">
+            <?= DwForm::text('articulo.precio_venta', array('class' => 'input-required mask-num show-error', 'maxlength' => '20'), NULL, 'Precio Venta'); ?>
+        </div>
+        <div class="col-md-2">
+            <?= DwForm::text('articulo.minimo', array('class' => 'mask-num input-required show-error', 'maxlength' => '12'), NULL, 'Stock Mínimo'); ?>
+        </div>
+        <div class="col-md-2">
+            <?= DwForm::text('articulo.maximo', array('class' => 'mask-num input-required show-error', 'maxlength' => '12'), NULL, 'Stock Máximo'); ?>
+        </div>
+    </div>
+
+    <?= DwForm::hidden('articulo.id', NULL, $articulo->id); ?>
+
+    <div class="row">
+        <div class="form-actions">
+            <?php echo DwForm::send('Agregar articulo'); ?>
+            <?php echo DwForm::cancel(); ?>
+            <?php echo DwForm::focus('articulo.mpn'); ?>            
+        </div>
+    </div>
+
+    <?php echo DwForm::close(); ?>
+
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('#articulo_tipo_articulo').change(function () {
+            actual = $(this).val();
+            row = '<div class="form-group"><label for="articulo_precio_compra">Precio Compra<span class="req">*</span></label><input id="articulo_precio_compra" name="articulo[precio_compra]" value="" class="form-control input-required mask-num show-error" maxlength="5" onchange="this.value=this.value.toUpperCase()" required="required" type="text"><p class="help-block"> <small class="help-error"></small></p></div>';
+            if (actual === 'A') {
+                $(row).appendTo("#label_precio_compra");
+            }
+            if (actual === 'S') {
+                $('#label_precio_compra').empty();
+            }
+        });
+    });
+</script>

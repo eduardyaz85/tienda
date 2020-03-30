@@ -1,0 +1,152 @@
+<?php View::flash(); ?>
+<style>
+    @media (min-width: 1200px) {
+        .container {
+            width: 1000px;
+        }
+    }
+</style>
+<div class="container shell-view">
+
+    <?php View::process($page_module, $page_title, $set_title); ?>
+
+    <?php View::partial('subnav/cliente/principal', FALSE, array('id' => Session::get('id'))); ?>
+
+    <ul class="nav nav-tabs hidden-xs">
+        <li class="active"><a href="#tab1" data-toggle="tab">Dirección Envió</a></li>
+    </ul>
+    <ul class="nav nav-pills nav-stacked visible-xs">    
+        <li class="active"><a href="#tab1" data-toggle="tab">Dirección Envió</a></li>
+    </ul>
+
+    <div class="tab-content">
+
+        <div class="tab-pane active" id="tab1">
+
+            <?php if (!empty($cliente->ruc)) { ?>
+
+                <?php echo DwForm::open(); ?>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <?= DwForm::dbSelect('cliente.tipo_documento', 'titulo', array('tablas_tipos', 'getListadoTablasTipos', 'tid'), 'Seleccione una Opción', array('class' => 'input-xlarge input-required mask-pint show-errors'), $cliente->tipo_documento, 'Tipo de identificación'); ?>
+                    </div>
+                    <div class="col-md-3" id="div_tipo_documento">
+                        <?php echo DwForm::text('cliente.ruc', array('class' => 'input-required mask-alphanum'), $cliente->ruc, 'Ruc/Cédula'); ?>
+                    </div>
+                    <div class="col-md-3">
+                        <?php echo DwForm::dbSelect('cliente.ciudad_id', 'ciudad', array('ciudad', 'getListadoCiudad', Ciudad::ACTIVO), NULL, array('class' => 'input-required'), $cliente->ciudad, 'Ciudad'); ?>
+                    </div>
+                    <div class="col-md-3">
+                        <?= DwForm::dbSelect('cliente.tipo_cliente', 'titulo', array('tablas_tipos', 'getListadoTablasTipos', TablasTipos::TIPO_CLIENTE), 'Seleccione una Opción', array('class' => 'input-xlarge input-required show-errors'), NULL, 'Tipo Cliente'); ?>
+                    </div>
+                </div>
+
+                <div class="row" id="div_tipo_cliente">
+                    <?php if ($tabla->codigo == 'PJU') { ?>
+                        <div class="col-md-8">
+                            <?= DwForm::text('cliente.apellidos', array('class' => 'input-required mask-text show-error', 'maxlength' => '60', 'placeholder' => 'Razon Social'), NULL, 'Razón Social'); ?>
+                        </div>
+                        <div class="col-md-4">
+                            <?= DwForm::text('cliente.siglas', array('class' => 'mask-alpha show-error', 'maxlength' => '60', 'placeholder' => 'Nombre Comercial'), NULL, 'Nombre Comercial'); ?>
+                        </div>
+                    <?php } else { ?>
+                        <div class="col-md-4">
+                            <?php echo DwForm::text('cliente.nombres', array('class' => 'input-required mask-alphanum'), empty($cliente->nombres) ? '' : $cliente->nombres, 'Nombres'); ?>
+                        </div>
+                        <div class="col-md-4">
+                            <?php echo DwForm::text('cliente.apellidos', array('class' => 'input-required mask-alphanum'), empty($cliente->apellidos) ? '' : $cliente->apellidos, 'Apellidos'); ?>
+                        </div>
+                        <div class="col-md-4">
+                            <?= DwForm::text('cliente.siglas', array('class' => 'mask-alpha show-error', 'maxlength' => '60', 'placeholder' => 'Nombre Comercial'), NULL, 'Nombre Comercial'); ?>
+                        </div>
+
+                    <?php } ?>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <?php echo DwForm::email('cliente.email', array('class' => 'mask-email input-required show-error'), empty($cliente->email) ? $usuario->email : $cliente->email, 'Email 1'); ?>
+                    </div>
+                    <div class="col-md-6">
+                        <?php echo DwForm::email('cliente.email2', array('class' => 'mask-email show-error'), empty($cliente->email2) ? '' : $cliente->email2, 'Email 2'); ?>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <?php echo DwForm::text('cliente.celular', array('class' => 'input-required mask-num'), $cliente->celular, 'Celular'); ?>
+                    </div>
+                    <div class="col-md-4">
+                        <?php echo DwForm::text('cliente.telefono', array('class' => 'mask-num'), $cliente->telefono, 'Teléfono'); ?>
+                    </div>
+                    <div class="col-md-4">
+                        <?php echo DwForm::text('cliente.ext', array('class' => 'mask-num'), $cliente->ext, 'Extensión'); ?>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <?php echo DwForm::textarea('cliente.direccion', array('class' => 'input-required mask-text'), $cliente->direccion, 'Dirección'); ?>
+                    </div>
+                </div>
+                <?php if (!empty($cliente->id)) { ?>
+                    <?php echo DwForm::hidden('cliente.id', NULL, $cliente->id); ?>
+                <?php } ?>
+                <div class="row">
+                    <div class="form-actions">
+                        <div class="text-right">
+                            <?php echo DwForm::send('Guardar cliente'); ?>
+                            <?php echo DwForm::cancel(); ?>
+                            <?php echo DwForm::focus('cliente.nombres'); ?>
+                        </div>
+                    </div>
+                </div>
+                <?php echo DwForm::close(); ?>
+            <?php } else { ?>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h3>Información Factura</h3>
+                        <ul class="list-group">
+
+                            <li class="list-group-item">Registre Información para la Factura</li>
+                            <li class="list-group-item">
+                                <?= DwHtml::link("micuenta/datos/agregar/" . Security::setKey(Session::get('id'), 'add_direccion'), 'Registrar', array('class' => 'no-load btn btn-success btn-large'), 'fa fa-pd-expand fa-edit', FALSE); ?>
+                            </li>
+                        </ul>
+                    </div><!-- /.col-sm-6 -->
+                </div>
+            <?php } ?>
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $('#cliente_tipo_documento').change(function () {
+            actual = $(this).val();
+            $.ajax({
+                type: "POST",
+                url: "<?php echo PUBLIC_PATH . 'micuenta/datos/input/'; ?>",
+                data: "tipo_id=" + actual,
+                success: function (data) {
+                    $("#div_tipo_documento").html(data);
+                }
+            });
+        });
+        $("#pagina-titulo").append("<?= $titulo ?>");
+        $('#cliente_tipo_cliente').change(function () {
+            actual = $(this).val();
+            $.ajax({
+                type: "POST",
+                url: "<?php echo PUBLIC_PATH . 'micuenta/datos/input/'; ?>",
+                data: "tipo_id=" + actual,
+                success: function (data) {
+                    $("#div_tipo_cliente").html(data);
+                }
+            });
+        });
+    });
+</script>

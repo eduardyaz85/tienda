@@ -1,0 +1,57 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+
+<section class="content">
+
+    <div class="box">
+
+        <div class="box-header">
+            <?php if (Session::get('perfil_id') <= Perfil::ADMIN) { ?>
+                <?php echo DwHtml::button("$modulo/agregar/", 'agregar', NULL, 'fa-check-square-o', APP_AJAX); ?>
+            <?php } ?>
+        </div>
+
+        <div class="box-body">
+
+            <div id="example2_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+
+                <table class="table table-hover">
+                    <tbody>
+                        <tr>
+                            <th>NUM</th>
+                            <th>UNIDAD</th>
+                            <th>SIMBOLO</th>
+                            <th>ESTADO</th>
+                            <?php if (Session::get('perfil_id') <= Perfil::ADMIN) { ?>
+                                <th>ACCIONES</th>
+                            <?php } ?>
+                        </tr>
+                        <?php foreach ($umedidas->items as $value): ?>
+                            <?php $key_upd = Security::setKey($value->id, 'upd_umedida'); ?>
+                            <tr>
+                                <td><?php echo $umedidas->counter; ?></td>
+                                <td><?= $value->unidad; ?></td>
+                                <td><?= $value->simbolo; ?></td>
+                                <td><?= ($value->activo == Umedida::ACTIVO) ? '<span class="label label-success">Activo</span>' : '<span class="label label-danger">Bloqueado</span>'; ?></td>
+                                <?php if (Session::get('perfil_id') <= Perfil::ADMIN) { ?>
+                                    <td class="btn-actions">
+                                        <?php echo DwHtml::buttonTable('Modificar perfil', "$modulo/editar/$key_upd/", null, 'warning', 'fa-edit'); ?>
+                                    </td>
+                                <?php } ?>
+                            </tr>
+                            <?php $umedidas->counter++; ?>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+
+                <?php View::partial('paginators/default', false, array('page' => $umedidas, 'url' => "$modulo/listar/$order/")); ?>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>

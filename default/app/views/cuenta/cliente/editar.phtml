@@ -1,0 +1,54 @@
+<?php View::flash(); ?>
+
+<div class="row">
+
+    <?= DwForm::open('', 'post', array('id' => 'data-form', 'class' => 'no-ajax dw-validate clearfix')); ?>
+
+    <div class="col-md-6">
+        <div class="billing-details">
+            <p>¿Ya eres cliente?  
+                <?php if (empty(Session::get('login'))) { ?>
+                    <?= DwHtml::link('cuenta/login/entrar', 'Iniciar sesión', array('class' => 'no-load', 'title' => 'Ingresar')); ?>
+                <?php } ?>
+            </p>
+            <div class="section-title">
+                <h3 class="title">Datos Para La Cuenta</h3>
+            </div>
+            <p>Ingrese el nombre de usuario y contraseña.
+            <p>
+            <div class="form-group">
+                <?= DwForm::text('cuenta.pool', array('class' => 'input-lower mask-text show-error', 'maxlength' => '20', 'readonly' => 'readonly'), NULL, 'Código Para Referidos'); ?>
+                <?= DwForm::text('cuenta.nombre', array('class' => 'input-required mask-text show-error', 'maxlength' => '45', 'placeholder' => 'Nombres', 'autocomplete' => 'off'), NULL, 'Nombres'); ?>
+                <?= DwForm::text('cuenta.apellido', array('class' => 'input-required mask-text show-error', 'maxlength' => '45', 'placeholder' => 'Apellidos', 'autocomplete' => 'off'), NULL, 'Apellidos'); ?>
+            </div>
+            <div class="form-group">
+                <?php echo DwForm::text('cuenta.login', array('class' => 'input-lower', 'readonly' => 'readonly'), NULL, 'Usuario'); ?>
+                <?php echo DwForm::email('cuenta.email', array('class' => 'input-email mask-email', 'autocomplete' => 'off'), NULL, 'Email'); ?>
+            </div>
+
+            <?php echo DwForm::hidden('mode', null, 'auth'); ?>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="order-summary clearfix">
+            <?php echo DwButton::submit('Actualizar', 'fa-save', array('class' => 'primary-btn btn-danger btn-guarda-orden'), 'Actualizar'); ?>
+        </div>
+
+    </div>
+
+    <?= DwForm::close(); ?>
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#cuenta_password").val('');
+    });
+    $(function () {
+        $('#data-form').on('submit', function (e) { //use on if jQuery 1.7+
+            $("#flash-message").empty();
+            flashInfo('Almacenando Espere por favor...');
+        });
+    });
+</script>

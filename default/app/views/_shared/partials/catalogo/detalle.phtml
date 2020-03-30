@@ -1,0 +1,129 @@
+<h2 align="right"><?= $orden->numero ?></h2>
+<table width="100%" style=" font-family: sans-serif;">
+    <tbody>
+        <tr>
+            <td width="15%"><b>Ref Atención:</b></td>
+            <td width="40%" colspan="6"> </td>
+            <td width="15%" align="right"><b>Fecha:</b></td>
+            <td width="40%" colspan="2" align="center"><?= DwOnline::FechaFormato(date("Y-m-d", strtotime($orden->fecha_emision))) ?></td>
+        </tr>
+        <tr>
+            <td><b>Cliente: </b></td>
+            <td colspan="6"><?= $orden->nombres . ' ' . $orden->razon_social ?></td>
+            <td align="right"><b>RUC:</b></td>
+            <td colspan="2" align="center"><?= $orden->ruc ?></td>
+        </tr>
+        <tr>
+            <td><b>Dirección: </b></td>
+            <td colspan="9"><?= $orden->ciudad ?>, <?= $orden->direccion ?></td>
+        </tr>
+        <tr>
+            <td><b>Teléfono: </b></td>
+            <td colspan="4"><?= empty($orden->telefono) ? $orden->celular : $orden->telefono ?></td>
+            <td align="right"><b>e-mail: </b></td>
+            <td colspan="4"><?= empty($orden->email) ? 'SIN EMAIL' : $orden->email ?></td>
+        </tr>
+    </tbody>
+</table>
+<br>
+
+<div style="height: 450px;font-size:8pt; font-family: lucidaconsole, mono;">
+    <table width="100%" style=" font-family: sans-serif;">
+        <thead>
+            <tr bgcolor="blue">
+                <td colspan="10"></td>
+            </tr>
+            <tr>
+                <td width="7%"><b>Cant.</b></td>
+                <td width="13%"><b>Códido</b></td>
+                <td width="45%" colspan="6"><b>Detalle</b></td>
+                <td width="7%" align="right"><b>Precio U.</b></td>
+                <td width="7%" align="right"><b>Desc.%</b></td>
+                <td width="10%" align="right"><b>Total</b></td>
+                <?php if (DwAuth::isLogged()) { ?>
+                    <td width="10%" align="right">Accion</td>
+                <?php } ?>
+            </tr>
+        </thead>
+        <tbody id="table-items">
+            <?php $counter = 0; ?>
+            <?php $sub_total = 0; ?>
+            <?php $costo_total = 0; ?>
+            <?php $dsc_total = 0; ?>
+            <?php if ($detalle) { ?>
+                <?php foreach ($detalle as $articulo): ?>
+                    <?php $key_upd = Security::setKey($articulo->id, 'upd_item'); ?>
+                    <?php $key_del = Security::setKey($articulo->id, 'del_item'); ?>
+                    <tr id="row-items-<?= $articulo->id; ?>" data-movement="<?= $articulo->id; ?>">
+                        <td class="borde-tbl" align="center"><?= $articulo->cantidad; ?></td>
+                        <td class="borde-tbl"><?= $articulo->mpn; ?></td>
+                        <td colspan="6" class="borde-tbl"><?= $articulo->descripcion; ?></td>
+                        <td class="borde-tbl" align="right"><?= $articulo->precio_venta; ?></td>
+                        <td class="borde-tbl" align="right"><?= $articulo->descuento; ?></td>
+                        <td class="borde-tbl" align="right">$ <?= $articulo->valor_total; ?></td>
+                        <?php if (DwAuth::isLogged()) { ?>
+                            <td class="borde-tbl" align="right">
+                                <?php if (Session::get('perfil_id') <= Perfil::SUPERVISOR) { ?>
+                                    <?= DwHtml::buttonTable('Editar articulo', "catalogo/items/editar/$key_upd/", array('class' => 'upd-items', 'data-to' => PUBLIC_PATH . "catalogo/items/editar/$key_upd/"), 'warning', 'fa-edit'); ?>
+                                    <?= DwHtml::buttonTable("Eliminar articulo", "catalogo/items/anular/$key_del/", array("class" => "js-confirm", "confirm-title" => "Eliminar articulo", "confirm-body" => "Está seguro de eliminar este registro? <br />Recuerda que esta operación no se puede reversar.", 'on-confirm' => 'removeItem'), "danger", "fa-ban"); ?>
+                                <?php } ?>
+                            </td>
+                        <?php } ?>
+                    </tr>
+                    <?php if ($articulo->detalle) { ?>
+                        <tr>
+                            <td class="borde-tbl"></td>
+                            <td class="borde-tbl"></td>
+                            <td colspan="6" class="borde-tbl"><?= $articulo->detalle; ?></td>
+                            <td class="borde-tbl"></td>
+                            <td class="borde-tbl"></td>
+                            <td class="borde-tbl"></td>
+                        </tr>
+                    <?php } ?>
+                    <?php $counter++; ?>
+                    <?php $sub_total += $articulo->valor_total; ?>
+                    <?php $costo_total += DwOnline::setPrecios($articulo->valor_total, $articulo->valor); ?>
+                <?php endforeach; ?>
+            <?php } ?>
+        </tbody>
+    </table>
+
+</div>
+
+<table width="100%" style=" font-family: sans-serif;">
+    <tbody>
+        <tr bgcolor="blue">
+            <td colspan="10"></td>
+        </tr>
+        <tr>
+            <td width="20%"><b>CRÉDITO:</b></td>
+            <td width="50%" colspan="7"><?= empty($orden->credito) ? 'NO TIENE' : $orden->tiempo . ' DIAS' ?></td>
+            <td width="10%" align="right"><b>SUBTOTAL:</b></td>
+            <td width="15%" align="right">$ <?= number_format($sub_total, 2) ?></td>
+        </tr>
+        <tr>
+            <td><b>FORMA DE PAGO:</b></td>
+            <td colspan="7"><?= $orden->pagos ?></td>
+            <td align="right"><b>DESCUENTO:</b></td>
+            <td align="right">$ 0.00</td>
+        </tr>
+        <tr>
+            <td><b>TIPO DE ENTREGA:</b></td>
+            <td colspan="7"><?= empty($orden->tiempo_entrega) ? '' : $orden->tiempo_entrega . ' Hrs' ?></td>
+            <td align="right"><b>IVA 12 %:</b></td>
+            <td align="right">$ <?= number_format($costo_total - $sub_total, 2) ?></td>
+        </tr>
+        <tr>
+            <td><b>GARANTÍA:</b></td>
+            <td colspan="7"><?= empty($orden->garantia) ? '' : $orden->garantia ?></td>
+            <td align="right"><b>IVA 0 %:</b></td>
+            <td align="right">$ 0.00</td>
+        </tr>
+        <tr>
+            <td><b>VÁLIDEZ:</b></td>
+            <td colspan="7"><?= empty($orden->vigencia) ? '' : $orden->vigencia . ' Días' ?></td>
+            <td align="right"><b>TOTAL:</b></td>
+            <td align="right"><b>$ <?= number_format($costo_total, 2) ?></b></td>
+        </tr>
+    </tbody>
+</table><br>

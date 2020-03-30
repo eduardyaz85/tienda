@@ -1,0 +1,63 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<section class="content">
+
+    <?= DwForm::open('', 'post', array('id' => 'form', 'class' => 'dw-validate  no-ajax')); ?>
+
+    <div class="box box-danger">
+
+        <div class="box-body">
+
+            <div class="row">
+                <div class="col-md-4">
+                    <?= DwForm::text('marca.marca', array('class' => 'input-medium input-required mask-text show-error', 'maxlength' => '60'), NULL, 'Marca'); ?>
+                </div>
+                <div class="col-md-4">
+                    <?= DwForm::text('marca.brand', array('class' => 'input-medium input-required mask-text show-error', 'maxlength' => '10'), NULL, 'Abreviatura'); ?>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row fileupload-buttonbar">
+
+                        <div class="col-md-6" style="margin-bottom: 20px;">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <?php echo DwForm::upload('imagen', array('data-to' => PUBLIC_PATH . 'administracion/marcas/upload/', 'data-size' => 5000000, 'data-files' => 'images', 'data-success' => 'loadImg'), 'Fotografía'); ?>
+                                </div>
+
+                                <?php $foto = empty($marca->imagen) ? 'default.jpg' : $marca->imagen; ?>
+
+                                <div class="col-md-6">
+                                    <div class="picture-profile text-center text-middle shadow-dark" style="margin: 5px auto 0px;">
+                                        <?php echo DwHtml::img("upload/marcas/$foto", "Fotografía", array('id' => 'img-marca', 'width' => '300')); ?>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <?= DwForm::hidden('marca.imagen', NULL, 'default.png'); ?>
+
+            <div class="box box-info">
+                <div class="box-footer">
+                    <?php echo DwForm::send('Agregar marca'); ?>
+                    <?php echo DwForm::cancel(); ?>
+                    <?php echo DwForm::focus('marca.marca'); ?>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <?php echo DwForm::close(); ?>
+
+</section>

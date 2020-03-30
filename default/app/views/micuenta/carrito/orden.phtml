@@ -1,0 +1,212 @@
+<?php View::flash(); ?>
+<style>
+    @media (min-width: 1200px) {
+        .container {
+            width: 1078px;
+        }
+        .logo_products {
+            padding: 2em 0 1em;
+        }
+    }
+</style>
+<div class="privacy about">
+
+    <?php View::process($page_module, $page_title, $set_title); ?>
+
+    <div class="btn-toolbar btn-toolbar-top">
+        <div class="row">
+            <div class="btn-actions">
+                <?php if (Session::get('perfil_id') <= Perfil::SUPERVISOR) { ?>
+                <?php } ?>
+            </div>            
+        </div>
+    </div>
+
+    <div class="container-overflow">
+
+        <table class="table table-bordered table-hover table-striped table-condensed table-responsive">
+            <thead>
+                <tr>
+                    <th>NUM</th>
+                    <th data-order="perfil">NUMERO ORDEN</th>
+                    <th data-order="perfil">FECHA ORDEN</th>
+                    <th data-order="estado">OBSERVACIONES</th>
+                    <th data-order="estado">ARTICULOS</th>
+                    <th data-order="estado">ESTADO</th>
+                    <?php if (Session::get('perfil_id') == Perfil::CLIENTE) { ?>
+                    <th class="btn-actions col-blocked text-center" style="width: 50px;">ACCIONES</th>
+                    <?php } ?>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($orden_carrito->items as $orden): ?>
+                    <?php $key_shw = Security::setKey($orden->id, 'shw_orden'); ?>
+                    <tr>
+                        <td><?php echo $orden_carrito->counter; ?></td>
+                        <td><?= $orden->codigo; ?></td>
+                        <td><?= $orden->fecha_compra; ?></td>
+                        <td><?= $orden->observaciones; ?></td>
+                        <td><?= $carrito->getTotalArticulos($orden->id)->total; ?></td>
+                        <td><?= DwOnline::setEstadoOrden($orden->activo); ?></td>
+                        <?php if (Session::get('perfil_id') == Perfil::CLIENTE) { ?>
+                            <td class="btn-actions">
+                                <?php echo DwHtml::buttonTable('Ver orden', "cliente/carrito/ver/$key_shw/", NULL, 'info', 'fa-search'); ?>
+                            </td>
+                        <?php } ?>
+                    </tr>
+                    <?php $orden_carrito->counter++; ?>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+
+    </div>
+
+    <?php View::partial('paginators/default', false, array('page' => $orden_carrito, 'url' => "compras/gastos/listar/$order/")); ?>
+</div>
+
+
+<div class="modal fade" tabindex="-1" id="form-add-ingreso" role="dialog" aria-labelledby="form-add-ingreso" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <?php echo DwForm::open("compras/gastos/ingreso/", '', array('id' => 'form-ingresos', 'class' => 'dw-validate no-ajax')); ?>
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3>Ingreso</h3>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <?= DwForm::date('ingreso.fecha', array('class' => 'input-small show-error', 'maxlength' => '60'), NULL, 'Fecha Ingreso'); ?>
+                    </div>
+                    <div class="col-md-6">
+                        <?= DwForm::text('ingreso.factura', array('class' => 'input-small mask-num show-error', 'maxlength' => '18'), NULL, 'Factura#'); ?>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-10">
+                        <?= DwForm::dbSelect('ingreso.tipo_divisa', 'titulo', array('tablas_tipos', 'getListadoTablasTipos', 'tpd'), 'Seleccione una Opción', array('class' => 'input-xlarge input-required mask-pint show-errors'), 3, 'Tipo Divisa'); ?>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-10">
+                        <?= DwForm::textarea('ingreso.descripcion', array('class' => 'input-xxlarge input-required mask-text show-error', 'maxlength' => '80'), NULL, 'Descripcion Ingresos'); ?>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-10">
+                        <?= DwForm::text('ingreso.valor', array('class' => 'input-large input-required mask-num show-error', 'maxlength' => '10'), NULL, 'Valor $'); ?>
+                    </div>
+                    <div class="col-md-10">
+                        <?= DwForm::dbSelect('ingreso.tipo_movimiento', 'titulo', array('tablas_tipos', 'getListadoTablasTipos', 'tpm'), 'Seleccione una Opción', array('class' => 'input-xlarge input-required mask-pint show-errors'), NULL, 'Categoría'); ?>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</button>   
+                <?php echo DwForm::submit("Guardar", array('id' => 'btn-submit-nueva', 'class' => 'btn btn-primary')); ?>
+            </div>
+
+            <?php echo DwForm::close(); ?>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="form-add-gasto" role="dialog" aria-labelledby="form-add-gasto" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <?php echo DwForm::open("compras/gastos/gasto/", '', array('id' => 'form-gasto', 'class' => 'dw-validate no-ajax')); ?>
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3>Gasto</h3>
+            </div>
+
+            <div class="modal-body"> 
+
+                <div class="row-fluid">
+                    <div class="span3">
+                        <?= DwForm::date('gasto.fecha', array('class' => 'input-small show-error', 'maxlength' => '60'), NULL, 'Fecha Gasto'); ?>
+                    </div>
+                    <div class="span3">
+                        <?= DwForm::text('gasto.factura', array('class' => 'input-small mask-num show-error', 'maxlength' => '18'), NULL, 'Factura#'); ?>
+                    </div>
+                    <div class="span6">
+                        <?= DwForm::dbSelect('gasto.tipo_divisa', 'titulo', array('tablas_tipos', 'getListadoTablasTipos', 'tpd'), 'Seleccione una Opción', array('class' => 'input-xlarge input-required mask-pint show-errors'), 3, 'Tipo Divisa'); ?>
+                    </div>
+                </div>
+
+                <div class="row-fluid">
+                    <div class="span12">
+                        <?= DwForm::textarea('gasto.descripcion', array('class' => 'input-xxlarge input-required mask-text show-error', 'maxlength' => '80'), NULL, 'Descripcion Gasto'); ?>
+                    </div>
+                </div>
+
+                <div class="row-fluid">
+                    <div class="span6">
+                        <?= DwForm::text('gasto.valor', array('class' => 'input-large input-required mask-num show-error', 'maxlength' => '10'), NULL, 'Valor $'); ?>
+                    </div>
+                    <div class="span6">
+                        <?= DwForm::dbSelect('gasto.tipo_movimiento', 'titulo', array('tablas_tipos', 'getListadoTablasTipos', 'tpg'), 'Seleccione una Opción', array('class' => 'input-xlarge input-required mask-pint show-errors'), NULL, 'Categoría'); ?>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cancelar</button>
+                <?php echo DwForm::submit("Guardar", array('class' => 'btn btn-primary')); ?>
+            </div>
+
+            <?php echo DwForm::close(); ?>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    /***** Funciones para abrir los dialogos *****/
+    function ingresonuevo(refer) {
+        $("#dw-message").empty();
+        $("#form-ingresos").attr('action', refer.attr('href')).attr('data-update', 'false');
+        $('#form-add-ingreso').modal('show');
+        form = $('#form-add-ingreso');
+        $('.input-break', form).val('');
+        $("#ingreso_fecha").focus();
+    }
+    function gastonuevo(refer) {
+        $("#dw-message").empty();
+        $("#form-gasto").attr('action', refer.attr('href')).attr('data-update', 'false');
+        $('#form-add-gasto').modal('show');
+        form = $('#form-add-gasto');
+        $('.input-break', form).val('');
+        $("#gasto_fecha").focus();
+    }
+    $(function () {
+        $("#pagina-titulo").append("<?= $titulo ?>");
+        $('.btn-ingreso').on('click', function (e) {
+            e.stopImmediatePropagation();
+            ingresonuevo($(this));
+            return false;
+        });
+        $('.btn-gasto').on('click', function (e) {
+            e.stopImmediatePropagation();
+            gastonuevo($(this));
+            return false;
+        });
+        $("#form-ingresos").on('submit', function () {
+            flashInfo('Almacenando...<br />Espere por favor.');
+            $('#form-add-ingreso').modal('hide');
+        });
+        $("#form-gasto").on('submit', function () {
+            flashInfo('Almacenando...<br />Espere por favor.');
+            $('#form-add-gasto').modal('hide');
+        });
+    });
+</script>

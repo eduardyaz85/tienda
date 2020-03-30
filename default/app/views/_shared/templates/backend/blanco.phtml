@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="<?php echo APP_CHARSET; ?>">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title><?php echo $page_title; ?></title>
+        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+        <?php Tag::css('backend/themes/template/bootstrap.min'); ?>
+        <?php Tag::css('font-awesome.min'); ?>
+        <?php Tag::css('ionicons.min'); ?>
+        <?php Tag::css('backend/themes/template/AdminLTE.min'); ?>
+        <?php Tag::css('backend/themes/skins/_all-skins.min'); ?>
+        <?php // Tag::css('backend/themes/all'); ?>
+        <?php // Tag::css('file-upload/jquery.fileupload'); ?>
+        <?php // Tag::css('file-upload/jquery.fileupload-ui'); ?>
+        <?php echo Html::includeCss(); ?>        
+
+        <?php // echo Tag::js('jquery/jquery.min') . PHP_EOL; ?>
+        <?php // echo Tag::js('jquery/ui/jquery.ui.widget'); ?>
+        <?php // echo Tag::js('jquery/jquery-file-upload/jquery.iframe-transport'); ?>
+        <?php // echo Tag::js('jquery/jquery-file-upload/jquery.fileupload'); ?>
+        <?php // echo Tag::js('jquery/jquery-file-upload/jquery.fileupload-fp'); ?>        
+        <?php // echo Tag::js('jquery/jquery-file-upload/jquery.fileupload-ui'); ?>
+
+ <!--[if gte IE 8]><?php // echo Tag::js('jquery/jquery-file-upload/cors/jquery.xdr-transport'); ?><![endif]-->
+        <style type="text/css">
+<?php if (APP_MAYUS) { ?>
+                .input-lower, .input-email, email, .mask-email, .js-datepicker { text-transform: none !important; font-size: 14px !important}
+                textarea, select, input[type="text"], input[type="search"], .uneditable-input { text-transform: uppercase; font-size: 13px }
+<?php } ?>
+        </style>
+        <script type="text/javascript">
+            function changeTitle(title) {
+                if ($(document).attr('title') != title) {
+                    $(document).attr('title', title);
+                }
+            }
+        </script>
+    </head>
+    <body class="hold-transition skin-blue fixed sidebar-mini">
+
+        <div class="wrapper">
+            <noscript><h5 style="text-align: center;">¡Tu navegador no soporta Javascript!.. Activa el uso de Javascript en tu navegador.</h5><meta http-equiv="refresh" content="1; URL=<?php echo PUBLIC_PATH; ?>dashboard/login/salir/no-script/" /></noscript>
+            <?php DwMenuBackend::load(Menu::BACKEND, Session::get('perfil_id')); ?>
+
+            <?php View::partial('backend/header'); ?>
+
+            <?php View::partial('backend/main'); ?>
+
+            <div class="content-wrapper">
+                <div id="shell-load">
+                    <?php View::content(); ?>
+                </div>
+            </div>
+
+            <?php View::partial('backend/footer'); ?>
+
+            <?php View::partial('backend/sidebar'); ?>
+
+            <div class="control-sidebar-bg"></div>
+
+        </div>
+
+        <?php // echo Tag::js('bootstrap/bootstrap.min') . PHP_EOL; ?>
+        <?php // echo Tag::js('bootstrap/bootstrap.typehead.min') . PHP_EOL; ?>
+        <?php // echo Tag::js('jquery/jquery.kumbiaphp') . PHP_EOL; ?>
+        <?php // echo Tag::js('jquery/jquery.keyfilter') . PHP_EOL; ?>
+        <?php // echo Tag::js('jquery/jquery.kload') . PHP_EOL; ?>        
+        <?php // echo Tag::js('jquery/jquery.spin') . PHP_EOL; ?>        
+        <?php // echo Tag::js('html5shiv') . PHP_EOL; ?>        
+
+        <?php // echo Tag::js('backend') . PHP_EOL; ?>
+        <?php // echo Tag::js('validador') . PHP_EOL; ?>
+
+    </body>
+</html>

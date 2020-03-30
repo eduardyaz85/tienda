@@ -1,0 +1,36 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<section class="content">
+
+    <?= DwForm::open('', 'post', array('id' => 'form', 'class' => 'dw-validate  no-ajax')); ?>
+
+    <div class="box box-danger">
+
+        <div class="box-body">
+
+            <div class="row">
+                <div class="col-md-6">
+                    <?= DwForm::text('ciudad.ciudad', array('class' => 'input-medium input-required mask-text show-error', 'maxlength' => '60'), NULL, 'Ciudad'); ?>
+                </div>
+                <div class="col-md-6">
+                    <?= DwForm::select('ciudad.region', array('' => 'Seleccione', 'l' => 'LOCAL', 'c' => 'COSTA', 's' => 'SIERRA', 'O' => 'ORIENTE', 'g' => 'GALAPAGOS'), array('class' => 'input-break input-medium input-required mask-pint show-errors'), NULL, 'REGION'); ?>
+                </div>
+            </div>
+
+            <div class="box box-info">
+                <div class="box-footer">
+                    <?= DwButton::save('Guardar información'); ?>
+                    <?php echo DwForm::cancel(); ?>
+                    <?php echo DwForm::focus('ciudad.ciudad'); ?>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <?php echo DwForm::close(); ?>
+
+</section>

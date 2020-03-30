@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="es">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Cuenta Cliente</title>
+        <link href="<?= $dominio ?>css/backend/themes/template/bootstrap.min.css" rel="stylesheet" type="text/css" media="screen" />
+        <link href="<?= $dominio ?>css/frontend/font-awesome.min.css" rel="stylesheet" type="text/css" media="screen" />
+        <style type="text/css">
+            /* Outlines the grid, remove when sending */
+            table td { border:1px solid #ffffff; }
+            /* CLIENT-SPECIFIC STYLES */
+            body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+            table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+            img { -ms-interpolation-mode: bicubic; }
+            /* RESET STYLES */
+            img { border: 0; outline: none; text-decoration: none; }
+            table { border-collapse: collapse !important; }
+            body { margin: 0 !important; padding: 0 !important; width: 100% !important; }
+            /* iOS BLUE LINKS */
+            a[x-apple-data-detectors] {
+                color: inherit !important;
+                text-decoration: none !important;
+                font-size: inherit !important;
+                font-family: inherit !important;
+                font-weight: inherit !important;
+                line-height: inherit !important;
+            }
+            /* ANDROID CENTER FIX */
+            div[style*="margin: 16px 0;"] { margin: 0 !important; }
+        </style>    
+    </head>
+    <body style="margin:0; padding:0; background-color:#F2F2F2;">
+        <center>
+            <div style="background-color:#ffffff; max-width: 640px; margin: auto;">
+                <!--[if mso]>
+                <table role="presentation" width="640" cellspacing="0" cellpadding="0" border="0" align="center">
+                <tr>
+                <td>
+                <![endif]-->
+
+                <table width="640" cellspacing="0" cellpadding="0" border="0" align="center" style="max-width:640px; width:100%;" bgcolor="#FFFFFF">
+                    <tr>
+                        <td align="center" valign="top" style="padding:10px;">
+                            <table width="600" cellspacing="0" cellpadding="0" border="0" align="center" style="max-width:600px; width:100%;">
+                                <tr>
+                                    <td align="center" valign="top" style="padding:10px;">
+                                        Estimado(a)  <b><?= ucwords(strtolower($data->nombre)) ?> <?= ucwords(strtolower($data->apellido)) ?>.</b>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="left" style="padding:10px;font-size: medium;">
+                                        <b>Bienvenido  a Asdin,</b> Recibimos una solicitud para otorgarle acceso a nuestro WebStore con una nueva contraseña.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="left" style="padding:10px;font-size: medium;">
+                                        Por favor haga clic en el siguiente enlace para crear su contraseña.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center" style="padding:10px;font-size: medium;">
+                                        <a href="<?php echo $url; ?>" class="btn primary-btn btn-success text-bold"><i class="btn-icon-only fa fa-unlock"></i> <span class="hidden-xs">RESTABLECER CLAVE</span></a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+                <?php View::partial('correo/footer'); ?>
+                <!--[if mso]>
+                </td>
+                </tr>
+                </table>
+                <![endif]-->
+            </div>
+
+        </center>
+    </body>
+</html>

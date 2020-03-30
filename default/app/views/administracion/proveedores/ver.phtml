@@ -1,0 +1,149 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<section class="content">
+
+
+    <div class="row">
+
+        <div class="col-xs-12">
+            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#fa-home" data-toggle="tab">Empresa</a></li>
+                    <li><a href="#segunda" data-toggle="tab">Contactos</a></li>
+                </ul>
+
+                <div class="tab-content">
+
+                    <div class="tab-pane active" id="fa-home">
+
+                        <section id="new">
+                            <h4 class="page-header">Informaci&oacute;n</h4>
+                        </section>
+
+                        <?= DwForm::open('', 'post', array('id' => 'form', 'class' => 'dw-validate')); ?>
+
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <h3><?= $proveedor->sucursal ?></h3>
+                                <ul class="list-group">
+                                    <li class="list-group-item"><?= DwForm::label('<b>Cédula/Ruc: </b>' . $proveedor->ruc, 'label'); ?></li>
+                                    <li class="list-group-item"><?= DwForm::label('<b>Nombres: </b>' . $proveedor->nombres, 'label'); ?></li>
+                                    <li class="list-group-item"><?= DwForm::label('<b>Razón Social: </b>' . $proveedor->razon_social, 'label'); ?></li>
+                                    <li class="list-group-item"><?= DwForm::label('<b>Dirección: </b>' . $proveedor->ciudad . ', ' . $proveedor->direccion, 'label'); ?></li>
+                                    <li class="list-group-item"><?= DwForm::label('<b><i class="fa fa-phone" aria-hidden="true"></i> </b><a href="tel: ' . $proveedor->telefono . '">' . $proveedor->telefono . '</a> <a href="tel: ' . $proveedor->telefono2 . '">' . $proveedor->telefono2 . '</a>  Ext. ' . $proveedor->ext, 'label'); ?></li>
+                                    <li class="list-group-item"><?= DwForm::label('<b>Celular: </b>' . $proveedor->celular, 'label'); ?></li>
+                                </ul>
+                            </div><!-- /.col-sm-4 -->
+                            <div class="col-sm-4">
+                                <h3>Información Contacto</h3>
+                                <ul class="list-group">
+                                    <li class="list-group-item"><?= DwForm::label('<b>Representante Legal: </b>' . $proveedor->legal, 'label'); ?></li>
+                                    <li class="list-group-item"><?= DwForm::label('<a href="mailto:' . $proveedor->email . '"><i class="fa fa-envelope-o" aria-hidden="true"></i> ' . $proveedor->email . '</a>', 'label'); ?></li>
+                                    <li class="list-group-item"><?= DwForm::label('<a href="mailto:' . $proveedor->email2 . '"><i class="fa fa-envelope-o" aria-hidden="true"></i> ' . $proveedor->email2 . '</a>', 'label'); ?></li>
+                                    <li class="list-group-item"><?= DwForm::label('<b>Web: </b><a href="' . $proveedor->web . '" target="_blank"><i class="fa fa-globe" aria-hidden="true"></i> ' . $proveedor->web . '</a>', 'label'); ?></li>
+                                    <li class="list-group-item"><?= DwForm::label('<b>Observación: </b>' . $proveedor->detalle, 'label'); ?></li>
+                                </ul>
+                            </div><!-- /.col-sm-4 -->
+                            <div class="col-sm-4">
+                                <h3>Información Empresa</h3>
+                                <?php
+                                if ($proveedor->tipo == '1') {
+                                    $tipo = 'BIENES';
+                                } else if ($proveedor->tipo == '2') {
+                                    $tipo = 'SERVICIOS';
+                                } else if ($proveedor->tipo == '3') {
+                                    $tipo = 'RECURSOS';
+                                }
+                                ?>
+                                <ul class="list-group">
+                                    <li class="list-group-item"><?= DwForm::label('<b>Contribuyente Especial: </b>' . $proveedor->especial, 'label'); ?></li>
+                                    <li class="list-group-item"><?= DwForm::label('<b>Tipo de Proveedor: </b>' . $tipo, 'label'); ?></li>
+                                    <li class="list-group-item"><?= DwForm::label('<b>INCOTERMS: </b>' . (($proveedor->lugar == '1') ? 'LOCAL' : 'INTERNACIONAL'), 'label'); ?></li>
+                                    <li class="list-group-item"><?= DwForm::label('<b>Ciudad: </b>' . $proveedor->ciudad, 'label'); ?></li>
+                                </ul>
+                            </div><!-- /.col-sm-4 -->
+                        </div>
+
+                        <div class="row">
+                            <div class="form-actions">
+                                <?php $key_upd = Security::setKey($proveedor->id, 'upd_proveedor'); ?>
+                                <?php $key_add = Security::setKey($proveedor->id, 'add_contacto'); ?>
+                                <?= DwHtml::button("$modulo/contacto/$key_add/", 'agregar contacto', array('class' => 'btn-success'), 'fa-check', APP_AJAX); ?>
+                                <?= DwHtml::button("$modulo/editar/$key_upd/", 'Modificar', array('class' => 'btn-warning'), 'fa-edit'); ?>
+                            </div>
+                        </div>
+
+                        <?= DwForm::close(); ?>
+
+                    </div>
+
+                    <div class="tab-pane" id="segunda">
+
+                        <?php if ((Session::get('perfil_id') == Perfil::SUPER_USUARIO)) { ?>
+                            <div class="row no-print">
+                                <div class="col-xs-12">
+                                    <?php echo DwHtml::button("$modulo/contacto/$key_add/", 'item', array('class' => 'btn-success btn-agrega-articulod'), 'fa-plus', APP_AJAX); ?>
+                                </div>
+                            </div>
+                        <?php } ?>
+
+                        <div class="box-body table-responsive no-padding">
+
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>NUM</th>
+                                        <th>CARGO</th>
+                                        <th>NOMBRES</th>
+                                        <th>APELLIDOS</th>
+                                        <th>CELULAR</th>
+                                        <th>EXTENSION</th>
+                                        <th>EMAIL</th>
+                                        <th>ESTADO</th>
+                                        <th class="col-blocked text-center">ACCIONES</th>
+                                    </tr>            
+                                </thead>
+                                <tbody>      
+                                    <?php if ($contactos) { ?>
+                                        <?php $counter = 1; ?>
+                                        <?php foreach ($contactos as $contacto): ?>
+                                            <?php $key_upd = Security::setKey($contacto->id, 'upd_contacto'); ?>
+                                            <?php $key_ina = Security::setKey($contacto->id, 'inactivar_contacto'); ?>
+                                            <?php $key_rea = Security::setKey($contacto->id, 'reactivar_contacto'); ?>
+                                            <tr>
+                                                <td><?= $counter; ?></td>
+                                                <td><?= $contacto->cargo; ?></td>
+                                                <td><?= $contacto->nombre; ?></td>
+                                                <td><?= $contacto->apellido; ?></td>
+                                                <td><?= $contacto->celular; ?></td>
+                                                <td><?= $contacto->extension; ?></td>
+                                                <td><?= $contacto->email; ?></td>
+                                                <td><?= ($contacto->estado == Contactos::ACTIVO) ? '<span class="label label-success" title="' . $contacto->nombre . '" rel="tooltip">Activo</span>' : '<span class="label label-danger" title="' . $contacto->nombre . '" rel="tooltip">Bloqueado</span>'; ?></td>
+                                                <td>
+                                                    <?= DwHtml::buttonTable('Modificar contacto', "$modulo/modifica/$key_upd/", null, 'info', 'fa-edit'); ?>
+                                                    <?php if ($contacto->estado == Contactos::ACTIVO) { ?>
+                                                        <?= DwHtml::buttonTable('Bloquear contacto', "$modulo/estadocontacto/inactivar/$key_ina/", null, 'success', 'fa-flag'); ?>
+                                                    <?php } else { ?>
+                                                        <?= DwHtml::buttonTable('Reactivar contacto', "$modulo/estadocontacto/reactivar/$key_rea/", null, 'danger', 'fa-flag'); ?>
+                                                    <?php } ?>
+                                                </td>
+                                            </tr>
+                                            <?php $counter++; ?>
+                                        <?php endforeach; ?>
+                                    <?php } ?>
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+</section>

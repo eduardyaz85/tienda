@@ -1,0 +1,115 @@
+<?php View::flash(); ?>
+<style>
+    @media (min-width: 1200px) {
+        .container {
+            width: 1078px;
+        }
+    }
+    .badge{
+        font-size: 18px;
+    }
+    .col-md-3 {
+        padding: 0;
+    }
+    .privacy {
+        padding-top: 0;
+    }
+</style>
+<div class="container shell-view">
+
+    <?php View::process($page_module, $page_title, $set_title); ?>
+
+    <?php //View::partial('subnav/cliente/principal', FALSE, array('id' => Session::get('id'))); ?>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="list-group list-group-alternate">
+                <a href="#" class="list-group-item"><span class="badge badge-success"><?= empty($direccion->tipo_envio) ? 'Sin Dirección' : $tabla_tipo->getNombreTabla($direccion->tipo_envio)->titulo ?></span> <i class="ti ti-email"></i> Enviar a </a> 
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="list-group list-group-alternate">
+                <a href="#" class="list-group-item"><span class="badge badge-success"><?= $carrito_total->total ?></span> <i class="ti ti-email"></i> Articulos Adquiridos </a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="list-group list-group-alternate">
+                <a href="#" class="list-group-item"><span class="badge badge-success">$ <?= $carrito_suma->total ?></span> <i class="ti ti-email"></i> Total </a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="list-group list-group-alternate">
+                <a href="#" class="list-group-item">Estado: <?= empty($orden_carrito->id) ? '' : DwOnline::setEstadoOrden($orden_carrito->activo) ?></a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="list-group list-group-alternate">
+                <a href="#" class="list-group-item">Forma de Pago <?= empty($orden_carrito->forma_pago) ? 'Sin Forma de Pago' : $tabla_tipo->getNombreTabla($orden_carrito->forma_pago)->titulo ?> </a> 
+                <a href="#" class="list-group-item">Cancelado $ <?= $orden_carrito->valor_cancelado ?></a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="list-group list-group-alternate">
+                <a href="#" class="list-group-item">Documento# <?= $orden_carrito->documento ?><br><br></a>
+                <a href="#" class="list-group-item">Institución <?= $orden_carrito->institucion ?></a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="list-group list-group-alternate">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="list-group list-group-alternate" style="padding-top: 5px; padding-left: 10px">
+                <?= empty($orden_carrito->id) ? '' : DwHtml::link("cliente/cart/finalizar/" . Security::setKey($orden_carrito->id, 'fin_orden'), 'FINALIZAR COMPRA', array('class' => 'no-load btn btn-success btn-large'), 'fa fa-pd-expand fa-money', FALSE); ?>
+            </div>
+        </div>
+    </div>
+    <!-- resumen articulos -->
+    <div class="privacy">
+        <?php if ($orden_carrito) : ?>
+            <div class="privacy1">
+                <h4>PEDIDO N.º <?= $orden_carrito->codigo ?></h4>
+                <div class="banner-bottom-grid1 privacy1-grid">
+                    <?php foreach ($carrito_detalle->items as $carrito): ?>
+                        <?php $key_del = Security::setKey($carrito->id, 'eliminar_items'); ?>
+                        <?php $key_agr = Security::setKey($carrito->id, 'agrega_items'); ?>
+                        <?php $key_qui = Security::setKey($carrito->id, 'quita_items'); ?>
+                        <?php $foto = $galeria->getFotoProducto($carrito->mpn)->imagen; ?>
+                        <ul>
+                            <li><?= Html::img("upload/productos/$foto", '', 'class="home_section_icon" style="width: 50%;height:50%; "'); ?></li><br>
+                            <li><span><h5><?php echo $carrito_detalle->counter; ?>)  <?php echo $carrito->description; ?></h5></span></li><br>
+                            <li><span><h5>SKU: <?php echo $carrito->mpn; ?> | Marca: <?php echo $carrito->marca; ?></h5></span></li><br>
+                            <li><span><h5>Cantidad: <?php echo $carrito->cantidad; ?> | Precio: $ <?php echo $carrito->precio_venta; ?> | Total: $ <?php echo $carrito->cantidad * $carrito->precio_venta; ?></h5></span></li><br>
+                            <?php if ($orden_carrito->activo == CatalogoOrden::PENDIENTE) { ?>
+                                <li>
+                                    <?php echo DwHtml::buttonTable('Agregar articulo', "cliente/cart/agregar/$key_agr/", array('class' => 'js-remote', 'title' => 'Agregar artículo', 'data-toggle' => 'tooltip'), 'success', 'fa-plus-square'); ?>
+                                    <?php echo DwHtml::buttonTable('Quitar articulo', "cliente/cart/quitar/$key_qui/", array('class' => 'js-confirm', 'title' => 'Agregar artículo', 'data-toggle' => 'tooltip'), 'info', 'fa-minus-square'); ?>
+                                    <?php echo DwHtml::buttonTable('Eliminar articulo', "cliente/cart/eliminar/$key_del/", array('class' => 'js-confirm', 'title' => 'Eliminar artículo', 'data-toggle' => 'tooltip'), 'warning', 'fa-times'); ?>
+                                </li>
+                            <?php } ?>
+                            <?php $carrito_detalle->counter++; ?>
+                        </ul>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+
+        <?php else : // Si no hay items  ?>
+
+            <div class="resultadoproductos">
+                <h2 align="center">No hay articulos en el carro!</h2>
+            </div>
+
+        <?php endif ?>
+    </div>
+    <!-- //resumen articulos -->
+
+
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("#pagina-titulo").append("<?= $titulo ?>");
+    });
+</script>

@@ -1,0 +1,92 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<section class="content">
+
+    <?= DwForm::open('', 'post', array('id' => 'form', 'class' => 'dw-validate  no-ajax')); ?>
+
+    <div class="box box-danger">
+
+        <div class="box-body">
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <h2 class="page-header">
+                        <i class="fa fa-cogs"></i> Empresa: <?= $empresa->nombres; ?> | <?= $empresa->razon_social; ?>
+                        <small class="pull-right">Fecha: <?= date('Y-m-d'); ?></small>
+                    </h2>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <?= DwForm::dbSelect('sucursal.ciudad_id', 'ciudad', array('ciudad', 'getListadoCiudad'), 'Seleccione una Ciudad', array('class' => 'select2 input-required mask-pint show-errors'), NULL, 'Ciudad'); ?>
+                </div>
+                <div class="col-md-4">
+                    <?= DwForm::text('sucursal.codigo_establecimiento', array('class' => 'input-required mask-pint show-error', 'maxlength' => '3', 'placeholder' => '001'), NULL, 'Codigo Establecimiento'); ?>
+                </div>
+                <div class="col-md-4">
+                    <?= DwForm::text('sucursal.sucursal', array('class' => 'input-required mask-text show-error', 'maxlength' => '250'), NULL, 'Nombre Establecimiento'); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <?= DwForm::text('sucursal.direccion', array('class' => 'input-required mask-text show-error', 'maxlength' => '150'), NULL, 'Dirección'); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <?= DwForm::email('sucursal.email', array('class' => 'input-required mask-email show-error', 'maxlength' => '100'), NULL, 'Email'); ?>
+                </div>
+                <div class="col-md-6">
+                    <?= DwForm::email('sucursal.email2', array('class' => 'mask-email show-error', 'maxlength' => '100'), NULL, 'Email 2'); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <?= DwForm::text('sucursal.telefono', array('class' => 'input-required mask-num show-error', 'maxlength' => '150'), NULL, 'Tel&eacute;fono'); ?>
+                </div>
+                <div class="col-md-4">
+                    <?= DwForm::text('sucursal.telefono2', array('class' => 'mask-num show-error', 'maxlength' => '150'), NULL, 'Tel&eacute;fono 2'); ?>
+                </div>
+                <div class="col-md-4">
+                    <?= DwForm::text('sucursal.celular', array('class' => 'mask-text show-error', 'maxlength' => '150'), NULL, 'Celular'); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <?= DwForm::text('sucursal.ext', array('class' => 'mask-pint show-error', 'maxlength' => '10'), NULL, 'Extensión'); ?>
+                </div>
+                <div class="col-md-4">
+                    <?= DwForm::text('sucursal.ext2', array('class' => 'mask-pint show-error', 'maxlength' => '10'), NULL, 'Extensión 2'); ?>
+                </div>
+            </div>
+
+            <?= DwForm::hidden('sucursal.empresas_id', NULL, $empresa->id); ?>
+
+            <div class="box box-info">
+                <div class="box-footer">
+                    <?php echo DwForm::send('Agregar Establecimiento'); ?>
+                    <?php echo DwForm::cancel(); ?>
+                    <?php echo DwForm::focus('sucursal.codigo_establecimiento'); ?>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <?php echo DwForm::close(); ?>
+
+</section>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.select2').select2();
+    });
+</script>

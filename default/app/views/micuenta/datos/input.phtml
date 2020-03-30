@@ -1,0 +1,62 @@
+<?php echo Tag::js('frontend/store/ruc_jquery_validator.min') . PHP_EOL; ?>
+<?php $campos = empty($tabla->valida) ? '' : $tabla->valida; ?>
+<?php $codigo = empty($tabla->codigo) ? '' : $tabla->codigo; ?>
+<?php $largo = empty($tabla->largo) ? '' : $tabla->largo; ?>
+<?php echo DwForm::setStyleForm(); ?>
+<?php if ($largo == '13' OR $largo == '10') { ?>
+    <?= DwForm::text('cliente.ruc', array('class' => 'input-required mask-pint show-error', 'maxlength' => $largo, 'placeholder' => '1712092939'), NULL, 'Ruc/Cédula'); ?>
+
+    <script type="text/javascript">
+        /***** identificacion *****/
+        $("#cliente_ruc").validarCedulaEC({
+            onValid: function () {
+//                console.log(this);
+                $("#flash-message").empty();
+                $("#btn-guarda-cliente").removeClass('btn-danger').addClass('btn-success').removeAttr('disabled');
+            },
+            onInvalid: function () {
+//                console.log(this);
+                $("#flash-message").empty();
+                $("#cliente_ruc").val('');
+                $("#btn-guarda-cliente").removeClass('btn-success').addClass('btn-danger').attr('disabled', 'disabled');
+                flashError('Ruc/Cédula Inválido.<br>Ingrese Nuevamente...');
+            }
+        });
+    <?php if ($largo == '13') { ?>
+            $("#cliente_ruc").on('change', function () {
+                $("#flash-message").empty();
+                var actual = $(this).val().length;
+                if (actual != 13) {
+                    flashError('El RUC debe tener 13 digitos')
+                    $('#cliente_ruc').val('');
+                    return false;
+                }
+            });
+    <?php } ?>
+    </script>
+<?php } ?>
+<?php if ($largo == '2') { ?>
+    <?= DwForm::text('cliente.ruc', array('class' => 'input-required mask-alphanum show-error', 'maxlength' => '13', 'placeholder' => '1712092939'), NULL, 'Pasaporte'); ?>
+<?php } ?>
+<?php if ($largo == '1') { ?>
+    <?= DwForm::text('cliente.ruc', array('class' => 'input-required input-readonly  mask-pint show-error', 'maxlength' => '13', 'placeholder' => '1712092939'), 'Seleccion Incorrecta', 'Ruc/Cédula'); ?>
+<?php } ?>
+<?php if ($codigo == 'PJU') { ?>
+    <div class="col-md-8">
+        <?= DwForm::text('cliente.apellidos', array('class' => 'input-required mask-text show-error', 'maxlength' => '60', 'placeholder' => 'Razon Social'), NULL, 'Razón Social'); ?>
+    </div>
+    <div class="col-md-4">
+        <?= DwForm::text('cliente.siglas', array('class' => 'mask-alpha show-error', 'maxlength' => '60', 'placeholder' => 'Nombre Comercial'), NULL, 'Nombre Comercial'); ?>
+    </div>
+<?php } ?>
+<?php if ($codigo == 'PNA') { ?>
+    <div class="col-md-4">
+        <?= DwForm::text('cliente.nombres', array('class' => 'input-required mask-text show-error', 'maxlength' => '60', 'placeholder' => 'Nombres'), NULL, 'Nombres'); ?>
+    </div>
+    <div class="col-md-4">
+        <?= DwForm::text('cliente.apellidos', array('class' => 'input-required mask-text show-error', 'maxlength' => '60', 'placeholder' => 'Apellidos'), NULL, 'Apellidos'); ?>
+    </div>
+    <div class="col-md-4">
+        <?= DwForm::text('cliente.siglas', array('class' => 'mask-alpha show-error', 'maxlength' => '60', 'placeholder' => 'Nombre Comercial'), NULL, 'Nombre Comercial'); ?>
+    </div>
+<?php } ?>

@@ -1,0 +1,50 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+
+<section class="content">
+
+    <div class="box">
+
+        <div class="box-body">
+<?= DwButton::report("auditoria/listar/$fecha/", 'html', 'Reporte de auditorías'); ?>
+            <div class="box-body table-responsive no-padding">
+
+                <table class="table table-hover">
+                    <tbody>
+                        <tr>
+                            <th>NUM</th>
+                            <th>USUARIO</th>
+                            <th>NOMBRES</th>
+                            <th>APELLIDOS</th>
+                            <th>NUMERO ACCIONES</th>
+                            <th>ACCIONES</th>
+                        </tr>
+                        <?php $counter = 1; ?>
+                        <?php foreach ($audits->items as $audit): ?>
+                            <?php $key_shw = Security::setKey($audit->id, 'shw_auditoria'); ?>
+                            <tr>
+                                <td><?php echo $counter; ?></td>
+                                <td><?php echo $audit->login; ?></td>
+                                <td><?php echo $audit->nombre; ?></td>
+                                <td><?php echo $audit->apellido; ?></td>
+                                <td><?php echo $audit->num_acciones; ?></td>
+                                <td>
+                                    <?php echo DwHtml::buttonTable('Ver Auditorias', "$modulo/usuario/$key_shw/", NULL, 'info', 'fa-search'); ?>
+                                </td>
+                            </tr>
+                            <?php $counter++; ?>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+
+                <?php View::partial('paginators/default', false, array('page' => $audits, 'url' => "$modulo/listar/$order/")); ?>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>

@@ -1,0 +1,56 @@
+<header class="main-header">
+
+    <?php echo DwHtml::link('dashboard/', '<span class="logo-lg">' . DwHtml::img("logo_min.png", APP_NAME, array('style' => 'height: 20px;')) . '</span><span class="logo-mini"><b>S</b>CM</span>', array('class' => 'logo')); ?>
+
+    <nav class="navbar navbar-static-top">
+        <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </a>
+
+        <div class="navbar-custom-menu">
+            <ul class="nav navbar-nav">
+
+                <li class="dropdown notifications-menu">
+                    <?php echo DwHtml::link('index/', 'Ver Tienda', array('class' => 'no-load btn btn-warning'), 'fa-home', FALSE); ?>
+                </li>
+
+                <li class="dropdown notifications-menu">
+                    <?php echo DwHtml::link('#', '<span class="label label-warning item-orden">0</span>', array('class' => 'no-load dropdown-toggle last', 'id' => 'viewcart'), 'fa-shopping-cart', FALSE); ?>
+                </li>
+
+                <li class="dropdown user user-menu">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <?= DwHtml::img('upload/personas/' . Session::get('foto'), 'User ', array('class' => 'user-image')); ?>
+                        <span class="hidden-xs"><?= Session::get('nombre') . ' ' . Session::get('apellido') ?></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <!-- User image -->
+                        <li class="user-header">
+                            <?= DwHtml::img('upload/personas/' . Session::get('foto'), 'User ', array('class' => 'img-circle', 'style' => 'width: 80px;')); ?>
+                            <p><?= Session::get('nombre') . ' ' . Session::get('apellido') ?>
+                                <small>Perfil: <?= Session::get('perfil') ?></small>
+                            </p>
+                        </li>
+                        <!-- Menu Footer-->
+                        <li class="user-footer">
+                            <div class="pull-left">
+                                <?php echo DwHtml::link('sistema/mi_cuenta/', 'Mi Cuenta', array('class' => 'no-load btn btn-default btn-flat'), 'fa-user', FALSE); ?>
+                            </div>
+                            <div class="pull-right">
+                                <?php echo DwHtml::link('cuenta/login/salir', 'Cerrar Sesión', array('class' => 'no-load btn btn-default btn-flat'), 'fa-sign-out', FALSE); ?>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                    <?php echo DwHtml::link('#', '', array('class' => 'no-load', 'data-toggle' => 'control-sidebars'), 'fa-gears', FALSE); ?>
+                </li>
+            </ul>
+        </div>
+
+    </nav>
+</header>

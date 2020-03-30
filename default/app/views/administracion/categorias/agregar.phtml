@@ -1,0 +1,45 @@
+<?php View::flash(); ?>
+
+<div class="container shell-view">
+
+    <?php View::process($page_module, $page_title, $set_title); ?>
+
+    <?= DwForm::open('', 'post', array('id' => 'form', 'class' => 'dw-validate  no-ajax')); ?>
+
+    <div class="row">
+        <div class="col-md-4">
+            <?= DwForm::select('categoria.have_childrens', array('' => 'Seleccione', '1' => 'SI', '0' => 'NO'), array('class' => 'input-break input-medium input-required mask-pint show-errors'), NULL, 'Tiene Hijos'); ?>
+        </div>
+        <div class="col-md-4">
+            <?= DwForm::dbSelect('categoria.parent_id', 'category', array('categorias', 'getListadoCategoriaPadre', Categorias::ACTIVO), 'Seleccione Categoria Padre', array('class' => 'input-xlarge show-errors'), NULL, 'Categoria Padre'); ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <?= DwForm::text('categoria.category', array('class' => 'input-xxlarge input-required mask-text show-error', 'maxlength' => '60'), NULL, 'Categoria'); ?>
+        </div>
+        <div class="col-md-6">
+            <?= DwForm::text('categoria.url', array('class' => 'input-xxlarge input-required mask-text show-error', 'maxlength' => '200'), NULL, 'URL'); ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <?= DwForm::select('categoria.tipo', array('' => 'Seleccione', 'a' => 'AUTOMATICO', 'm' => 'MANUAL', 'i' => 'INACTIVO'), array('class' => 'input-break input-medium input-required mask-pint show-errors'), NULL, 'PUBLICACION WEB'); ?>
+        </div>
+        <div class="col-md-4">
+            <?= DwForm::select('categoria.activo', array('' => 'Seleccione', '1' => 'ACTIVO', '0' => 'BLOQUEADO'), array('class' => 'input-break input-medium input-required mask-pint show-errors'), NULL, 'Estado WEB'); ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-actions">
+            <?= DwButton::save('Guardar categoria'); ?>
+            <?= DwButton::back("$modulo/listar/"); ?>
+        </div>
+    </div>
+
+    <?= DwForm::close(); ?>
+
+</div>

@@ -1,0 +1,22 @@
+<?php View::flash(); ?>
+<style>
+    @media (min-width: 1200px) {
+        .container {
+            width: 1078px;
+        }
+        .logo_products {
+            padding: 2em 0 1em;
+        }
+    }
+</style>
+<div class="container shell-view">
+    
+    <?php View::process($page_module, $page_title, $set_title); ?>
+
+    <?php View::partial('subnav/cliente/principal', FALSE, array('id' => Session::get('id'))); ?>
+
+    <div class="container-overflow">
+        <h3 align="center">Bienvenido a nuestra tienda en Línea</h3>
+    </div>
+    
+</div>

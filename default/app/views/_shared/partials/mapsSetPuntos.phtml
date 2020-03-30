@@ -1,0 +1,43 @@
+<?php $apiKey = ""; ?>
+
+<style type="text/css">
+    .mimapa{width:500px;height:500px;}
+</style>
+
+<<div id="mimapa" class="mimapa"></div>
+<script type="text/javascript">
+    var mimapa;
+    var gmarkers = new Array();
+
+    function initialize() {
+        if (GBrowserIsCompatible()) {
+            //creamos un nuevo mapa
+            mimapa = new GMap2(document.getElementById("mimapa"));
+            //establecemos cual es el centro del mapa
+            center = new GLatLng(<?php echo $centro['lat']; ?>, <?php echo $centro['lng']; ?>);
+            mimapa.setCenter(center, <?php echo $centro['zoom']; ?>);
+            //seleccionamos la interzaz del mapa
+            mimapa.setUIToDefault();
+
+            //por cada coordenada que se envie se crea un punto
+<?php foreach ($puntos as $punto) { ?>
+                var point = new GLatLng(<?= $punto['lat'] ?>,<?= $punto['lng'] ?>);
+                mimapa.addOverlay(new GMarker(point));
+<?php } ?>
+        }
+    }
+</script>
+
+<?php echo "<script type='text/javascript' src='http://maps.google.com/maps?file=api&;v=2&key=" . $apiKey . "&async=2&callback=initialize'></script>"; ?>
+
+
+USO
+<?php $centro=array('lat'=>'-24.79', 'lng'=>'-65.41', 'zoom'=>'14');?>
+ 
+<?php $puntos=array(
+array('lat'=>'-24.79', 'lng'=>'-65.41'),
+array('lat'=>'-24.792', 'lng'=>'-65.416'),
+array('lat'=>'-24.785', 'lng'=>'-65.419')
+);?>
+ 
+<?php View::partial('mapsSetPuntos', false, array('centro'=>$centro,'puntos'=>$puntos)); ?>

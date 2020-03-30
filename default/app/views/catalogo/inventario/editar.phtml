@@ -1,0 +1,300 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<section class="content">
+
+    <?= DwForm::open('', 'post', array('id' => 'form', 'class' => 'dw-validate no-ajax')); ?>
+
+    <div class="box box-danger">
+
+        <div class="box-body">
+
+            <?php if ($articulo->tipo_articulo == 's') { ?>
+                <section id="new">
+                    <h4 class="page-header">Informaci&oacute;n SERVICIO</h4>
+                </section>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <?= DwForm::dbSelect('articulo.categorias_id', array('categoria', 'category'), array('inventarios/categorias', 'getListadoCategoriasArticulos', Categorias::ACTIVO), 'Seleccion Categoria', array('class' => 'select2 input-required show-errors'), NULL, 'Categoria'); ?>
+                    </div>
+                    <div class="col-md-4">
+                        <?= DwForm::dbSelect('articulo.marca_id', 'marca', array('marca', 'getListadoMarcas', Marca::ACTIVO), 'Seleccione', array('class' => 'select2 input-required show-errors'), NULL, 'Marca'); ?>
+                    </div>
+                    <div class="col-md-4">
+                        <?= DwForm::dbSelect('articulo.umedida_id', 'unidad', array('umedida', 'getListadoUnidad', Umedida::ACTIVO), 'Seleccione', array('class' => 'select2 input-required show-errors'), 1, 'Unidad de Medida'); ?>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <?= DwForm::text('articulo.codigo', array('class' => 'input-lower input-required mask-text show-error', 'autocomplete' => 'off', 'maxlength' => '25', 'readonly' => 'readonly'), NULL, 'CODIGO SISTEMA'); ?>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <?= DwForm::textarea('articulo.descripcion', array('class' => 'input-lower input-required input-required mask-text show-error', 'maxlength' => '300', 'placeholder' => 'Nombre del Servicio'), NULL, 'Nombre Art&iacute;culo'); ?>
+                    </div>
+                    <div class="col-md-6">
+                        <?= DwForm::textarea('articulo.detalle', array('class' => 'input-lower mask-text input-xxlarge show-error', 'maxlength' => '500', 'placeholder' => 'Detalle en el caso de ser muy extensa la informacion del Servicio'), NULL, 'Informaci&oacute;n adicional'); ?>
+                    </div>
+                </div>
+
+                <section id="new">
+                    <h4 class="page-header">Informaci&oacute;n costos</h4>
+                </section>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <?php echo DwForm::text('articulo.precio_compra', array('class' => 'input-required mask-alphanum'), NULL, 'Precio Compra'); ?>
+                    </div>
+                    <div class="col-md-3">
+                        <?php echo DwForm::text('precio_venta', array('class' => 'input-required mask-alphanum'), $articulo->precio_venta, 'Precio Venta'); ?>
+                    </div>
+                </div>
+
+                <section id="new">
+                    <h4 class="page-header">Seleccione los impuestos que Aplica al SERVICIO</h4>
+                </section>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <?= DwForm::dbSelect('iva_id', array('valor', 'impuesto'), array('impuestos', 'getListaTablasImpuestos', 'iva', 'I'), 'Seleccione una Opción', array('class' => 'input-required show-errors'), $articulo->impuestos_id, 'Apllca IVA'); ?>
+                    </div>
+                </div>
+            <?php } else { ?>
+                <section id="new">
+                    <h4 class="page-header">Informaci&oacute;n ARTICULO</h4>
+                </section>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <?php echo DwForm::dbSelect('articulo.empresas_id', 'nombres', array('empresas', 'getListaEmpresas', Empresas::PROVEEDOR), NULL, array('class' => 'input-required'), NULL, 'Proveedor'); ?>
+                    </div>
+                    <div class="col-md-3">
+                        <?= DwForm::dbSelect('articulo.categorias_id', array('categoria', 'category'), array('inventarios/categorias', 'getListadoCategoriasArticulos', Categorias::ACTIVO), 'Seleccion Categoria', array('class' => 'select2 input-required show-errors'), NULL, 'Categoria'); ?>
+                    </div>
+                    <div class="col-md-3">
+                        <?= DwForm::dbSelect('articulo.marca_id', 'marca', array('marca', 'getListadoMarcas', Marca::ACTIVO), 'Seleccione', array('class' => 'select2 input-required show-errors'), NULL, 'Marca'); ?>
+                    </div>
+                    <div class="col-md-3">
+                        <?= DwForm::dbSelect('articulo.umedida_id', 'unidad', array('umedida', 'getListadoUnidad', Umedida::ACTIVO), 'Seleccione', array('class' => 'select2 input-required show-errors'), 1, 'Unidad de Medida'); ?>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <?php if (Session::get('perfil_id') <= Perfil::ADMIN) { ?>
+                        <div class="col-md-3">
+                            <?= DwForm::text('articulo.sku', array('class' => 'input-required show-error', 'autocomplete' => 'off', 'maxlength' => '45', 'placeholder' => 'Codigo de la empresa'), NULL, 'CODIGO PRINCIPAL'); ?>
+                        </div>
+                        <div class="col-md-3">
+                            <?= DwForm::text('articulo.mpn', array('class' => 'input-required show-error', 'autocomplete' => 'off', 'maxlength' => '45', 'placeholder' => 'Codigo del fabricante'), NULL, 'CODIGO AUXILIAR/BARRAS'); ?>
+                        </div>
+                        <div class="col-md-3">
+                            <?php echo DwForm::text('articulo.instock', array('class' => 'input-required mask-alphanum'), $articulo->instock, 'Stock'); ?>
+                        </div>
+                        <div class="col-md-3">
+                            <?= DwForm::select('articulo.web', array('' => 'Seleccione', '1' => 'ACTIVO', '0' => 'BLOQUEADO'), array('class' => 'input-break input-medium input-required mask-pint show-errors'), $articulo->web, 'Estado WEB'); ?>
+                        </div>
+                    <?php } else { ?>
+                        <div class="col-md-3">
+                            <?= DwForm::text('articulo.sku', array('class' => 'input-required show-error', 'autocomplete' => 'off', 'maxlength' => '45', 'placeholder' => 'Codigo de la empresa', 'readonly' => 'readonly'), NULL, 'CODIGO PRINCIPAL'); ?>
+                        </div>
+                        <div class="col-md-3">
+                            <?= DwForm::text('articulo.mpn', array('class' => 'input-required show-error', 'autocomplete' => 'off', 'maxlength' => '45', 'placeholder' => 'Codigo del fabricante', 'readonly' => 'readonly'), NULL, 'CODIGO AUXILIAR/BARRAS'); ?>
+                        </div>
+                        <div class="col-md-3">
+                            <?php echo DwForm::text('articulo.instock', array('class' => 'input-required mask-alphanum', 'readonly' => 'readonly'), $articulo->instock, 'Stock'); ?>
+                        </div>
+                        <div class="col-md-3">
+                            <?= DwForm::select('articulo.web', array('' => 'Seleccione', '1' => 'ACTIVO', '0' => 'BLOQUEADO'), array('class' => 'input-break input-medium input-required mask-pint show-errors'), $articulo->web, 'Estado WEB'); ?>
+                        </div>
+                    <?php } ?>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <?= DwForm::textarea('articulo.descripcion', array('class' => 'input-lower input-required mask-text show-error', 'maxlength' => '200', 'placeholder' => 'Nombre del Servicio'), NULL, 'Nombre Art&iacute;culo'); ?>
+                    </div>
+                    <div class="col-md-6">
+                        <?= DwForm::textarea('articulo.detalle', array('class' => 'input-lower mask-text input-xxlarge show-error', 'maxlength' => '500', 'placeholder' => 'Detalle en el caso de ser muy extensa la informacion del Servicio'), NULL, 'Informaci&oacute;n adicional'); ?>
+                    </div>
+                </div>
+
+                <section id="new">
+                    <h4 class="page-header">Informaci&oacute;n compras</h4>
+                </section>
+
+                <div class="row">
+                    <?php if (Session::get('perfil_id') <= Perfil::ADMIN) { ?>
+                        <div class="col-md-3">
+                            <?php echo DwForm::text('articulo.precio_compra', array('class' => 'input-required mask-alphanum'), $articulo->precio_compra, 'Precio Compra'); ?>
+                        </div>
+                        <div class="col-md-3">
+                            <?= DwForm::text('precio_venta', array('class' => 'input-required mask-num show-error', 'readonly' => 'readonly'), $articulo->precio_venta, 'Precio Venta'); ?>
+                        </div>
+                        <div class="col-md-1">
+                            <?= DwForm::label('<b>Utilidad.<br> Manual</b>', 'pre_mani'); ?>
+                            <?= DwForm::check('articulo.pre_man', NULL, array('class' => 'utilidad-manual'), FALSE); ?>
+                        </div>
+                        <div class="col-md-2">
+                            <?= DwForm::text('articulo.porcentaje', array('class' => 'mask-num input-readonly show-error', 'autocomplete' => 'off', 'maxlength' => '6', 'placeholder' => '30'), NULL, 'Porcentaje Utilidad'); ?>
+                        </div>
+                        <div class="col-md-2">
+                            <?= DwForm::label('<b>Descuento</b>', 'pre_mani'); ?>
+                            <?= DwForm::check('articulo.onsales', $articulo->onsales, array('readonly' => 'readonly'), FALSE); ?>
+
+                            <?= DwForm::label('<b>Nuevo.</b>', 'pre_mani'); ?>
+                            <?= DwForm::check('articulo.nuevo', $articulo->nuevo, array('readonly' => 'readonly'), FALSE); ?>
+                        </div>
+                    <?php } else { ?>
+                        <div class="col-md-3">
+                            <?php echo DwForm::text('articulo.precio_compra', array('class' => 'input-required mask-alphanum', 'readonly' => 'readonly'), $articulo->precio_compra, 'Precio Compra'); ?>
+                        </div>
+                        <div class="col-md-3">
+                            <?php echo DwForm::text('precio_venta', array('class' => 'input-required mask-num', 'readonly' => 'readonly'), $articulo->precio_venta, 'Precio Venta'); ?>
+                        </div>
+                        <div class="col-md-3">
+                            <?php echo DwForm::text('precio_venta', array('class' => 'input-required mask-num', 'readonly' => 'readonly'), $articulo->precio_venta, 'Precio Venta'); ?>
+                        </div>
+                        <div class="col-md-3">
+                            <?php echo DwForm::text('articulo.porcentaje', array('class' => 'input-required mask-alphanum', 'readonly' => 'readonly'), $articulo->porcentaje, 'Utilidad %'); ?>
+                        </div>
+                    <?php } ?>
+                </div>
+
+                <section id="new">
+                    <h4 class="page-header">Seleccione los impuestos que aplica</h4>
+                </section>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <?= DwForm::dbSelect('iva_id', array('valor', 'impuesto'), array('impuestos', 'getListaTablasImpuestos', 'iva', 'I'), 'Seleccione una Opción', array('class' => 'input-required show-errors'), $articulo->impuestos_id, 'Apllca IVA'); ?>
+                    </div>
+                    <div class="col-md-4">
+                        <?= DwForm::dbSelect('ice_id', array('valor', 'impuesto'), array('impuestos', 'getListaTablasImpuestos', 'ice', 'I'), 'Seleccione una Opción', array('class' => 'select2 show-errors'), NULL, 'Aplica ICE'); ?>
+                    </div>
+                    <div class="col-md-4">
+                        <?= DwForm::dbSelect('irbpnr_id', array('valor', 'impuesto'), array('impuestos', 'getListaTablasImpuestos', 'irb', 'I'), 'Seleccione una Opción', array('class' => 'show-errors'), NULL, 'Aplica IRBPNR'); ?>
+                    </div>
+                </div>
+            <?php } ?>
+        </div>
+
+        <div class="box box-info">
+            <div class="box-footer">
+                <?= DwButton::save('Guardar articulo'); ?>
+                <?= DwForm::cancel(); ?>
+            </div>
+        </div>
+
+    </div>
+
+    <?= DwForm::close(); ?>
+
+</section>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.select2').select2();
+        $('.utilidad-manual').on('click', function () {
+            $("#flash-message").empty();
+            if ($(this).is(':checked')) {
+                $("#articulo_pre_man0").val('1');
+                $("#articulo_porcentaje").removeAttr("readonly").attr('required', 'required');
+                $("#precio_venta").removeAttr("readonly").attr('required', 'required');
+                // Hacer algo si el checkbox ha sido seleccionado
+                flashValid("Ingrese el margen de utilidad");
+            } else {
+                $("#articulo_pre_man0").val('0');
+                $("#articulo_porcentaje").attr("readonly", "true");
+                $("#precio_venta").attr("readonly", "true").val('');
+                // Hacer algo si el checkbox ha sido deseleccionado
+                flashInfo("El margen de utilidad sera colocado por el sistema");
+            }
+        });
+        $('.onsales').on('click', function () {
+            $("#flash-message").empty();
+            if ($(this).is(':checked')) {
+                $("#articulo_onsales1").val('1');
+                flashValid("Se activa descuentos...");
+            } else {
+                $("#articulo_onsales1").val('0');
+                flashWarning("Se desactiva descuentos...");
+            }
+        });
+        $('.nuevo').on('click', function () {
+            $("#flash-message").empty();
+            if ($(this).is(':checked')) {
+                $("#articulo_nuevo2").val('1');
+                flashValid("Se activa nuevo...");
+            } else {
+                $("#articulo_nuevo2").val('0');
+                flashWarning("Se desactiva nuevo...");
+            }
+        });
+    });
+    $(function () {
+        $("#articulo_porcentaje").on("change", function () {
+            var utilidad = $(this).val();
+            calcular(utilidad);
+        });
+        $("#articulo_precio_compra").on("change", function () {
+            calcularPrecio();
+        });
+        $("#precio_venta").on("change", function () {
+            calcularPorcentaje();
+        });
+
+        function calcular(utilidad) {
+            $("#flash-message").empty();
+            compra = $("#articulo_precio_compra").val();
+            precio = $("#precio_venta").val();
+            if (compra.length > 0 && utilidad.length > 0) {
+                precio = (parseFloat(compra) * (parseFloat(utilidad) / 100)) + parseFloat(compra);
+                nuevo = precio.toFixed(2);
+                ganancia = parseFloat(nuevo - compra);
+                flashValid("Utilidad <b>$ " + ganancia.toFixed(2) + '<b>');
+                $("#precio_venta").val(precio);
+            }
+        }
+        function calcularPorcentaje() {
+            $("#flash-message").empty();
+            venta = $("#precio_venta").val();
+            compra = $("#articulo_precio_compra").val();
+            utilidad = $("#articulo_porcentaje").val();
+
+            if (parseFloat(venta) <= parseFloat(compra)) {
+                flashError("El precio de venta no puede ser menor al de compra! $ <b> " + venta + '<b>');
+                $("#precio_venta").val('');
+                return false;
+            }
+            if (compra.length > 0 && venta.length > 0) {
+                utilidad = (parseFloat(venta) - parseFloat(compra)) / parseFloat(compra) * 100;
+                nuevo = utilidad.toFixed(2);
+                flashValid("Porcentaje <b> " + nuevo + '%<b>');
+                $("#articulo_porcentaje").val(nuevo);
+            }
+        }
+        function calcularPrecio() {
+            $("#flash-message").empty();
+            compra = $("#articulo_precio_compra").val();
+            utilidad = $("#articulo_porcentaje").val();
+            precio = $("#precio_venta").val();
+
+            if (parseFloat(precio) <= parseFloat(compra)) {
+                flashError("El precio de venta no puede ser menor al de compra! $ <b> " + precio + '<b>');
+                $("#precio_venta").val('');
+                return false;
+            }
+            if (compra.length > 0 && utilidad.length > 0) {
+                precio = (parseFloat(compra) * (parseFloat(utilidad) / 100)) + parseFloat(compra);
+                nuevo = precio.toFixed(2);
+                flashValid("Precio Venta <b>$ " + nuevo + '<b>');
+                $("#precio_venta").val(precio);
+            }
+        }
+    });
+</script>

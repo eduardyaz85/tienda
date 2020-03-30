@@ -1,0 +1,34 @@
+<nav class="navbar navbar-transparent navbar-color-on-scroll fixed-top navbar-expand-lg" color-on-scroll="100" id="sectionsNav">
+    <noscript><h5 style="text-align: center;">¡Tu navegador no soporta Javascript!.. Activa el uso de Javascript en tu navegador.</h5></noscript>
+    <div class="container">
+        <div class="navbar-translate">
+            <?php echo DwHtml::link("", 'INICIO', array('class' => 'navbar-brand'), 'fa-home'); ?>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ml-auto">
+                <li class="dropdown nav-item">
+                    <div class="dropdown-menu dropdown-with-icons">
+                        <a href="#" class="dropdown-item">
+                            <i class="material-icons">layers</i> Todos
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            <i class="material-icons">content_paste</i> Introducci&oacute;n
+                        </a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="tel:+593984022304" data-original-title="Llamar Celular"><i class="fa fa-phone"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="https://api.whatsapp.com/send?phone=593984022304" target="_blank" data-original-title="Enviar WhatsApp"><i class="fa fa-whatsapp"></i></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

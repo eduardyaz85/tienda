@@ -1,0 +1,137 @@
+<?php echo Tag::js('jquery/comun') . PHP_EOL; ?>
+<?php echo Tag::js('jquery/minicart.min') . PHP_EOL; ?>
+
+<script type="text/javascript">
+    posicionarMenu();
+
+    $(window).scroll(function () {
+        posicionarMenu();
+    });
+
+    function posicionarMenu() {
+        var altura_del_header = $('#top-header').outerHeight(true);
+        if ($(window).scrollTop() >= altura_del_header) {
+            $('.resumen-cart').addClass('circle-cart');
+            $('.mi-carro').empty();
+            $('#top-header').css('margin-top', '0px');
+        } else {
+            html = '<strong class="text-uppercase mi-carro">Mi Carro:</strong>';
+            $('.mi-carro').html(html);
+            $('.resumen-cart').removeClass('circle-cart');
+            $('#top-header').css('margin-top', '0');
+        }
+    }
+    function actualizaCarrito() {
+        cart = paypal.minicart.cart;
+        items = (cart.items());
+
+        total = 0;
+        unidades = 0;
+        // Count the number of each item in the cart
+        for (var i = 0, max = items.length; i < max; i++) {
+            data = items[i]._data;
+            unidades += data.quantity;
+            total += items[i]._total;
+        }
+        if (total > 0) {
+            vtotal = total.toFixed(2);
+            $('.item-orden').text(unidades);
+            $('.cart-total').text('$ ' + vtotal);
+        }
+    }
+
+    function cargaCarrito(refer) {
+        $("#flash-message").empty();
+        $('#form-carga-carrito').modal('show');
+    }
+    function suscribeCorreo(refer) {
+        $("#flash-message").empty();
+        $("#form-modal-suscribe").attr('action', refer.attr('href')).attr('data-update', 'false');
+        $('#form-suscribe').modal('show');
+        form = $('#form-suscribe');
+        $('.input-break', form).val('');
+    }
+
+    // Mini Cart
+    paypal.minicart.render({
+        action: '#'
+    });
+/*    paypal.minicart.cart.on('remove', function (idx, product) {
+        $("#flash-message").empty();
+        data = product._data.mpn;
+        if (idx) {
+            actualizaCarrito();
+            flashError('Eliminado ' + data);
+        }
+    });*/
+    paypal.minicart.cart.on('add', function (evt) {
+        $("#flash-message").empty();
+        actualizaCarrito();
+    });
+<?php if (PRODUCTION) { ?>
+        $.getJSON('http://api.wipmania.com/jsonp?callback=?', function (data) {
+    <?= DwAudit::setUrlVisitante(DwUtils::setUrl()); ?>
+        });
+<?php } ?>
+    if (~window.location.search.indexOf('reset=true')) {
+        paypal.minicart.reset();
+    }
+    $(function () {
+        $('.btn-suscipcion').on('click', function (e) {
+            e.stopImmediatePropagation();
+            suscribeCorreo($(this));
+            return false;
+        });
+        $('#pide-nuevo').change(function () {
+            nuevo = $(this).val();
+            if (nuevo != 0) {
+                $("#pide-nuevo").val('0');
+            } else {
+                $("#pide-nuevo").val('1');
+            }
+        });
+        $('#pide-nuevom').change(function () {
+            nuevo = $(this).val();
+            if (nuevo != 0) {
+                $("#pide-nuevom").val('0');
+            } else {
+                $("#pide-nuevom").val('1');
+            }
+        });
+        $('#pide-oferta').change(function () {
+            promo = $(this).val();
+            if (promo != 0) {
+                $("#pide-oferta").val('0');
+            } else {
+                $("#pide-oferta").val('1');
+            }
+        });
+        $('#pide-ofertam').change(function () {
+            promo = $(this).val();
+            if (promo != 0) {
+                $("#pide-ofertam").val('0');
+            } else {
+                $("#pide-ofertam").val('1');
+            }
+        });
+        $('#viewcart').click(function (e) {
+            e.stopPropagation();
+            paypal.minicart.view.show();
+        });
+        $("#form-modal-pedido").on('submit', function () {
+            $("#flash-message").empty();
+            flashInfo('Almacenando Espere por favor...', 500);
+        });
+        $(".addToCartQuantityBox").on('blur', function () {
+            $("#flash-message").empty();
+            canti = parseInt($(this).val());
+            stock = parseInt($(this).attr("id"));
+
+            if (canti > stock) {
+                $(this).val('1');
+                flashWarning('La cantidad solicitad no se encuentra disponible.');
+            } else {
+            }
+        });
+    });
+</script>

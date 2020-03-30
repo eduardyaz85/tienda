@@ -1,0 +1,6 @@
+<footer class="main-footer">
+    <div class="pull-right hidden-xs">
+        <b>Versión</b> <?php echo APP_VERSION; ?> - Ip: <?php echo Session::has('ip') ? Session::get('ip') : DwUtils::getIp(); ?> - Tiempo: <?php echo number_format(round((microtime(1) - START_TIME), 4), 4), ' seg.' ?>
+    </div>
+    <strong>Copyright &copy; 2012-<?php echo date("Y"); ?> <a href="#" target="_blank">Corporacionm</a>.</strong> Todos los derechos reservados.
+</footer>

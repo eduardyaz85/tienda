@@ -1,0 +1,269 @@
+<div id="responsive-nav">
+    <!-- category nav -->
+    <div class="category-nav">
+        <span class="category-header">Categorias <i class="fa fa-list"></i></span>
+        <ul class="category-list">
+            <li class="dropdown side-dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Computadores <i class="fa fa-angle-right"></i></a>
+                <div class="custom-menu">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <ul class="list-links">
+                                <li>
+                                    <h3 class="list-links-title">COMPUTADORES</h3></li>
+                                <li><?= DwHtml::link('index/categoria/cpt.notebook', 'Port&aacute;tiles', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/cpt.desktop', 'Computadores de Mesa', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/cpt.allone', 'Todo-en-Uno', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/cpt.tablet', 'Tabletas', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/cpt.server', 'Servidores', '', '', FALSE); ?></li>
+                            </ul>
+                            <hr>
+                            <ul class="list-links">
+                                <li>
+                                    <h3 class="list-links-title">MONITORES</h3></li>
+                                <li><?= DwHtml::link('index/categoria/mnt.monitor', 'Monitores', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/mnt.tv', 'Televisores', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/mon.monacc', 'Accesorios', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/mon.monacc', 'Accesorios', '', '', FALSE); ?></li>
+                            </ul>
+                            <hr class="hidden-md hidden-lg">
+                        </div>
+                        <div class="col-md-4">
+                            <ul class="list-links">
+                                <li>
+                                    <h3 class="list-links-title">COMPONENTES INFORMÁTICOS</h3></li>
+                                <li><?= DwHtml::link('index/categoria/cco.case', 'Cajas / Gabinetes', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/cco.mobo', 'Tarjetas Madre (Placas Madre)', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/cco.psupply', 'Fuentes de Poder', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/cco.cpu', 'Procesadores', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/cco.graphic', 'Tarjetas de Video', '', '', FALSE); ?></li>
+                            </ul>
+                            <hr>
+                            <ul class="list-links">
+                                <li>
+                                    <h3 class="list-links-title">Memorias</h3></li>
+                                <li><?= DwHtml::link('index/categoria/mem.flash', 'Tarjetas de Memoria Flash', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/mem.dramgen', 'Módulos RAM - Genéricos', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/mem.dramprop', 'Módulos RAM - Propietarios', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/mem.usbflash', 'Unidades Flash USB', '', '', FALSE); ?></li>
+                            </ul>
+                            <hr class="hidden-md hidden-lg">
+                        </div>
+                        <div class="col-md-4">
+                            <ul class="list-links">
+                                <li>
+                                    <h3 class="list-links-title">ALMACENAMIENTO</h3></li>
+                                <li><?= DwHtml::link('index/categoria/sto.exthd', 'Discos Duros Externos', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/sto.extod', 'Discos Opticos Externos', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/sto.inthd', 'Discos Duros Internos', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/sto.intod', 'Discos Opticos Internos', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/sto.ssd', 'Discos de Estado Sólido', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/sto.nw', 'Almacenamiento de Redes (NAS)', '', '', FALSE); ?></li>
+                            </ul>
+                            <hr>
+                            <ul class="list-links">
+                                <li>
+                                    <h3 class="list-links-title">PROYECTORES</h3></li>
+                                <li><?= DwHtml::link('index/categoria/prj.projector', 'PROYECTORES', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/prj.screen', 'Pantallas', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/prj.acc', 'Accesorios', '', '', FALSE); ?></li>
+                            </ul>
+                            <hr class="hidden-md hidden-lg">
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li><?= DwHtml::link('index/categoria/avs.headphone', 'Auriculares', '', '', FALSE); ?></li>
+            <li class="dropdown side-dropdown"><a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">IMPRESION Y PUNTOS DE VENTA <i class="fa fa-angle-right"></i></a>
+                <div class="custom-menu">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <ul class="list-links">
+                                <li>
+                                    <h3 class="list-links-title">Impresoras </h3></li>
+                                <li><?= DwHtml::link('index/categoria/prt.dotmatrix', 'Impresoras Matriciales', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/prt.inkjet', 'Impresoras Cartuchos', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/prt.laser', 'Impresoras Laser', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/prt.mfp', 'Impresoras Multifuncionales', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/prt.plotter', 'Impresoras Plotter', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/prt.scanner', 'Escáneres', '', '', FALSE); ?></li>
+                            </ul>
+                            <hr>
+                            <ul class="list-links">
+                                <li>
+                                    <h3 class="list-links-title">CONSUMIBLES</h3></li>
+                                <li><?= DwHtml::link('index/categoria/cns.cart', 'Cartuchos de Toner e Ink-Jet', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/cns.ribbon', 'Cintas de Impresion', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/cns.maint', 'Suministros y Repuestos', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/cns.paper', 'Papel', '', '', FALSE); ?></li>
+                            </ul>
+                            <hr class="hidden-md hidden-lg">
+                        </div>
+                        <div class="col-md-4">
+                            <ul class="list-links">
+                                <li>
+                                    <h3 class="list-links-title">Puntos de Venta</h3></li>
+                                <li><?= DwHtml::link('index/categoria/pos.acc', 'Accesorios', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/pos.barcode', 'Escáneres de Código de Barras', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/pos.printer', 'Impresoras para Recibos', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/pos.monitor', 'Monitores', '', '', FALSE); ?></li>
+                            </ul>
+                            <hr>
+                            <ul class="list-links">
+                                <li>
+                                    <h3 class="list-links-title">Muebles</h3></li>
+                                <li><?= DwHtml::link('index/categoria/frn.desktop', 'Escritorios', '', '', FALSE); ?></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li><?= DwHtml::link('index/categoria/cel.smart/', 'Celulares Desbloqueados', '', '', FALSE); ?></li>
+            <li class="dropdown side-dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">REDES <i class="fa fa-angle-right"></i></a>
+                <div class="custom-menu">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <ul class="list-links">
+                                <li>
+                                    <h3 class="list-links-title">REDES</h3></li>
+                                <li><?= DwHtml::link('index/categoria/net.acc', 'Accesorios', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/net.accpoint', 'Puntos de Acceso', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/net.nwadapter', 'Adaptadores y Controladoras', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/net.antenna', 'Antenas', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/net.router', 'Routers', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/net.nwcable', 'Cables', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/net.cableacc', 'Accesorios para Cableo', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/net.nwconnect', 'Conectores', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/net.hubswitch', 'Hubs & Switches', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/net.wallplate', 'Placas y Soported de Pared', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/net.rackpanel', 'Paneles, Gabinetes y Cajas de Redes', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/net.nwtool', 'Herramientas y Equipo de Herramientas', '', '', FALSE); ?></li>
+                            </ul>
+                            <hr class="hidden-md hidden-lg">
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="dropdown side-dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">ELECTRODOMÉSTICOS <i class="fa fa-angle-right"></i></a>
+                <div class="custom-menu">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <ul class="list-links">
+                                <li>
+                                    <h3 class="list-links-title">ELECTRODOMÉSTICOS</h3></li>
+                                <li><?= DwHtml::link('index/categoria/app.heatcool', 'Climatización', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/net.refrigerator', 'Neveras', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/net.washerdryer', 'Lavadoras y Secadoras', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/avs.system', 'Sistemas de Audio', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/avs.cable', 'Cables', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/avs.remote', 'Controles Remoto', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/avs.speaker', 'Parlantes / Bocinas / Cornetas', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/dca.webcam', 'Cámaras Web', '', '', FALSE); ?></li>
+                            </ul>
+                            <hr class="hidden-md hidden-lg">
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="dropdown side-dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">SOFTWARE <i class="fa fa-angle-right"></i></a>
+                <div class="custom-menu">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <ul class="list-links">
+                                <li>
+                                    <h3 class="list-links-title">SOFTWARE</h3></li>
+                                <li><?= DwHtml::link('index/categoria/sfw.os', 'Sistema Operativo', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/sfw.security', 'Aplicaciones de Seguridad', '', '', FALSE); ?></li>
+                                <li><?= DwHtml::link('index/categoria/com.video', 'Video Conferencia', '', '', FALSE); ?></li>
+                            </ul>
+                            <hr class="hidden-md hidden-lg">
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li><?= DwHtml::link('index/producto/catalogo/', 'Ver Todos', '', '', FALSE); ?></li>
+        </ul>
+    </div>
+</div>
+<!-- menu nav -->
+<div class="menu-nav">
+    <span class="menu-header">Menu <i class="fa fa-bars"></i></span>
+    <ul class="menu-list">
+        <li><?= DwHtml::link('index/', 'Inicio', '', 'fa-home', FALSE); ?></li>
+        <li><?= DwHtml::link('index/producto/catalogo/', 'Tienda', '', 'fa-shopping-cart', FALSE); ?></li>
+        <li class="dropdown mega-dropdown"><a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true"><i class="fa fa-tv"></i> COMPUTADORES <i class="fa fa-caret-down"></i></a>
+            <div class="custom-menu">
+                <div class="row">
+                    <div class="col-md-4">
+                        <ul class="list-links">
+                            <li>
+                                <h3 class="list-links-title">COMPUTADORES</h3></li>
+                            <li><?= DwHtml::link('index/categoria/cpt.notebook', 'Port&aacute;tiles', '', '', FALSE); ?></li>
+                            <li><?= DwHtml::link('index/categoria/cpt.desktop', 'Computadores de Mesa', '', '', FALSE); ?></li>
+                            <li><?= DwHtml::link('index/categoria/cpt.allone', 'Todo-en-Uno', '', '', FALSE); ?></li>
+                            <li><?= DwHtml::link('index/categoria/cpt.tablet', 'Tabletas', '', '', FALSE); ?></li>
+                            <li><?= DwHtml::link('index/categoria/cpt.server', 'Servidores', '', '', FALSE); ?></li>
+                        </ul>
+                        <hr class="hidden-md hidden-lg">
+                    </div>
+                    <div class="col-md-4">
+                        <ul class="list-links">
+                            <li>
+                                <h3 class="list-links-title">MONITORES</h3></li>
+                            <li><?= DwHtml::link('index/categoria/mnt.monitor', 'Monitores', '', '', FALSE); ?></li>
+                            <li><?= DwHtml::link('index/categoria/mnt.tv', 'Televisores', '', '', FALSE); ?></li>
+                            <li><?= DwHtml::link('index/categoria/mon.monacc', 'Accesorios', '', '', FALSE); ?></li>
+                            <li><?= DwHtml::link('index/categoria/mon.monacc', 'Accesorios', '', '', FALSE); ?></li>
+                        </ul>
+                        <hr class="hidden-md hidden-lg">
+                    </div>
+                    <div class="col-md-4">
+                        <ul class="list-links">
+                            <li>
+                                <h3 class="list-links-title">COMPONENTES INFORMÁTICOS</h3></li>
+                            <li><?= DwHtml::link('index/categoria/cco.case', 'Cajas / Gabinetes', '', '', FALSE); ?></li>
+                            <li><?= DwHtml::link('index/categoria/cco.mobo', 'Tarjetas Madre (Placas Madre)', '', '', FALSE); ?></li>
+                            <li><?= DwHtml::link('index/categoria/cco.psupply', 'Fuentes de Poder', '', '', FALSE); ?></li>
+                            <li><?= DwHtml::link('index/categoria/cco.cpu', 'Procesadores', '', '', FALSE); ?></li>
+                            <li><?= DwHtml::link('index/categoria/cco.graphic', 'Tarjetas de Video', '', '', FALSE); ?></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </li>
+        <li class="dropdown mega-dropdown full-width"><a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true"><i class="fa fa-print"></i>  Impresoras <i class="fa fa-caret-down"></i></a>
+            <div class="custom-menu">
+                <div class="row">
+                    <div class="col-md-4">
+                        <ul class="list-links">
+                            <li>
+                                <h3 class="list-links-title">Impresoras </h3></li>
+                            <li><?= DwHtml::link('index/categoria/prt.dotmatrix', 'Impresoras Matriciales', '', '', FALSE); ?></li>
+                            <li><?= DwHtml::link('index/categoria/prt.inkjet', 'Impresoras Cartuchos', '', '', FALSE); ?></li>
+                            <li><?= DwHtml::link('index/categoria/prt.laser', 'Impresoras Laser', '', '', FALSE); ?></li>
+                            <li><?= DwHtml::link('index/categoria/prt.mfp', 'Impresoras Multifuncionales', '', '', FALSE); ?></li>
+                            <li><?= DwHtml::link('index/categoria/prt.plotter', 'Impresoras Plotter', '', '', FALSE); ?></li>
+                            <li><?= DwHtml::link('index/categoria/prt.scanner', 'Escáneres', '', '', FALSE); ?></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <ul class="list-links">
+                            <li>
+                                <h3 class="list-links-title">CONSUMIBLES</h3></li>
+                            <li><?= DwHtml::link('index/categoria/cns.cart', 'Cartuchos de Toner e Ink-Jet', '', '', FALSE); ?></li>
+                            <li><?= DwHtml::link('index/categoria/cns.ribbon', 'Cintas de Impresion', '', '', FALSE); ?></li>
+                            <li><?= DwHtml::link('index/categoria/cns.maint', 'Suministros y Repuestos', '', '', FALSE); ?></li>
+                            <li><?= DwHtml::link('index/categoria/cns.paper', 'Papel', '', '', FALSE); ?></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </li>
+        <li><?= DwHtml::link('tel:+593984022304', 'Llamar 0984022304', array('title' => 'Llamar 0984022304'), 'fa-phone', FALSE); ?></li>
+        <li><?= DwHtml::link('https://api.whatsapp.com/send?phone=593984022304', 'WhatsApp', array('title' => 'WhatsApp', 'target' => '_blank'), 'fa-whatsapp', FALSE); ?></li>
+    </ul>
+</div>
+<!-- menu nav -->

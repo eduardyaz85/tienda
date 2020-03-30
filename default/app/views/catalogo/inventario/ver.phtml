@@ -1,0 +1,179 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<section class="content">
+
+    <?php $key_upd = Security::setKey($articulo->id, 'upd_articulo'); ?>
+    <?php $key_img = Security::setKey($articulo->id, 'upd_foto'); ?>
+
+    <div class="row">
+        <div class="col-xs-12">
+
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">Inventario</h3>
+
+                    <div class="box-tools">
+                        <?= DwForm::open("$modulo/producto/buscar/", 'post', array('class' => 'no-ajax')); ?>
+                        <div class="input-group input-group-sm" style="width: 150px;">
+                            <input type="text" name="value" class="form-control pull-right" placeholder="Buscar...">
+                            <div class="input-group-btn">
+                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                        <?= DwForm::close(); ?>
+                    </div>
+                </div>
+                <!-- The time line -->
+                <ul class="timeline">
+                    <!-- timeline time label -->
+                    <li class="time-label">
+                        <span class="bg-red">
+                            <?= $articulo->descripcion; ?>
+                        </span>
+                    </li>
+                    <!-- /.timeline-label -->
+                    <!-- timeline item -->
+                    <li>
+                        <!-- timeline icon -->
+                        <i class="fa fa-database bg-blue"></i>
+                        <div class="timeline-item">
+                            <span class="time"><i class="fa fa-clock-o"></i> <?= date("Y-m-d", strtotime($articulo->registro_at)) ?></span>
+
+
+                            <h3 class="timeline-header"><a href="#">Creado</a> ...</h3>
+
+                            <div class="timeline-body">
+                                <!-- info row -->
+                                <div class="row invoice-info">
+                                    <div class="col-sm-4 invoice-col">
+                                        <address>
+                                            <strong>PROVEEDOR: </strong><?= $articulo->nombres; ?><br>
+                                            <strong>CODIGO SISTEMA: </strong><?= $articulo->codigo; ?><br>
+                                            <strong>SKU: </strong><?= $articulo->sku; ?><br>
+                                            <strong>NUMERO PARTE: </strong><?= $articulo->mpn; ?><br>
+                                            <strong>DESCRIPCION: </strong><?= $articulo->descripcion; ?><br>
+                                            <strong>DETALLE: </strong><?= $articulo->detalle; ?><br>
+                                        </address>
+                                    </div>
+                                    <div class="col-sm-4 invoice-col">
+                                        <address>
+                                            <strong>CATEGORIA: </strong><?= $articulo->category; ?><br>
+                                            <strong>MARCA: </strong><?= $articulo->marca; ?><br>
+                                            <strong>U. MEDIDA: </strong><?= $articulo->simbolo; ?><br>
+                                            <strong>TIPO ARTICULO: </strong><?= $articulo->tipo_articulo; ?><br>
+                                            <strong>TIPO: </strong><?= $articulo->type; ?><br>
+                                            <strong>PRECIO MANUAL: </strong><?= (!empty($articulo->pre_man) ? '<span class="label label-success">SI</span>' : '<span class="label label-danger">NO</span>'); ?><br>
+                                            <strong>UTILIDAD: </strong><?= $articulo->porcentaje; ?><br>
+                                            <strong>IMPUESTO: </strong><?= $articulo->impuesto; ?><br>
+                                        </address>
+                                    </div>
+                                    <?php
+                                    //precios de venta con impuesto
+                                    $precio_comp = DwOnline::setPrecios($articulo->precio_compra, $articulo->valor);
+                                    $precio_vent = DwOnline::setPrecios($articulo->precio_venta, $articulo->valor);
+                                    $precio_dist = DwOnline::setPrecios($articulo->precio_distribuidor, $articulo->valor);
+                                    ?>
+                                    <div class="col-sm-4 invoice-col">
+                                        <address>
+                                            <strong>PRECIO COMPRA: </strong><span class="label label-primary">$ <?= $precio_comp; ?></span><br>
+                                            <strong>PRECIO VENTA: </strong><span class="label label-success">$ <?= $precio_vent; ?></span><br>
+                                            <strong>PRECIO DISTRIBUIDOR: </strong><span class="label label-warning">$ <?= $precio_dist; ?></span><br>
+                                            <strong>STOCK: </strong><span class="label label-danger"><?= $articulo->instock; ?></span><br>
+                                            <strong>DESCUENTO: </strong><?= (!empty($articulo->onsales) ? '<span class="label label-success">SI</span>' : '<span class="label label-danger">NO</span>'); ?><br>
+                                            <strong>NUEVO: </strong><?= (!empty($articulo->nuevo) ? '<span class="label label-success">SI</span>' : '<span class="label label-danger">NO</span>'); ?><br>
+                                            <strong>WEB: </strong><?= (!empty($articulo->web) ? '<span class="label label-success">SI</span>' : '<span class="label label-danger">NO</span>'); ?><br>
+                                            <strong>ESTADO: </strong><?= (!empty($articulo->estado) ? '<span class="label label-success">ACTIVO</span>' : '<span class="label label-danger">INACTIVO</span>'); ?><br>
+                                        </address>
+                                    </div>
+                                </div>
+                                <!-- /.row -->
+                            </div>
+                            <div class="timeline-footer">
+                                <?= DwHtml::buttonTable('Modificar Material', "$modulo/editar/$key_upd/", null, 'primary', 'fa-edit'); ?>
+                            </div>
+                        </div>
+                    </li>
+                    <!-- END timeline item -->
+                    <li>
+                        <i class="fa fa-camera bg-purple"></i>
+
+                        <div class="timeline-item">
+                            <span class="time"><i class="fa fa-clock-o"></i> <?= date("Y-m-d", strtotime($articulo->registro_at)) ?></span>
+
+                            <h3 class="timeline-header"><a href="#">Imagen</a> ...</h3>
+                            <?php $foto = empty($articulo->imagen) ? 'default.jpg' : $articulo->imagen; ?>
+                            <div class="timeline-body">
+                                <?= DwHtml::img("upload/productos/$foto", "$articulo->mpn", array('class' => 'margin', 'width' => '300')); ?>
+                            </div>
+                            <div class="timeline-footer">
+                                <?= DwHtml::buttonTable('Modificar Imagen', "$modulo/foto/$key_img/", null, 'primary', 'fa-edit'); ?>
+                            </div>
+
+                        </div>
+                    </li>
+                    <!-- END timeline item -->
+                    <li>
+                        <i class="fa fa-list bg-purple"></i>
+
+                        <div class="timeline-item">
+
+                            <h3 class="timeline-header"><a href="#">Historico de Precios</a> ...</h3>
+
+                            <div class="timeline-body">
+                                <div class="box-body">
+
+                                    <div id="example2_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+
+                                        <table class="table table-hover">
+                                            <tbody>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>STOCK</th>
+                                                    <th>PRECIO COMPRA</th>
+                                                    <th>PRECIO VENTA</th>
+                                                    <th>PRECIO DISTRIBUIDOR</th>
+                                                    <th>FECHA REGISTRO</th>
+                                                    <th>ESTADO</th>
+                                                </tr>
+                                                <?php $cuenta = 1; ?>
+                                                <?php foreach ($precios as $row) { ?>
+                                                    <tr>
+                                                        <td><?= $row->cat_master_id; ?></td>
+                                                        <td><?= $row->instock; ?></td>
+                                                        <td><span class="text-danger"><?= $row->price; ?></span></td>
+                                                        <td><?= $row->precio_venta; ?></td>
+                                                        <td><?= $row->precio_distribuidor; ?></td>
+                                                        <td><?= $row->registro_at; ?></td>
+                                                        <td><?= $row->estado; ?></td>
+                                                    </tr>
+                                                    <?php $cuenta++; ?>
+                                                <?php } ?>
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="timeline-footer">
+
+                            </div>
+                        </div>
+                    </li>
+                    <!-- END timeline item -->
+                </ul>
+                <div class="box box-info">
+                    <div class="box-footer text-right">
+                        <?php echo DwHtml::button("$modulo/producto/listar/", 'SALIR', array('class' => 'btn-danger'), 'fa-sign-out', APP_AJAX); ?>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</section>

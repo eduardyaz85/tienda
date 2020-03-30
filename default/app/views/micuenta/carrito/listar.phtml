@@ -1,0 +1,85 @@
+<?php View::flash(); ?>
+<style>
+    @media (min-width: 1200px) {
+        .container {
+            width: 1078px;
+        }
+        .logo_products {
+            padding: 2em 0 1em;
+        }
+    }
+</style>
+<div class="container shell-view">
+
+    <?php View::process($page_module, $page_title, $set_title); ?>
+
+    <?php View::partial('subnav/cliente/principal', FALSE, array('id' => Session::get('id'))); ?>
+
+    <div class="btn-toolbar btn-toolbar-top">
+        <div class="row">
+            <div class="btn-actions">
+                <?php if (Session::get('perfil_id') <= Perfil::SUPERVISOR) { ?>
+                <?php } ?>
+            </div>            
+        </div>
+    </div>
+
+    <div class="container-overflow">
+
+        <?php if ($orden_carrito->items) : ?>
+
+            <table class="table table-bordered table-hover table-striped table-condensed table-responsive">
+                <thead>
+                    <tr>
+                        <th>NUM</th>
+                        <th data-order="perfil">NUMERO ORDEN</th>
+                        <th data-order="perfil">FECHA ORDEN</th>
+                        <?php if (Session::get('perfil_id') != Perfil::CLIENTE) { ?>
+                            <th data-order="cliente">CLIENTE</th>
+                        <?php } ?>
+                        <th data-order="estado">OBSERVACIONES</th>
+                        <th data-order="estado">ARTICULOS</th>
+                        <th data-order="estado">ESTADO</th>
+                        <th class="btn-actions col-blocked text-center" style="width: 50px;">ACCIONES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($orden_carrito->items as $orden): ?>
+                        <?php $key_shw = Security::setKey($orden->id, 'shw_orden'); ?>
+                        <tr>
+                            <td><?php echo $orden_carrito->counter; ?></td>
+                            <td><?= $orden->codigo; ?></td>
+                            <td><?= $orden->fecha_compra; ?></td>
+                            <?php if (Session::get('perfil_id') != Perfil::CLIENTE) { ?>
+                                <td><?= $orden->nombre .' '.$orden->apellido; ?></td>
+                            <?php } ?>
+                            <td><?= $orden->observaciones; ?></td>
+                            <td><?= $carrito->getTotalArticulos($orden->id)->total; ?></td>
+                            <td><?= DwOnline::setEstadoOrden($orden->activo); ?></td>
+                            <td class="btn-actions">
+                                <?php echo DwHtml::buttonTable('Ver orden', "cliente/carrito/ver/$key_shw/", NULL, 'info', 'fa-search'); ?>
+                            </td>
+                        </tr>
+                        <?php $orden_carrito->counter++; ?>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+
+            <?php View::partial('paginators/default', false, array('page' => $orden_carrito, 'url' => "compras/gastos/listar/$order/")); ?>
+
+        <?php else : // Si no hay items  ?>
+
+            <div class="resultadoproductos">
+                <h2 align="center">No hay compras realizadas!</h2>
+            </div>
+
+        <?php endif ?>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("#pagina-titulo").append("<?= $titulo ?>");
+    });
+</script>

@@ -1,0 +1,145 @@
+<!-- ASIDE -->
+<div id="aside" class="col-md-3">
+    <!-- aside widget -->
+    <div class="aside">
+        <h3 class="aside-title">Filtrar por Precio</h3>
+        <div id="price-slider"></div>
+    </div>
+    <!-- aside widget -->
+
+    <!-- aside widget -->
+    <div class="aside">
+        <h3 class="aside-title">Filtrar por Marca</h3>
+        <ul class="list-links">
+            <li><a href="#">DELL</a></li>
+            <li><a href="#">KINGSTON</a></li>
+            <li><a href="#">MICROSOFT</a></li>
+            <li><a href="#">LOGITECH</a></li>
+        </ul>
+    </div>
+    <!-- /aside widget -->
+
+    <!-- aside widget -->
+    <div class="aside">
+        <h3 class="aside-title">Producto mejor calificado</h3>
+        <!-- widget product -->
+        <!--                <div class="product product-widget">
+                            <div class="product-thumb">
+                                <img src="./img/thumb-product01.jpg" alt="">
+                            </div>
+                            <div class="product-body">
+                                <h2 class="product-name"><a href="#">Product Name Goes Here</a></h2>
+                                <h3 class="product-price">$32.50 <del class="product-old-price">$45.00</del></h3>
+                                <div class="product-rating">
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star-o empty"></i>
+                                </div>
+                            </div>
+                        </div>-->
+        <!-- /widget product -->
+    </div>
+    <!-- /aside widget -->
+</div>
+<!-- /ASIDE -->
+
+<!-- MAIN -->
+<div id="main" class="col-md-9">
+    <!-- store top filter -->
+    <div class="store-filter clearfix">
+        <div class="pull-right-container">
+            <?php View::partial('paginators/default', false, array('page' => $catalogo, 'url' => "index/producto/$accion/")); ?>
+        </div>
+    </div>
+    <!-- /store top filter -->
+
+    <!-- STORE -->
+    <div id="store">
+        <!-- row -->
+        <div class="row">
+            <!-- Product Single -->
+            <?php if (!empty($catalogo)) { ?>
+                <?php $cuenta = 0; ?>
+                <?php foreach ($catalogo->items as $articulo) { ?>
+                    <?php
+                    $codigo = $articulo['mpn'];
+                    $producto = $articulo['descripcion'];
+                    $foto_web = empty($articulo['imagen']) ? 'default.jpg' : $articulo['imagen'];
+                    $titulo = strtolower($producto);
+
+                    if (!empty(Session::get('login')) && Session::get('perfil_id') == Perfil::DISTRIBUIDOR) {
+                        $precio_vent = DwOnline::setPrecios($articulo['precio_distribuidor'], $articulo['valor']);
+                    } else {
+                        $precio_vent = DwOnline::setPrecios($articulo['precio_venta'], $articulo['valor']);
+                    }
+                    ?>
+                    <div class="col-md-4 col-sm-6 col-xs-6">
+                        <div class="product product-single">
+                            <div class="product-thumb">
+                                <div class="product-label">
+                                    <?php if (!empty($articulo['nuevo'])) { ?>
+                                        <span><?= !empty($articulo['nuevo']) ? 'Nuevo' : ''; ?></span>
+                                    <?php } else if (!empty($articulo['onsales'])) { ?>
+                                        <span class="sale"><?= !empty($articulo['onsales']) ? 'Oferta' : ''; ?></span>
+                                    <?php } ?>
+                                </div>
+                                <a href="http://asdinec.com/index/detalle/<?= $articulo['id'] ?>/<?= $articulo['brand'] ?>/" class="no-load btn main-btn quick-view" tabindex="-1"><i class="fa fa-pd-expand fa-search-plus"></i> Ver más...</a>
+                                <img src="http://asdinec.com/img/upload/productos/<?= $foto_web ?>" alt="" id="img-productos" class="imgen-store">
+                            </div>
+                            <div class="product-body">
+                                <h3 class="product-price">$<?= $precio_vent ?></h3>
+                                <div class="product-rating" itemprop="aggregateRating" itemtype="http://schema.org/AggregateRating" itemscope>
+                                    Stock: <?= $articulo['instock'] ?>
+                                    <meta itemprop="reviewCount" content="89" />
+                                    <meta itemprop="ratingValue" content="4.4" />
+                                </div>
+                                <?php if (!empty(Session::get('login')) && Session::get('perfil_id') <= Perfil::SUPERVISOR) { ?>
+                                    <h5 class="product-single text-danger">SKU: <?= $articulo['sku']; ?></h5>
+                                <?php } ?>
+                                <h6 class="text-success"><?= $articulo['marca']; ?></h6>
+                                <h6 class="text-success">MODELO: <?= $articulo['mpn']; ?></h6>
+                                <h2 class="product-name"><?php echo DwHtml::link("index/detalle/" . $articulo['id'] . "/" . $articulo['brand'], substr($articulo['descripcion'], 0, 60), array('title' => 'Click para Ver Producto', ''), NULL, FALSE); ?></h2>
+
+                                <div class="product-btns">
+                                    <?php echo DwForm::open('#', '', array('class' => 'no-ajax form-validate formulario', 'id' => 'formulario')); ?>
+                                    <fieldset>
+                                        <input type="hidden" name="href" value="<?= $articulo['id'] . '/' . $articulo['brand']; ?>" />
+                                        <input type="hidden" name="imagen" value="<?= $foto_web; ?>" />
+                                        <input type="hidden" name="instock" value="<?= $articulo['instock'] ?>" />
+                                        <input type="hidden" name="codigo" value="<?= $articulo['id'] ?>" />
+                                        <input type="hidden" name="mpn" value="<?= $articulo['mpn'] ?>" />
+                                        <input type="hidden" name="cmd" value="_cart" />
+                                        <input type="hidden" name="articulo" value="<?= $articulo['descripcion'] ?>" />
+                                        <input type="hidden" name="amount" value="<?= $precio_vent ?>" />
+                                        <input type="hidden" name="discount_amount" value="0" />
+                                        <div class="item-add-qty">
+                                            <input id="<?= $articulo['instock'] ?>" maxlength="3" class="addToCartQuantityBox mask-num" type="text" name="quantity" value="1" autocomplete="off" />
+                                            <button type="submit" name="submit" class="primary-btn add-to-cart btn-add-item"><i class="fa fa-shopping-cart"></i> COMPRAR</button>
+                                            <?= DwHtml::outLink("https://wa.me/593999301365?text=Me%20gustaría%20comprar%20el%20siguiente%20producto%20codigo:%20$codigo%20$producto", '<i class="fa fa-pd-expand fa-whatsapp"></i> Pedir x WatsApp', array('class' => 'primary-btn btn-success', 'target' => '_blank')); ?>
+                                        </div>
+                                    </fieldset>
+                                    <?php echo DwForm::close(); ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /Product Single -->
+                    <?php $cuenta++; ?>
+                <?php } ?>
+            <?php } ?>
+        </div>
+        <!-- /row -->
+    </div>
+    <!-- /STORE -->
+
+    <!-- store bottom filter -->
+    <div class="store-filter clearfix">
+        <div class="pull-right-container">
+            <?php View::partial('paginators/default', false, array('page' => $catalogo, 'url' => "index/producto/$accion/")); ?>
+        </div>
+    </div>
+    <!-- /store bottom filter -->
+</div>
+<!-- /MAIN -->

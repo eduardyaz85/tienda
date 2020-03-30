@@ -1,0 +1,84 @@
+<?php View::flash(); ?>
+
+<script type="text/javascript">
+    $(function () {
+        $('table').kgrid({
+            form_data: ['<?php echo $field; ?>', '<?php echo $value; ?>'],
+            form_to: $.KumbiaPHP.publicPath + 'temporal/excel/buscar/',
+            order_attr: '<?php echo (APP_AJAX) ? 'class="js-link js-spinner"' : ''; ?>',
+            order_to: $.KumbiaPHP.publicPath + 'temporal/excel/buscar/<?php echo $field; ?>/<?php echo $value; ?>'
+        });
+    });
+</script>
+
+<div class="container shell-view">
+
+    <?php View::process($page_module, $page_title, $set_title); ?>
+
+    <div class="btn-toolbar btn-toolbar-top">
+        <div class="row">
+            <div class="btn-actions">
+                <?php echo DwHtml::button("temporal/excel/agregar/", 'agregar', NULL, 'fa-check-square-o', APP_AJAX); ?>
+                <?php echo DwHtml::button("temporal/excel/listar/", 'listar', NULL, 'fa-check', APP_AJAX); ?>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-overflow">
+
+        <table class="table table-bordered table-hover table-striped table-condensed table-responsive">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th data-search="fila">CODIGO</th>
+                    <th data-order="nombre">NOMBRE</th>
+                    <th>STOCK</th>
+                    <th>PRECIO COMPRA</th>
+                    <th>PRECIO VENTA</th>
+                    <th data-order="categoria">CATEGORIA</th>
+                    <th>SUB CATEGORIA</th>
+                    <th data-order="marca">MARCA</th>
+                    <th data-order="unidad">UNIDAD</th>
+                    <th>STOCK MINIMO</th>
+                    <th>STOCK MAXIMO</th>
+                    <th>FECHA REGISTRO</th>
+                    <th>HORA REGISTRO</th>
+                    <th class="btn-actions no-responsive" style="width: 80px;">ACCIONES</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if ($articulos) { ?>
+                    <?php foreach ($articulos->items as $obj): ?>
+                        <?php $key_upd = Security::setKey($obj->id, 'upd_articulo'); ?>
+                        <?php $key_del = Security::setKey($obj->id, 'eliminar_articulo'); ?>
+                        <tr>
+                            <td><?php echo ($field == 'fila') ? DwUtils::resaltar($value, $obj->id) : $obj->id; ?></td>
+                            <td><?php echo ($field == 'mpn') ? DwUtils::resaltar($value, $obj->mpn) : $obj->mpn; ?></td>
+                            <td><?php echo ($field == 'nombre') ? DwUtils::resaltar($value, $obj->nombre) : $obj->nombre; ?></td>
+                            <td><?php echo ($field == 'stock') ? DwUtils::resaltar($value, $obj->cantidad) : $obj->cantidad; ?></td>
+                            <td><?php echo ($field == 'precio_compra') ? DwUtils::resaltar($value, $obj->precio_compra) : $obj->precio_compra; ?></td>
+                            <td><?php echo ($field == 'precio_venta') ? DwUtils::resaltar($value, $obj->precio_venta) : $obj->precio_venta; ?></td>
+                            <td><?php echo ($field == 'categoria') ? DwUtils::resaltar($value, $obj->categoria) : $obj->categoria; ?></td>
+                            <td><?php echo ($field == 'sub_categoria') ? DwUtils::resaltar($value, $obj->sub_categoria) : $obj->sub_categoria; ?></td>
+                            <td><?php echo ($field == 'marca') ? DwUtils::resaltar($value, $obj->marca) : $obj->marca; ?></td>
+                            <td><?php echo ($field == 'unidad') ? DwUtils::resaltar($value, $obj->unidad) : $obj->unidad; ?></td>
+                            <td><?php echo ($field == 'minimo') ? DwUtils::resaltar($value, $obj->minimo) : $obj->minimo; ?></td>
+                            <td><?php echo ($field == 'maximo') ? DwUtils::resaltar($value, $obj->maximo) : $obj->maximo; ?></td>
+                            <td><?php echo date("Y-m-d", strtotime($obj->creado_at)); ?></td>
+                            <td><?php echo date("H:i:s", strtotime($obj->creado_at)); ?></td>
+                            <td>
+                                <?php echo DwHtml::buttonTable('Modificar articulo', "temporal/excel/editar/$key_upd/", null, 'warning', 'fa-edit'); ?>
+                                <?php echo DwHtml::buttonTable('Eliminar articulo', "temporal/excel/eliminar/$key_del/", array('class' => 'js-confirm', 'confirm-title' => 'Eliminar articulo', 'confirm-body' => 'Está seguro de eliminar este articulo? <br />Recuerda que esta operación no se puede reversar.'), 'danger', 'fa-ban'); ?>
+                            </td>
+                        </tr>
+                        <?php $articulos->counter++; ?>
+                    <?php endforeach; ?>
+                <?php } ?>
+            </tbody>
+        </table>
+
+    </div>
+
+    <?php View::partial('paginators/default', false, array('page' => $articulos, 'url' => "temporal/excel/buscar/$field/$value/$order/")); ?>
+
+</div>

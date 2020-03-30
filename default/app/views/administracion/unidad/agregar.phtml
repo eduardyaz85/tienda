@@ -1,0 +1,36 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<section class="content">
+
+    <?= DwForm::open('', 'post', array('id' => 'form', 'class' => 'dw-validate  no-ajax')); ?>
+
+    <div class="box box-danger">
+
+        <div class="box-body">
+
+            <div class="row">
+                <div class="col-md-6">
+                    <?= DwForm::text('unidad.unidad', array('class' => 'input-lower input-required input-required mask-text show-error', 'maxlength' => '60'), NULL, 'Unidad'); ?>
+                </div>
+                <div class="col-md-6">
+                    <?= DwForm::text('unidad.simbolo', array('class' => 'input-lower input-required input-required mask-text show-error', 'maxlength' => '10'), NULL, 'Simbolo'); ?>
+                </div>
+            </div>
+
+            <div class="box box-info">
+                <div class="box-footer">
+                    <?php echo DwForm::send('Guardar unidad'); ?>
+                    <?php echo DwForm::cancel(); ?>
+                    <?php echo DwForm::focus('unidad.unidad'); ?>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <?php echo DwForm::close(); ?>
+
+</section>

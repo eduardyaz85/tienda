@@ -1,0 +1,77 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<section class="content">
+
+    <div class="box">
+
+        <div class="box-header">
+            <?php if (Session::get('perfil_id') <= Perfil::SUPERVISOR) { ?>
+                <?php echo DwHtml::button("$modulo/agregar/", 'AGREGAR', array('class' => 'btn-success'), 'fa-plus', APP_AJAX); ?>
+            <?php } ?>
+        </div>
+
+        <div class="box-header">
+            <h3 class="box-title">Lista de Categorias</h3>
+            <div class="box-tools">
+                <?php echo DwForm::open("$modulo/buscar/", 'post'); ?>
+                <div class="input-group input-group-sm" style="width: 150px;">
+                    <input type="text" name="value" class="form-control pull-right" placeholder="Buscar...">
+                    <div class="input-group-btn">
+                        <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                    </div>
+                </div>
+                <?php echo DwForm::close(); ?>
+            </div>
+        </div>
+
+        <div class="box-body">
+
+            <div class="container-overflow">
+
+                <table class="table table-bordered table-hover table-striped table-condensed table-responsive">
+                    <thead>
+                        <tr>
+                            <th>NUM</th>
+                            <th class="col-hidden" data-order="category" data-search="categoria">CATEGORÍA</th>
+                            <th class="col-hidden" data-order="category">CATEGORIA PADRE</th>
+                            <th data-order="">URL</th>
+                            <th data-order="">TIENE HIJOS</th>
+                            <th data-order="">ESTADO</th>
+                            <?php if (Session::get('perfil_id') <= Perfil::ADMIN) { ?>
+                                <th class="btn-actions col-blocked text-center  ">ACCIONES</th>
+                            <?php } ?>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($categorias->items as $categoria): ?>
+                            <?php $key_upd = Security::setKey($categoria->id, 'upd_categoria'); ?>
+                            <tr>
+                                <td><?php echo $categorias->counter; ?></td>
+                                <td><?= $categoria->category; ?></td>
+                                <td><?= ($categoria->parent_id == '0') ? '' : $NomCat->getNombreCategoria($categoria->parent_id)->category; ?></td>
+                                <td><?= $categoria->url; ?></td>
+                                <td><?= ($categoria->have_childrens == '0') ? 'NO' : 'SI'; ?></td>
+                                <td><?= ($categoria->activo == Categorias::ACTIVO) ? '<span class="label label-success">Activo</span>' : '<span class="label label-danger">Bloqueado</span>'; ?></td>
+                                <?php if (Session::get('perfil_id') <= Perfil::ADMIN) { ?>
+                                    <td class="btn-actions">
+                                        <?php echo DwHtml::buttonTable('Modificaa categoria', "$modulo/editar/$key_upd/", null, 'warning', 'fa-edit'); ?>
+                                    </td>
+                                <?php } ?>
+                            </tr>
+                            <?php $categorias->counter++; ?>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+
+            </div>
+
+            <?php View::partial('paginators/default', false, array('page' => $categorias, 'url' => "$modulo/listar/$order/")); ?>
+
+        </div>
+
+    </div>
+
+</section>
+

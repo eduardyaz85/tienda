@@ -1,0 +1,176 @@
+<footer id="footer" class="section section-grey">
+    <!-- container -->
+    <div class="container">
+        <!-- row -->
+        <div class="row">
+            <!-- footer widget -->
+            <div class="col-md-3 col-sm-6 col-xs-6">
+                <div class="footer">
+                    <!-- footer logo -->
+                    <div class="footer-logo">
+                        <a class="logo" href="#">
+                            <?= DwHtml::img("frontend/estatico/logo_form.png"); ?>
+                        </a>
+                    </div>
+                    <!-- /footer logo -->
+
+                    <p>Tienda en línea las 24 horas, los 7 días de la semana sin interrupciones</p>
+
+                    <!-- footer social -->
+                    <ul class="footer-social">
+                        <li><a href="https://instagram.com/asdin_ec" target="_blank" class="instagram"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
+                        <li><a href="https://www.facebook.com/asdinec/" target="_blank" class="facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                        <li><a href="https://twitter.com/EduardYaz" target="_blank" class="twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                    </ul>
+                    <!-- /footer social -->
+                </div>
+            </div>
+            <!-- /footer widget -->
+
+            <!-- footer widget -->
+            <div class="col-md-3 col-sm-6 col-xs-6">
+                <div class="footer">
+                    <h3 class="footer-header">Mi Cuenta</h3>
+                    <ul class="list-links">
+                        <li>
+                            <?= DwHtml::link('cuenta/cliente/datos/', 'Mi Cuenta', array('class' => 'no-load'), 'fa-user', FALSE); ?>
+                        </li>
+                        <li>
+                            <?= DwHtml::link('cuenta/cliente/deseos/', 'Mi Lista de Deseos', array('class' => 'no-load'), 'fa-heart-o', FALSE); ?>
+                        </li>
+                        <li>
+                            <?= DwHtml::link('#', 'Comparar', array('class' => 'no-load'), 'fa-exchange', FALSE); ?>
+                        </li>
+                        <li>
+                            <?= DwHtml::link('cuenta/cliente/carro/', 'Checkout', array('class' => 'no-load'), 'fa-check', FALSE); ?>
+                        </li>
+                        <?php if (!empty(Session::get('login'))) { ?>
+                            <li>
+                                <?php echo DwHtml::link('cuenta/login/salir/', 'Salir', array('class' => 'no-load'), 'fa-power-off', FALSE); ?>
+                            </li>
+                        <?php } else { ?>
+                            <li>
+                                <?= DwHtml::link('cuenta/login/entrar', 'Ingresar', array('class' => 'text-uppercase no-load', 'title' => 'Ingresar'), 'fa-user', FALSE); ?>
+                            </li>
+                            <li>
+                                <?= DwHtml::link('index/registro/', 'Regístro', array('class' => 'text-uppercase no-load', 'title' => 'Registrarme'), 'fa-edit', FALSE); ?>
+                            </li>
+                        <?php } ?>
+                    </ul>
+                </div>
+            </div>
+            <!-- /footer widget -->
+
+            <div class="clearfix visible-sm visible-xs"></div>
+
+            <!-- footer widget -->
+            <div class="col-md-3 col-sm-6 col-xs-6">
+                <div class="footer">
+                    <h3 class="footer-header">SERVICIO AL CLIENTE</h3>
+                    <ul class="list-links">
+                        <li><?php echo DwHtml::link('index/nosotros/', 'Nosotros'); ?></li>
+                        <li><?php echo DwHtml::link('index/servicios/', 'Servicios'); ?></li>
+                        <li><?php echo DwHtml::link('index/privacidad/', 'Privacidad'); ?></li>
+                        <li><?php echo DwHtml::link('index/terminos/', 'Términos de Uso'); ?></li>
+                        <li><?php echo DwHtml::link('index/ayuda/', 'Ayuda FAQ'); ?></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- /footer widget -->
+
+            <!-- footer subscribe -->
+            <div class="col-md-3 col-sm-6 col-xs-6">
+                <div class="footer">
+                    <h3 class="footer-header">MANTENTE CONECTADO</h3>
+                    <p>Suscribete a nuestro canal, recibe ofertas, productos nuevos...</p>
+                    <?= DwForm::open('index/boletines/', '', array('class' => 'no-ajax', 'id' => 'form-modal-suscribe')); ?>
+                    <div class="form-group">
+                        <?= DwForm::email('correo', array('class' => 'input mask-email', 'maxlength' => '100', 'placeholder' => 'Ingrese su correo electronico', 'autocomplete' => 'off')); ?>
+                    </div>
+                    <button class="primary-btn">&Uacute;nete al boletín</button>
+                    <?php echo DwForm::close(); ?>
+                </div>
+            </div>
+            <!-- /footer subscribe -->
+        </div>
+        <!-- /row -->
+        <hr>
+        <!-- row -->
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2 text-center">
+                <div class="footer-copyright">
+                    <p>&copy; Copyright <?php echo date("Y"); ?> - <?= APP_NOMBRE ?>. Todos los derechos reservados.  | Versión: <?= APP_VERSION; ?></p>
+                </div>
+            </div>
+        </div>
+        <!-- /row -->
+    </div>
+    <!-- /container -->
+</footer>
+
+<div class="modal fade" id="form-suscribe" style="max-width: 99%;max-height: 90%;">
+
+    <div class="modal-dialog">
+
+        <?= DwForm::open('index/boletines/', '', array('class' => 'no-ajax', 'id' => 'form-modal-suscribe')); ?>
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                <h4 align="center">Suscripci&oacute;n a Ofertas, Productos Nuevos</h4>
+            </div>
+
+            <div class="modal-body">
+
+
+                <div class="row">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4">
+                        <?= DwForm::text('suscribe.nombres', array('class' => 'input-required mask-text show-error', 'maxlength' => '100', 'placeholder' => 'Ingrese su nombre', 'autocomplete' => 'off'), NULL, 'Nombres'); ?>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4">
+                        <?= DwForm::email('correo', array('class' => 'input-required mask-email show-error', 'maxlength' => '100', 'placeholder' => 'Ingrese su correo electronico', 'autocomplete' => 'off'), NULL, 'Correo'); ?>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4">
+                        <div class="input-checkbox">
+                            <input id="pide-nuevom" name="suscribe[nuevo]" type="checkbox" value="0">
+                            <label class="font-weak"><b>Deseo Recibir sobre productos nuevos!</b></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4">
+                        <div class="input-checkbox">
+                            <input id="pide-ofertam" name="suscribe[promo]" type="checkbox" value="0">
+                            <label class="font-weak"><b>Deseo Recibir sobre promociones!</b></label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <div class="box box-info">
+                    <div class="box-footer">
+                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cerrar</button>
+                        <?php echo DwForm::submit("Suscribir", array('class' => 'btn btn-primary btn-guarda-sus')); ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php echo DwForm::close(); ?>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>

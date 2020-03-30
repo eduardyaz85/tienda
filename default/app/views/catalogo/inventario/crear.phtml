@@ -1,0 +1,87 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<section class="content">
+
+    <?= DwForm::open('', 'post', array('id' => 'form', 'class' => 'dw-validate  no-ajax')); ?>
+
+    <div class="box box-danger">
+
+        <div class="box-body">
+
+            <section id="new">
+                <h4 class="page-header">Informaci&oacute;n SERVICIO</h4>
+            </section>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <?= DwForm::dbSelect('articulo.categorias_id', array('categoria', 'category'), array('inventarios/categorias', 'getListadoCategoriasArticulos', Categorias::ACTIVO), 'Seleccion Categoria', array('class' => 'select2 input-required show-errors'), NULL, 'Categoria'); ?>
+                </div>
+                <div class="col-md-4">
+                    <?= DwForm::dbSelect('articulo.marca_id', 'marca', array('marca', 'getListadoMarcas', Marca::ACTIVO), 'Seleccione', array('class' => 'select2 input-required show-errors'), NULL, 'Marca'); ?>
+                </div>
+                <div class="col-md-4">
+                    <?= DwForm::dbSelect('articulo.umedida_id', 'unidad', array('umedida', 'getListadoUnidad', Umedida::ACTIVO), 'Seleccione', array('class' => 'select2 input-required show-errors'), 1, 'Unidad de Medida'); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <?= DwForm::text('articulo.codigo', array('class' => 'input-lower input-required mask-text show-error', 'autocomplete' => 'off', 'maxlength' => '25', 'readonly' => 'readonly'), $codigo, 'CODIGO SISTEMA'); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <?= DwForm::textarea('articulo.descripcion', array('class' => 'input-lower input-required input-required mask-text show-error', 'maxlength' => '300', 'placeholder' => 'Nombre del Servicio'), NULL, 'Nombre Art&iacute;culo'); ?>
+                </div>
+                <div class="col-md-6">
+                    <?= DwForm::textarea('articulo.detalle', array('class' => 'input-lower mask-text input-xxlarge show-error', 'maxlength' => '500', 'placeholder' => 'Detalle en el caso de ser muy extensa la informacion del Servicio'), NULL, 'Informaci&oacute;n adicional'); ?>
+                </div>
+            </div>
+
+            <section id="new">
+                <h4 class="page-header">Informaci&oacute;n costos</h4>
+            </section>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <?php echo DwForm::text('articulo.precio_compra', array('class' => 'input-required mask-alphanum'), NULL, 'Precio Compra'); ?>
+                </div>
+                <div class="col-md-3">
+                    <?php echo DwForm::text('precio_venta', array('class' => 'input-required mask-alphanum'), NULL, 'Precio Venta'); ?>
+                </div>
+            </div>
+
+            <section id="new">
+                <h4 class="page-header">Seleccione los impuestos que Aplica al SERVICIO</h4>
+            </section>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <?= DwForm::dbSelect('iva_id', array('valor', 'impuesto'), array('impuestos', 'getListaTablasImpuestos', 'iva', 'I'), 'Seleccione una Opción', array('class' => 'input-required show-errors'), NULL, 'Apllca IVA'); ?>
+                </div>
+            </div>
+
+            <div class="box box-info">
+                <div class="box-footer">
+                    <?= DwButton::save('Guardar servicio'); ?>
+                    <?php echo DwForm::cancel(); ?>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <?php echo DwForm::close(); ?>
+
+</section>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //Initialize Select2 Elements
+        $('.select2').select2();
+    });
+</script>

@@ -1,0 +1,52 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<section class="content">
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+
+                <div class="box-header">
+                    <?php echo DwHtml::button("$modulo/producto/listar/", 'listar', NULL, 'fa-check', APP_AJAX); ?>
+                </div>
+
+                <div class="box-body table-responsive no-padding">
+
+                    <table class="table table-hover">
+                        <tr>
+                            <th>NUM</th>
+                            <th class="col-hidden" >PROVEEDOR</th>
+                            <th class="col-hidden" >MENSAJE</th>
+                            <th class="col-hidden" >COD. ERROR</th>
+                            <th class="col-hidden" >REFERENCIA</th>
+                            <th class="col-hidden" >HORA SERVICIO</th>
+                            <th class="col-hidden" >FECHA SISTEMA</th>
+                            <th class="col-hidden" >HORA SISTEMA</th>
+                        </tr>
+                        <?php foreach ($conexiones->items as $row): ?>
+                            <tr>
+                                <td><?php echo $conexiones->counter; ?></td>
+                                <td><?= $row->nombres; ?></td>
+                                <td><?= $row->mensaje; ?></td>
+                                <td><?= $row->codigo_error; ?></td>
+                                <td><?= $row->referencia; ?></td>
+                                <td><?= $row->hora_ws; ?></td>
+                                <td><?= date("Y-m-d", strtotime($row->fecha_at)); ?></td>
+                                <td><?= date("H:i:s", strtotime($row->fecha_at)); ?></td>
+                            </tr>
+                            <?php $conexiones->counter++; ?>
+                        <?php endforeach; ?>
+                    </table>
+
+                    <?php View::partial('paginators/default', false, array('page' => $conexiones, 'url' => "$modulo/conexion/$order/")); ?>
+
+                </div>
+                <!-- /.box-body -->
+
+            </div>
+        </div>
+    </div>
+
+</section>

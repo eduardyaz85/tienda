@@ -1,0 +1,71 @@
+<?php View::flash(); ?>
+
+<div class="row">
+
+    <div class="section-title">
+        <h3 class="title">Mi cuenta</h3>
+    </div>
+
+    <?php $key_upd = Security::setKey($usuario->id, 'upd_datos'); ?>
+    <?php $key_img = Security::setKey($usuario->id, 'upd_foto'); ?>
+
+    <div class="col-md-12">
+        <!-- The time line -->
+        <ul class="timeline">
+            <!-- timeline time label -->
+            <li class="time-label">
+                <span class="bg-red">
+                    <?= $usuario->nombre; ?> <?= $usuario->apellido; ?>
+                </span>
+            </li>
+            <!-- /.timeline-label -->
+            <!-- timeline item -->
+            <li>
+                <!-- timeline icon -->
+                <i class="fa fa-database bg-blue"></i>
+                <div class="timeline-item">
+                    <span class="time"><i class="fa fa-clock-o"></i> <?= date("Y-m-d", strtotime($usuario->usuario_at)) ?></span>
+
+
+                    <h3 class="timeline-header"><a href="#">Creado</a> ...</h3>
+
+                    <div class="timeline-body">
+                        <!-- info row -->
+                        <div class="row invoice-info">
+                            <div class="col-sm-4 invoice-col">
+                                <address>
+                                    <strong>NOMBRE: </strong><?= $usuario->nombre; ?> <?= $usuario->apellido; ?><br>
+                                    <strong>USUARIO: </strong><?= $usuario->login; ?><br>
+                                    <strong>EMAIL: </strong><?= $usuario->email; ?><br>
+                                    <strong>C&Oacute; </strong> <?= $usuario->pool; ?>
+                                </address>
+                            </div>
+                            <div class="col-sm-4 invoice-col">
+                                <div class="timeline-item">
+                                    <div class="timeline-body">
+                                        <?= DwHtml::img("upload/personas/$usuario->fotografia", "$usuario->nombre", array('class' => 'margin', 'width' => '200')); ?>
+                                    </div>
+                                    <div class="timeline-footer">
+                                        <?= DwHtml::buttonTable('Modificar Imagen', "$modulo/foto/$key_img/", null, 'primary', 'fa-edit'); ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.row -->
+                    </div>
+                    <div class="timeline-footer">
+                        <?= DwHtml::buttonTable('Modificar Cuenta', "$modulo/editar/$key_upd/", null, 'primary', 'fa-edit'); ?>
+                    </div>
+                </div>
+            </li>
+            <!-- END timeline item -->
+        </ul>
+        <div class="box box-info">
+            <div class="box-footer text-right">
+                <?php echo DwHtml::button("index/", 'SALIR', array('class' => 'btn-danger'), 'fa-sign-out', APP_AJAX); ?>
+            </div>
+        </div>
+
+    </div>
+
+</div>

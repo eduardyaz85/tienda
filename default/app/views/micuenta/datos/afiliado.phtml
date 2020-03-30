@@ -1,0 +1,89 @@
+<?php View::flash(); ?>
+<style>
+    @media (min-width: 1200px) {
+        .container {
+            width: 1078px;
+        }
+        .logo_products {
+            padding: 2em 0 1em;
+        }
+    }
+    .badge{
+        font-size: 15px;
+    }
+</style>
+<div class="container shell-view">
+
+    <?php View::process($page_module, $page_title, $set_title); ?>
+
+    <?php View::partial('subnav/cliente/principal', FALSE, array('id' => Session::get('id'))); ?>
+
+    <ul class="nav nav-tabs hidden-xs">
+        <li class="active"><a href="#tab1" data-toggle="tab">Información Cuenta Promotor</a></li>
+    </ul>
+    <ul class="nav nav-pills nav-stacked visible-xs">
+        <li class="active"><a href="#tab1" data-toggle="tab">Información Cuenta Promotor</a></li>
+    </ul>
+
+    <div class="tab-content">
+
+        <div class="tab-pane active" id="tab1">
+
+            <?php echo DwForm::open(); ?>
+
+            <div class="col-md-8 agileinfo_mail_grid_left">
+                <ul>
+                    <li><i class="fa fa-user-md" aria-hidden="true"></i></li>
+                    <li>Codigo<span><?= DwForm::label("<p class='text-info'><b>" . $cliente->direccion . ' - ' . $cliente->ciudad . "</b></p>", 'direccion'); ?></span></li>
+                </ul>
+                <ul>
+                    <li><i class="fa fa-money" aria-hidden="true"></i></li>
+                    <li>Monedero<span><a href="mailto:<?= $cliente->email; ?>"><?= DwForm::label("<p class='text-info'><b>" . $cliente->email . "</b></p>", 'email'); ?></a></span></li>
+                </ul>
+                <ul>
+                    <li><i class="fa fa-dollar" aria-hidden="true"></i></li>
+                    <li>Comisión<span><a href="tel:<?= $cliente->celular; ?>"><?= DwForm::label("<p class='text-info'><b>" . $cliente->celular .' '.(empty($cliente->telefono)? '': ' | '.$cliente->telefono) . ''.(empty($cliente->ext)? '': ' | Ext. '.$cliente->ext). "</b></p>", 'celular'); ?></a></span></li>
+                </ul>
+            </div>
+            <div class="btn-toolbar btn-toolbar-top">
+                <div class="col-md-4">
+                    <div class="list-group list-group-alternate">
+                        <a href="#" class="list-group-item"><span class="badge badge-danger"><?= $cliente->nombres . ' ' . $cliente->apellidos ?></span> <i class="ti ti-email"></i> Cliente </a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="list-group list-group-alternate">
+                        <a href="#" class="list-group-item"><span class="badge badge-danger"><?= $cliente->ruc ?></span> <i class="ti ti-email"></i> Cédula/RUC </a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="list-group list-group-alternate">
+                        <a href="#" class="list-group-item"><span class="badge badge-danger"><?= empty($cliente->tipo_envio)? '' : $tabla_tipo->getNombreTabla($cliente->tipo_envio)->titulo ?></span> <i class="ti ti-email"></i> Enviar a: </a>
+                    </div>
+                </div>
+            </div>
+
+            <?php echo DwForm::close(); ?>
+
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="form-actions">
+            <?php if (empty($cliente->direccion)) { ?>
+                <?= DwHtml::link("micuenta/datos/agregar/" . Security::setKey(Session::get('id'), 'add_direccion'), 'Registrar Direccion', array('class' => 'no-load btn btn-success btn-large'), 'fa fa-pd-expand fa-edit', FALSE); ?>
+            <?php } else { ?>
+                <?= DwHtml::link("micuenta/datos/editar/" . Security::setKey(Session::get('id'), 'upd_direccion'), 'Modificar Direccion', array('class' => 'no-load btn btn-success btn-large'), 'fa fa-pd-expand fa-edit', FALSE); ?>
+            <?php } ?>
+            <?php echo DwButton::back(); ?>
+        </div>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("#pagina-titulo").append("<?= $titulo ?>");
+    });
+</script>

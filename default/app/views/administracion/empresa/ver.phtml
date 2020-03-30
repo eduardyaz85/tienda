@@ -1,0 +1,73 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<section class="invoice">
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h2 class="page-header">
+                <i class="fa fa-cogs"></i> Establecimiento: <?= $sucursales->codigo_establecimiento; ?> | <?= $sucursales->sucursal; ?>
+                <small class="pull-right">Fecha: <?= date('Y-m-d'); ?></small>
+            </h2>
+        </div>
+    </div>
+
+    <div class="row no-print">
+        <div class="col-xs-12">
+            <?php $key_add = Security::setKey($sucursales->id, 'add_emision'); ?>
+            <?php echo DwButton::back("$modulo/index"); ?>
+            <?php echo DwHtml::button("$modulo/agregar/$key_add/", 'item', array('class' => 'btn-success btn-agrega-articulod'), 'fa-plus', APP_AJAX); ?>
+        </div>
+    </div>
+
+    <div class="box-body table-responsive no-padding">
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>NUM</th>
+                    <th>ESTABLECIMIENTO</th>
+                    <th>PUNTO EMISION</th>
+                    <th>AGENCIA</th>
+                    <th>CODIGO NUMERICO</th>
+                    <th>TIEMPO ESPERA</th>
+                    <th>TIPO AMBIENTE</th>
+                    <th>TIPO EMISION</th>
+                    <th>ESTADO</th>
+                    <?php if (Session::get('perfil_id') <= Perfil::ADMIN) { ?>
+                        <th class="btn-actions col-blocked text-center  ">ACCIONES</th>
+                    <?php } ?>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($emision)) { ?>
+                    <?php $counter = 1; ?>
+                    <?php foreach ($emision as $row): ?>
+                        <?php $key_mod = Security::setKey($row->id, 'upd_emision'); ?>
+                        <tr>
+                            <td><?= $counter; ?></td>
+                            <td><?= $row->codigo_establecimiento; ?></td>
+                            <td><?= $row->codigo_emision; ?></td>
+                            <td><?= $row->sucursal; ?></td>
+                            <td><?= $row->codigo_numerico; ?></td>
+                            <td><?= $row->tiempo_espera; ?></td>
+                            <td><?= $tbltipo->getNombreTabla($row->tipo_ambiente)->titulo; ?></td>
+                            <td><?= $tbltipo->getNombreTabla($row->tipo_emision)->titulo; ?></td>
+                            <td><?= ($row->estado == Establecimientos::ACTIVO) ? '<span class="label label-success" rel="tooltip">Activo</span>' : '<span class="label label-danger" rel="tooltip">Bloqueado</span>'; ?></td>
+                            <?php if (Session::get('perfil_id') <= Perfil::ADMIN) { ?>
+                                <td class="btn-actions">
+                                    <?= DwHtml::buttonTable('Modificar', "$modulo/editar/$key_mod/", NULL, 'warning', 'fa-edit'); ?>
+                                </td>
+                            <?php } ?>
+                        </tr>
+                        <?php $counter++; ?>
+                    <?php endforeach; ?>
+                <?php } ?>
+            </tbody>
+        </table>
+
+    </div>
+
+</section>
+

@@ -1,0 +1,5 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<?php View::partial('catalogo/inventario', FALSE, array('catalogo' => $catalogo, 'modulo' => $modulo, 'url' => $url)); ?>

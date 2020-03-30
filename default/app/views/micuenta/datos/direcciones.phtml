@@ -1,0 +1,71 @@
+<?php View::flash(); ?>
+<style>
+    @media (min-width: 1200px) {
+        .container {
+            width: 1078px;
+        }
+        .logo_products {
+            padding: 2em 0 1em;
+        }
+    }
+</style>
+<div class="container shell-view">
+
+    <?php View::process($page_module, $page_title, $set_title); ?>
+
+    <?php View::partial('subnav/cliente/principal', FALSE, array('id' => Session::get('id'))); ?>
+
+
+    <ul class="nav nav-tabs hidden-xs">
+        <li class="active"><a href="#tab1" data-toggle="tab">Direcciones de Env&iacute;o</a></li>
+    </ul>
+    <ul class="nav nav-pills nav-stacked visible-xs">    
+        <li class="active"><a href="#tab1" data-toggle="tab">Direcciones de Env&iacute;o</a></li>
+    </ul>
+
+    <div class="tab-content">
+
+        <div class="tab-pane active" id="tab1">
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <h3>Dirección</h3>
+                    <ul class="list-group">
+                        <?php if (!empty($cliente)) { ?>
+                            <li class="list-group-item"><?= DwForm::label('<b>Cédula/Ruc: </b>' . $cliente->ruc, 'label'); ?></li>
+                            <li class="list-group-item"><?= DwForm::label('<b>Razón Social: </b>' . $cliente->nombres . ' ' . $cliente->apellidos, 'label'); ?></li>
+                            <li class="list-group-item"><?= DwForm::label('<b>Dirección: </b>' . $cliente->ciudad . ', ' . $cliente->direccion, 'label'); ?></li>
+                            <li class="list-group-item"><?= DwForm::label('<b><i class="fa fa-phone" aria-hidden="true"></i> </b><a href="tel: ' . $cliente->telefono . '">' . $cliente->telefono . '</a> <a href="tel: ' . $usuario->telefono2 . '">' . $usuario->telefono2 . '</a>  Ext. ' . $usuario->ext, 'label'); ?></li>
+                            <li class="list-group-item"><?= DwForm::label('<b>Celular: </b>' . $cliente->celular, 'label'); ?></li>
+                            <li class="list-group-item"><?= DwForm::label('<a href="mailto:' . $cliente->email . '"><i class="fa fa-envelope-o" aria-hidden="true"></i> ' . $usuario->email . '</a>', 'label'); ?></li>
+                            <li class="list-group-item">
+                                <?= DwHtml::link("micuenta/datos/editar/" . Security::setKey(Session::get('id'), 'upd_direccion'), 'Actualizar', array('class' => 'no-load btn btn-success btn-large'), 'fa fa-pd-expand fa-edit', FALSE); ?>
+                            </li>
+                        <?php } else { ?>
+
+                        <?php } ?>
+                    </ul>
+                </div><!-- /.col-sm-6 -->
+                <div class="col-sm-6">
+                    <ul class="list-group">
+                        <li class="list-group-item">Agregar Dirección</li>
+                        <li class="list-group-item">
+                            <?= DwHtml::link("micuenta/datos/agregar/" . Security::setKey(Session::get('id'), 'add_direccion'), 'Registrar', array('class' => 'no-load btn btn-success btn-large'), 'fa fa-pd-expand fa-edit', FALSE); ?>
+                        </li>
+                    </ul>
+                </div><!-- /.col-sm-6 -->
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("#pagina-titulo").append("<?= $titulo ?>");
+        $("#usuario_password").val("");
+    });
+</script>

@@ -1,0 +1,59 @@
+<?php View::flash(); ?>
+
+<?php View::process($page_module, $page_title, $set_title); ?>
+
+<section class="content">
+
+    <div class="box">
+
+        <div class="box-header">
+            <?php if (Session::get('perfil_id') <= Perfil::ADMIN) { ?>
+                <?php echo DwHtml::button("$modulo/agregar/", 'AGREGAR', array('class' => 'btn-success'), 'fa-plus', APP_AJAX); ?>
+            <?php } ?>
+        </div>
+
+        <div class="box-body">
+
+            <div id="example2_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+
+                <table class="table table-hover">
+                    <tbody>
+                        <tr>
+                            <th>NUM</th>
+                            <th data-order="perfil">DESDE</th>
+                            <th data-order="plantilla">HASTA</th>
+                            <th data-order="usuarios">PORCENTAJE</th>
+                            <th data-order="estado">TIPO</th>
+                            <?php if (Session::get('perfil_id') <= Perfil::ADMIN) { ?>
+                                <th class="btn-actions col-blocked text-center">ACCIONES</th>
+                            <?php } ?>
+                        </tr>
+                        </tr>
+                        <?php foreach ($utilidad->items as $value): ?>
+                            <?php $key_upd = Security::setKey($value->id, 'upd_utilidad'); ?>
+                            <tr>
+                                <td><?php echo $utilidad->counter; ?></td>
+                                <td><?= $value->desde; ?></td>
+                                <td><?= $value->hasta; ?></td>
+                                <td><?= $value->porcentaje; ?></td>
+                                <td><?= $value->tipo; ?></td>
+                                <?php if (Session::get('perfil_id') <= Perfil::ADMIN) { ?>
+                                    <td>
+                                    <?php echo DwHtml::buttonTable('Modificar costo', "$modulo/editar/$key_upd/", null, 'warning', 'fa-edit'); ?>
+                                    </td>
+                                <?php } ?>
+                            </tr>
+                            <?php $utilidad->counter++; ?>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+
+                <?php View::partial('paginators/default', false, array('page' => $utilidad, 'url' => "$modulo/listar/$order/")); ?>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>

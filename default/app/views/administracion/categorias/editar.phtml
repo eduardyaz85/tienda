@@ -1,0 +1,61 @@
+<?php View::flash(); ?>
+
+<div class="container shell-view">
+
+    <?php View::process($page_module, $page_title, $set_title); ?>
+
+    <?= DwForm::open('', 'post', array('id' => 'form', 'class' => 'dw-validate  no-ajax')); ?>
+
+    <div class="row">
+        <div class="col-md-4">
+            <?php if ($categoria->parent_id != '0') { ?>
+                <?= DwForm::select('categoria.have_childrens', array('' => 'Seleccione', '1' => 'SI', '0' => 'NO'), array('class' => 'input-break input-medium input-required mask-pint show-errors'), $categoria->have_childrens, 'Tiene Hijos'); ?>
+            <?php } else { ?>
+                <?= DwForm::text('have_childrens', array('class' => 'input-xxlarge show-error readonly', 'maxlength' => '5'), 'NO', 'Tiene Hijos'); ?>
+                <?= DwForm::hidden('categoria.have_childrens', NULL, $categoria->have_childrens) ?>
+            <?php } ?>
+        </div>
+        <div class="col-md-4">
+            <?php if ($categoria->parent_id != '0') { ?>
+                <?= DwForm::dbSelect('categoria.parent_id', 'category', array('categorias', 'getListadoCategoriaPadre', Categorias::ACTIVO), 'Seleccione Categoria Padre', array('class' => 'input-xlarge show-errors'), NULL, 'Categoria Padre'); ?>
+            <?php } else { ?>
+                <?= DwForm::text('parent_id', array('class' => 'show-error'), 'Padre', 'Categoria Padre'); ?>
+                <?= DwForm::hidden('categoria.parent_id', NULL, $categoria->parent_id) ?>
+            <?php } ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <?= DwForm::text('categoria.category', array('class' => 'input-required mask-text show-error', 'maxlength' => '60'), NULL, 'Categoria'); ?>
+        </div>
+        <div class="col-md-6">
+            <?php if ($categoria->parent_id != '0') { ?>
+                <?= DwForm::text('categoria.url', array('class' => 'input-required mask-alpha show-error', 'maxlength' => '45'), NULL, 'URL'); ?>
+            <?php } else { ?>
+                <?= DwForm::text('categoria.url', array('class' => 'input-required mask-alpha show-error', 'maxlength' => '45'), NULL, 'URL'); ?>
+            <?php } ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <?= DwForm::select('categoria.tipo', array('' => 'Seleccione', 'a' => 'AUTOMATICO', 'm' => 'MANUAL', 'i' => 'INACTIVO'), array('class' => 'input-break input-medium input-required mask-pint show-errors'), $categoria->tipo, 'PUBLICACION WEB'); ?>
+        </div>
+        <div class="col-md-4">
+            <?= DwForm::select('categoria.activo', array('' => 'Seleccione', '1' => 'ACTIVO', '0' => 'BLOQUEADO'), array('class' => 'input-break input-medium input-required mask-pint show-errors'), $categoria->activo, 'Estado'); ?>
+        </div>
+    </div>
+
+    <?= DwForm::hidden('categoria.id', NULL, $categoria->id) ?>
+
+    <div class="row">
+        <div class="form-actions">
+            <?= DwButton::save('Guardar categoria'); ?>
+            <?= DwButton::back("$modulo/listar/"); ?>
+        </div>
+    </div>
+
+    <?= DwForm::close(); ?>
+
+</div>
